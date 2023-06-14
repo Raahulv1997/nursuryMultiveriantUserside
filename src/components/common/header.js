@@ -30,11 +30,11 @@ export default function Header() {
                                 <div className="header-select">
                                     <i className="icofont-world"></i>
                                     <select className="select" style={{ display: 'none' }}>
-                                        <option value="english" selected>english</option>
+                                        <option value="english" >english</option>
                                         <option value="bangali">bangali</option>
                                         <option value="arabic">arabic</option>
                                     </select>
-                                    <div className={LangOpen ? "nice-select select open" : "nice-select select"} tabindex="0">
+                                    <div className={LangOpen ? "nice-select select open" : "nice-select select"} tabIndex="0">
                                         <Link to="" onClick={()=>{LangOpen === false ? setLangOpen(true) : setLangOpen(false)}}>
                                             <span className="current">english</span> 
                                        </Link>
@@ -48,11 +48,11 @@ export default function Header() {
                                 <div className="header-select">
                                     <i className="icofont-money"></i>
                                     <select className="select" style={{ display: 'none' }}>
-                                        <option value="english" selected>doller</option>
+                                        <option value="english" >doller</option>
                                         <option value="bangali">pound</option>
                                         <option value="arabic">taka</option>
                                     </select>
-                                    <div className={currencyOpen ? "nice-select select open" : "nice-select select"} tabindex="0">
+                                    <div className={currencyOpen ? "nice-select select open" : "nice-select select"} tabIndex="0">
                                     <Link to="" onClick={()=> {currencyOpen === false ? setCurrencyOpen(true) : setCurrencyOpen(false)}}>
                                             <span className="current">doller</span> 
                                        </Link>

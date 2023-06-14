@@ -28,20 +28,6 @@ export default function Home() {
           </div>
           <div className="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
             <ProductBox />
-            <ProductBox />
-            <ProductBox />
-            <ProductBox />
-            <ProductBox />
-            <ProductBox />
-            <ProductBox />
-            <ProductBox />
-            <ProductBox />
-            <ProductBox />
-            <ProductBox />
-            <ProductBox />
-            <ProductBox />
-            <ProductBox />
-            <ProductBox />
           </div>
           <div className="row">
             <div className="col-lg-12">

@@ -4,6 +4,7 @@ import Footer from './common/footer'
 import Otherbannner from './common/otherbannner'
 import Profilesection from './common/profilesection'
 import Orderhistorysection from './common/orderhistorysection'
+
 export default function Profile() {
     const [activeTab, setActiveTab] = useState('component1');
 

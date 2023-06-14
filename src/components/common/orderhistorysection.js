@@ -14,7 +14,7 @@ export default function Orderhistorysection() {
                                 <div className="filter-short">
                                     <label className="form-label">short by:</label>
                                     <select className="form-select">
-                                        <option value="all" selected="">all order</option>
+                                        <option value="all">all order</option>
                                         <option value="recieved">recieved order</option>
                                         <option value="processed">processed order</option>
                                         <option value="shipped">shipped order</option>
