@@ -16,15 +16,11 @@ export default function Header() {
   return (
     <div>
       <Navbar expand="lg" fixed="top" bg="white" className={"p-0"}>
-        <Container className={"justify-content-start"}>
+        <Container className={""}>
           <Navbar.Brand to="/">
             <img src={logo} alt="logo" height={"70px"} />
           </Navbar.Brand>
-          <div className="header-content w-100 ps-5">
-            <Link to="/profile" className="header-widget" title="My Account">
-              <img src={user} alt="user" />
-              <span>join</span>
-            </Link>
+          <div className="header-content w-100 ps-5 ">
             <form className="header-form">
               <input type="text" placeholder="Search anything..." />
               <button>
@@ -32,14 +28,14 @@ export default function Header() {
               </button>
             </form>
             <div className="header-widget-group">
-              <Link to="" className="header-widget" title="Compare List">
+              {/* <Link to="" className="header-widget" title="Compare List">
                 <i className="fas fa-random"></i>
                 <sup>0</sup>
               </Link>
               <Link to="  " className="header-widget" title="Wishlist">
                 <i className="fas fa-heart"></i>
                 <sup>0</sup>
-              </Link>
+              </Link> */}
               <button
                 className="header-widget header-cart"
                 title="Cartlist"
@@ -53,6 +49,14 @@ export default function Header() {
               </button>
               {cartOpen ? <Cart close={() => setCartOpen(false)} /> : null}
             </div>
+            <Link
+              to="/profile"
+              className="header-widget ps-4"
+              title="My Account"
+            >
+              <img src={user} alt="user" />
+              <span>join</span>
+            </Link>
           </div>
         </Container>
       </Navbar>
