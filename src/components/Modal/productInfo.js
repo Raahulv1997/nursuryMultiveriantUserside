@@ -1,18 +1,18 @@
-import React , {useEffect} from 'react'
+import React, { useEffect } from 'react'
 import { Modal } from "react-bootstrap"
 import user from "../../image/user.png"
 import useValidation from "../common/useValidation"
-import { UpdateUer ,UserData} from '../api/api'
+import { UpdateUer, UserData } from '../api/api'
 export default function ProfileInfoModal(props) {
-        /*Function to get user details */
-        let GetUserData = async () => {
-            let response = await UserData()
-            console.log(response.data[0])
-            setState(response.data[0])
-        }
-        useEffect(() => {
-            GetUserData()
-        }, [])
+    /*Function to get user details */
+    let GetUserData = async () => {
+        let response = await UserData()
+        console.log(response.data[0])
+        setState(response.data[0])
+    }
+    useEffect(() => {
+        GetUserData()
+    }, [])
     // USER PERSONAL DETAIL VALIDATION
     // INITIAL STATE ASSIGNMENT
     const initialFormStateuser = {
@@ -112,16 +112,16 @@ export default function ProfileInfoModal(props) {
     /*Function to Update user Profile */
     const OnuserProfileClick = async (event) => {
         event.preventDefault();
-    if (validate()) { 
-        let response = await UpdateUer(state)
-        console.log(response)
-        setErrors("")
-    }
+        if (validate()) {
+            let response = await UpdateUer(state)
+            console.log(response)
+            setErrors("")
+        }
     }
     return (
         <Modal
-        show={props.show}
-        size="lg"
+            show={props.show}
+            size="lg"
         >
             <button className="modal-close icofont-close" data-bs-dismiss="modal" onClick={props.close}></button>
             <div>
@@ -156,7 +156,7 @@ export default function ProfileInfoModal(props) {
                                 <span className="fas fa-pen text-dark bg-gray p-1 rounded"></span>
                             </label>
                         </div>
-                       
+
                     </div>
                     <div className="form-group">
                         <label className="form-label">First Name</label>
@@ -165,12 +165,12 @@ export default function ProfileInfoModal(props) {
                                 ? "form-control border border-danger"
                                 : "form-control"
                         }
-                        placeholder='User Name'
+                            placeholder='User Name'
                             type="text"
                             value={state.first_name}
                             name="first_name"
-                            onChange={onInputChange} 
-                            maxLength={15}/>
+                            onChange={onInputChange}
+                            maxLength={15} />
                         {/*----ERROR MESSAGE FOR first_name----*/}
                         {errors.first_name && (
                             <span
@@ -188,12 +188,12 @@ export default function ProfileInfoModal(props) {
                                 ? "form-control border border-danger"
                                 : "form-control"
                         }
-                        placeholder='Surename'
+                            placeholder='Surename'
                             type="text"
                             value={state.last_name}
                             name="last_name"
-                            onChange={onInputChange} 
-                            maxLength={15}/>
+                            onChange={onInputChange}
+                            maxLength={15} />
                         {/*----ERROR MESSAGE FOR last_name----*/}
                         {errors.last_name && (
                             <span
@@ -211,7 +211,7 @@ export default function ProfileInfoModal(props) {
                                 ? "form-control border border-danger"
                                 : "form-control"
                         }
-                        placeholder='Mobile number'
+                            placeholder='Mobile number'
                             type="number"
                             value={state.phone_no}
                             name="phone_no"
@@ -234,7 +234,7 @@ export default function ProfileInfoModal(props) {
                                 ? "form-control border border-danger"
                                 : "form-control"
                         }
-                        placeholder='address'
+                            placeholder='address'
                             type="text"
                             value={state.address}
                             name="address"
@@ -257,7 +257,7 @@ export default function ProfileInfoModal(props) {
                                 ? "form-control border border-danger"
                                 : "form-control"
                         }
-                        placeholder='Another Address'
+                            placeholder='Another Address'
                             type="text"
                             value={state.alternate_address}
                             name="alternate_address"
@@ -280,7 +280,7 @@ export default function ProfileInfoModal(props) {
                                 ? "form-control border border-danger"
                                 : "form-control"
                         }
-                        placeholder='Email'
+                            placeholder='Email'
                             type="text"
                             value={state.email}
                             name="email"
@@ -302,7 +302,7 @@ export default function ProfileInfoModal(props) {
                                 ? "form-control border border-danger"
                                 : "form-control"
                         }
-                        placeholder='Pincode'
+                            placeholder='Pincode'
                             type="number"
                             value={state.pincode}
                             name="pincode"
@@ -325,7 +325,7 @@ export default function ProfileInfoModal(props) {
                                 ? "form-control border border-danger"
                                 : "form-control"
                         }
-                        placeholder='city'
+                            placeholder='city'
                             type="text"
                             value={state.city}
                             name="city"

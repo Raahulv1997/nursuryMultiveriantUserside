@@ -27,6 +27,7 @@ export default function Home() {
             </div>
           </div>
           <div className="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
+<<<<<<< Updated upstream
             <ProductBox />
             <ProductBox />
             <ProductBox />
@@ -37,6 +38,18 @@ export default function Home() {
             <ProductBox />
             <ProductBox />
             <ProductBox />
+=======
+            <ProductBox 
+            pricefilter={""}
+            rating={""}
+            cateFilter={""}
+            brandFilter={""}
+            Pages={"10"}
+            currentPage={"0"}
+            sortByAlpha={""}
+            sortByRating={""}
+            sortByPrice={""}/>
+>>>>>>> Stashed changes
           </div>
           <div className="row">
             <div className="col-lg-12">
@@ -126,11 +139,16 @@ export default function Home() {
             </div>
           </div>
           <div className="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
-            <ProductBox />
-            <ProductBox />
-            <ProductBox />
-            <ProductBox />
-            <ProductBox />
+          <ProductBox 
+            pricefilter={""}
+            rating={""}
+            cateFilter={""}
+            brandFilter={""}
+            Pages={"10"}
+            currentPage={"0"}
+            sortByAlpha={""}
+            sortByRating={""}
+            sortByPrice={""}/>
           </div>
           <div className="row">
             <div className="col-lg-12">
