@@ -41,3 +41,7 @@
 .category_header {
   margin-top: 84px;
 }
+
+.dropdown-megamenu:hover .megamenu {
+  top: 155px;
+}

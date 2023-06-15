@@ -18,7 +18,7 @@ export default function Header() {
       <Navbar expand="lg" fixed="top" bg="white" className={"p-0"}>
         <Container className={""}>
           <Navbar.Brand to="/">
-            <img src={logo} alt="logo" height={"70px"} />
+            <img src={logo} alt="logo" height={"40px"} />
           </Navbar.Brand>
           <div className="header-content w-100 ps-5 ">
             <form className="header-form">
