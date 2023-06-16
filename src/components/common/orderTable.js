@@ -6,9 +6,7 @@ export default function OrderTable(props) {
 
     return (
         <div>
-
-
-            <div className="table-scroll">
+             <div className="table-scroll">
                 <table className="table-list">
                     <thead>
                         <tr>

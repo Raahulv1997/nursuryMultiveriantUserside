@@ -5,6 +5,7 @@ import user3 from "../../image/avatar/03.jpg"
 import user4 from "../../image/avatar/04.jpg"
 import videoimg from '../../image/video.jpg'
 import { Link } from 'react-router-dom'
+import { AddReview } from '../api/api'
 export default function Productdescription() {
     const [activeTab, setActiveTab] = useState('tab-desc');
 

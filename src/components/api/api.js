@@ -57,9 +57,11 @@ export const UpdateUserPassword = async (props) => {
 export const ChangeUserPassword = async (props) => {
   console.log(props)
   const response = axios.post(`${API_URL}/change_user_password`,
-  {"old_password":props.password, 
-  "new_password":props.new_password,
-  "email":props.email},
+    {
+      "old_password": props.password,
+      "new_password": props.new_password,
+      "email": props.email
+    },
     { headers: headers }
   )
   return response.data;
@@ -118,9 +120,9 @@ export const FilterList = async (props) => {
 };
 
 /*Api for Product list*/
-export const ProductList = async (to_product_price, from_product_price, rating, cateFilter, brandFilter, Pages, currentPage, sortByAlpha, sortByRating, sortByPrice , id) => {
- console.log(id)
-  const response = axios.post(`${API_URL}/search?page=${currentPage}&per_page=${Pages}`,
+export const ProductList = async (to_product_price, from_product_price, rating, CatSearch, brandFilter, Pages, currentPage, sortByAlpha, sortByRating, sortByPrice, id, search) => {
+  console.log("Category Search", CatSearch)
+  const response = axios.post(`${API_URL}/search_vendor_product?page=${currentPage}&per_page=${Pages}`,
     {
       "price_from": from_product_price === undefined ? "" : from_product_price,
       "price_to": to_product_price === undefined ? "" : to_product_price,
@@ -128,18 +130,26 @@ export const ProductList = async (to_product_price, from_product_price, rating, 
       "rating__": sortByRating,
       "id__": "",
       "created_on__": "",
-      "search": "",
+      "search": search === null || search === undefined ? "" : search,
       "rating": rating,
-      "category": cateFilter,
+      "category": CatSearch === null || CatSearch === undefined ? "" : CatSearch,
       "brand": brandFilter,
       "seo_tag": [],
       "vendor_id": [],
       "id": [],
-      "product_id": id === (null|| undefined) ? [""]:[id],
+      "product_id": id === (null || undefined) ? [""] : [id],
       "verient_name__": sortByAlpha,
-      "verient_name" : ""
+      "verient_name": ""
     },
-    { headers: headers }
+    {
+      headers: Token ? {
+        'Content-Type': 'application/json',
+        'vendor_token': `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTcsImlhdCI6MTY4NTk1MzQzNH0.Sz6SZdgpRdX_EUWyUIyC-_WfaA2hBYgvX8lqJpFAzBY`
+      } : {
+        'Content-Type': 'application/json',
+        'user_blank': `true`
+      }
+    }
   )
   return response;
 };
@@ -152,6 +162,46 @@ export const AddToCart = async (id, varId, qty) => {
       "product_id": id,
       "product_verient_id": varId,
       "cart_product_quantity": qty
+    },
+    { headers: headers }
+  )
+  return response;
+};
+
+/*Api to get Cart list */
+export const CartList = async (props) => {
+  console.log(props)
+  const response = axios.get(`${API_URL}/cart_list`,
+    { headers: headers }
+  )
+  return response;
+};
+
+/*Api for Order list*/
+export const OrderList = async (props) => {
+  const response = axios.post(`${API_URL}/order_search?page=${0}&per_page=${10}`,
+    {
+      "search": "",
+      "order_id": "",
+      "vendor_id": "",
+      "category": "",
+      "brand": ""
+    },
+    { headers: headers }
+  )
+  return response;
+};
+
+/*Api for Order list*/
+export const AddReview = async (props) => {
+  const response = axios.post(`${API_URL}/review_rating`,
+    {
+      "product_id": "",
+      "user_name": "",
+      "product_name": "",
+      "review_date": "",
+      "review_rating": "",
+      "comment": ""
     },
     { headers: headers }
   )

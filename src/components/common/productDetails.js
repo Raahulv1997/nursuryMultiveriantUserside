@@ -8,7 +8,11 @@ import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import Productdescription from './productdescription'
 import ProductBox from './productBox'
+import { useLocation } from 'react-router-dom';
+import ProductDetailsBox from './productDetailsBox';
 export default function ProductDetails() {
+    let location = useLocation()
+    let proData = location.state.data
     return (
         <div>
             {/* Header */}
@@ -28,7 +32,7 @@ export default function ProductDetails() {
             {/* Product details */}
             <section className="inner-section">
                 <div className="container">
-                    <div className="row">
+                    {/* <div className="row">
                         <div className="col-lg-6">
                             <div className="details-gallery">
                                 <div className="details-label-group">
@@ -195,7 +199,11 @@ export default function ProductDetails() {
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> */}
+                     <ProductDetailsBox 
+         id={proData.product_id}
+          var={proData.product_verient_id}
+          page={"details"}/>
                 </div>
             </section>
             {/* Other details */}
@@ -211,6 +219,7 @@ export default function ProductDetails() {
                         </div>
                     </div>
                     <div className="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
+                        {/* <ProductBox />
                         <ProductBox />
                         <ProductBox />
                         <ProductBox />
@@ -219,8 +228,7 @@ export default function ProductDetails() {
                         <ProductBox />
                         <ProductBox />
                         <ProductBox />
-                        <ProductBox />
-                        <ProductBox />
+                        <ProductBox /> */}
                     </div>
                     <div className="row">
                         <div className="col-lg-12">

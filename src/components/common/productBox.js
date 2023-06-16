@@ -1,23 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import productImg from "../../image/product.jpg"
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import ProductDetailModal from '../Modal/productDetail';
 import { ProductList, AddToCart } from '../api/api';
 import ProductRating from './productRating';
 import { useLocation } from 'react-router-dom';
 import { toast } from "react-toastify"
+import CartUpdate from './cartButton';
 const ProductBox = ({ pricefilter, rating, cateFilter, brandFilter, Pages, paginationData, currentPage, sortByAlpha, sortByRating, sortByPrice }) => {
   const location = useLocation();
+  let Token = localStorage.getItem("token");
+  let navigate = useNavigate()
+  const searchParams = new URLSearchParams(location.search);
+  const search = searchParams.get('search');
+  const category = searchParams.get('category');
   const [productDetailModal, setProductDetailModal] = useState(false)
   const [data, setData] = useState([])
   const [productId, setProductId] = useState()
   const [productVarId, setProductVarId] = useState()
   const [qtyNo, setQtyNo] = useState(1)
-
+  const [apicall, setapicall] = useState(false)
+  let CatSearch = cateFilter.length === 0 ? category : cateFilter
+  console.log(cateFilter, category);
   /*Function to get the product list */
   let GetProductList = async () => {
     let response = await ProductList(pricefilter.to_product_price
-      , pricefilter.from_product_price, rating, cateFilter, brandFilter, Pages, currentPage, sortByAlpha, sortByRating, sortByPrice)
+      , pricefilter.from_product_price, rating, CatSearch, brandFilter, Pages, currentPage, sortByAlpha, sortByRating, sortByPrice, "", search)
     // console.log(response.data.results)
     if (response.data.results === undefined
       || response.data.results === "undefined"
@@ -34,7 +42,7 @@ const ProductBox = ({ pricefilter, rating, cateFilter, brandFilter, Pages, pagin
   /*Render method to get product list */
   useEffect(() => {
     GetProductList()
-  }, [pricefilter, rating, cateFilter, brandFilter, Pages, currentPage, sortByAlpha, sortByRating, sortByPrice, qtyNo])
+  }, [pricefilter, rating, CatSearch, brandFilter, Pages, currentPage, sortByAlpha, sortByRating, sortByPrice, qtyNo, search])
 
   /*Function to Open Product Detail Page */
   const OpenProductDetailModal = (e, f) => {
@@ -79,7 +87,7 @@ const ProductBox = ({ pricefilter, rating, cateFilter, brandFilter, Pages, pagin
                   {/* <button className="product-wish wish">
               <i className="fas fa-heart"></i>
             </button> */}
-                  <Link className="product-image" to="">
+                  <Link className="product-image" to='/productdetails' state={{ data: item }} >
                     <img src={item.cover_image === null
                       || item.cover_image === undefined
                       || item.cover_image === "undefined"
@@ -87,18 +95,6 @@ const ProductBox = ({ pricefilter, rating, cateFilter, brandFilter, Pages, pagin
                       : item.cover_image} alt="product" />
                   </Link>
                   <div className="product-widget">
-                    {/* <Link
-                title="Product Compare"
-                to=""
-                className="fas fa-random"
-              ></Link>
-              <Link
-                title="Product Video"
-                to=""
-                className="venobox fas fa-play vbox-item"
-                data-autoplay="true"
-                data-vbtype="video"
-              ></Link> */}
                     <Link
                       title="Product View"
                       className="fas fa-eye"
@@ -108,7 +104,7 @@ const ProductBox = ({ pricefilter, rating, cateFilter, brandFilter, Pages, pagin
                 </div>
                 <div className="product-content px-3 pb-3">
                   <div className="product-rating">
-                    {/* Ratind Component */}
+                    {/* Ratind Component */ console.log(item.cart_count)}
                     <ProductRating rating={item.rating} review={item.review} />
                   </div>
                   <h6 className="product-name">
@@ -120,57 +116,23 @@ const ProductBox = ({ pricefilter, rating, cateFilter, brandFilter, Pages, pagin
                       {item.price}<small>/piece</small>
                     </span>
                   </h6>
-                  {item.cart_count === null ? (
+                  {item.cart_count === (null || undefined) ? (
                     <button
                       className='product-add'
                       title='Add to Cart'
-                      onClick={() =>
+                      onClick={Token ? () =>
                         onAddToCart(
                           item.product_id,
                           item.product_verient_id
                         )
+                        : () => navigate("/login")
                       }
                     >
                       <i className='fas fa-shopping-basket'></i>
                       <span>add</span>
                     </button>
                   ) : (
-                    <div className='product-action d-flex'>
-                      <button
-                        className='action-minus'
-                        title='Quantity Minus'
-                        onClick={() =>
-                          updateQuantity(
-                            item.product_id,
-                            item.product_verient_id,
-                            item.cart_count - 1
-                          )
-                        }
-                      >
-                        <i className='icofont-minus'></i>
-                      </button>
-                      <input
-                        className='action-input'
-                        title='Quantity Number'
-                        type='text'
-                        name='quantity'
-                        value={item.cart_count}
-                        readOnly
-                      />
-                      <button
-                        className='action-plus'
-                        title='Quantity Plus'
-                        onClick={() =>
-                          updateQuantity(
-                            item.product_id,
-                            item.product_verient_id,
-                            item.cart_count + 1
-                          )
-                        }
-                      >
-                        <i className='icofont-plus'></i>
-                      </button>
-                    </div>
+                    <CartUpdate qty={item.cart_count} id={item.product_id} vid={item.product_verient_id} />
                   )}
                 </div>
               </div>

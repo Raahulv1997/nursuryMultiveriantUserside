@@ -1,8 +1,32 @@
-import React from 'react'
+import React, { useState , useEffect} from 'react'
 import { Link } from 'react-router-dom'
 import CartBox from './common/cartBox'
+import { CartList } from './api/api'
 
 export default function Cart({close}) {
+    let [data, setData] = useState([])
+  /*Function to get the Cart list */
+  let GetCartList = async () => {
+    let response = await CartList()
+    console.log(response)
+    // if (response.data.results === undefined
+    //   || response.data.results === "undefined"
+    //   || response.data.results === null
+    //   || response.data.results.length === 0) {
+    //   setData([])
+    // } else {
+    //   setData(response.data.results)
+    //   if (location.pathname === "/shop") {
+    //     // paginationData(response.data.pagination)
+    //   }
+    // }
+  }
+  console.log("Cart List", data)
+  
+  /*Render method to get Cart list */
+  useEffect(() => {
+    GetCartList()
+  }, [])
   return (
     <div> 
       <div className="cart-sidebar active">
@@ -17,10 +41,6 @@ export default function Cart({close}) {
         </button>
     </div>
     <ul className="cart-list">
-           <CartBox/>
-           <CartBox/>
-           <CartBox/>
-           <CartBox/>
            <CartBox/>
     </ul>
     <div className="cart-footer">

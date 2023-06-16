@@ -1,18 +1,48 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import logo from "../../image/logo.png";
 import user from "../../image/user.png";
 import Cart from "../cart";
+import { toast } from "react-toastify";
 import { Container, Navbar } from "react-bootstrap";
-
+import { CategoryList } from "../api/api";
 export default function Header() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
+  const [catData, setCatData] = useState([]);
+  const [search, setSearch] = useState('');
 
+  /*Function of DropDown */
   const handleDropdownToggle = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
 
+  /*Function to Get Category list */
+  const GetCategoryList = async () => {
+    let response = await CategoryList()
+    console.log(response.data.response);
+    setCatData(response.data.response)
+  }
+  /*Function to get the data just by parent */
+  const parentCategories = catData.filter(category => category.parent_id === 0);
+
+  /*Render method of getting category list */
+  useEffect(() => {
+    GetCategoryList()
+  }, [])
+
+/*Function to search the product from header */
+  const onSearch = (event) => {
+    event.preventDefault();
+    const url = `/shop?search=${encodeURIComponent(search)}`;
+    window.location.href = url;
+  };
+
+  /*Function to search the product by Category*/
+  const OnCategorySearch = (searchCat) => {
+    const url = `/shop?category=${encodeURIComponent(searchCat)}`;
+    window.location.href = url;
+  };
   return (
     <div>
       <Navbar expand="lg" fixed="top" bg="white" className={"p-0"}>
@@ -21,9 +51,14 @@ export default function Header() {
             <img src={logo} alt="logo" height={"40px"} />
           </Navbar.Brand>
           <div className="header-content w-100 ps-5 ">
-            <form className="header-form">
-              <input type="text" placeholder="Search anything..." />
-              <button>
+            <form className="header-form" onSubmit={onSearch}>
+              <input
+                type="text"
+                placeholder="Search anything..."
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
+              />
+              <button type="submit">
                 <i className="fas fa-search"></i>
               </button>
             </form>
@@ -57,10 +92,23 @@ export default function Header() {
               <img src={user} alt="user" />
               <span>join</span>
             </Link>
+            <Link
+              to="/login"
+              className="header-widget ps-4"
+              title="logout"
+              onClick={() => {
+                localStorage.clear(); // clear the local storage
+                toast.error("Log Out Successfully", {
+                  position: toast.POSITION.TOP_RIGHT,
+                  autoClose: 1000,
+                });
+              }}
+            >
+              <i className="fas fa-sign-out-alt fs-4  "></i>
+            </Link>
           </div>
         </Container>
       </Navbar>
-
       <nav className="navbar-part category_header">
         <div className="container">
           <div className="row">
@@ -88,226 +136,31 @@ export default function Header() {
                     <div className="megamenu">
                       <div className="container megamenu-scroll">
                         <div className="row row-cols-5">
-                          <div className="col">
-                            <div className="megamenu-wrap">
-                              <h5 className="megamenu-title">vegetables</h5>
-                              <ul className="megamenu-list">
-                                <li>
-                                  <Link to={""}>carrot</Link>
-                                </li>
-                                <li>
-                                  <Link to={""}>broccoli</Link>
-                                </li>
-                                <li>
-                                  <Link to={""}>asparagus</Link>
-                                </li>
-                                <li>
-                                  <Link to={""}>cauliflower</Link>
-                                </li>
-                                <li>
-                                  <Link to={""}>eggplant</Link>
-                                </li>
-                              </ul>
+                          {/* Functin to map the array data of the category */}
+                          {parentCategories.map(category => (
+                            <div className="col" key={category.id}>
+                              <div className="megamenu-wrap">
+                                <h5 className="megamenu-title">
+                                  <Link to={""}
+                                   className="text-muted" 
+                                   onClick={() => OnCategorySearch(category.category_name)}>
+                                    {category.category_name}
+                                  </Link>
+                                  </h5>
+                                <ul className="megamenu-list">
+                                  {catData
+                                    .filter(child => child.parent_id === category.id)
+                                    .map(child => (
+                                      <li key={child.id}>
+                                        <Link to={""}
+                                         onClick={() => OnCategorySearch(child.category_name)}>
+                                          {child.category_name}</Link>
+                                      </li>
+                                    ))}
+                                </ul>
+                              </div>
                             </div>
-                          </div>
-                          <div className="col">
-                            <div className="megamenu-wrap">
-                              <h5 className="megamenu-title">fruits</h5>
-                              <ul className="megamenu-list">
-                                <li>
-                                  <Link to={""}>Apple</Link>
-                                </li>
-                                <li>
-                                  <Link to={""}>orange</Link>
-                                </li>
-                                <li>
-                                  <Link to={""}>banana</Link>
-                                </li>
-                                <li>
-                                  <Link to={""}>strawberrie</Link>
-                                </li>
-                                <li>
-                                  <Link to={""}>watermelon</Link>
-                                </li>
-                              </ul>
-                            </div>
-                          </div>
-                          <div className="col">
-                            <div className="megamenu-wrap">
-                              <h5 className="megamenu-title">dairy farms</h5>
-                              <ul className="megamenu-list">
-                                <li>
-                                  <Link to={""}>Butter</Link>
-                                </li>
-                                <li>
-                                  <Link to={""}>Cheese</Link>
-                                </li>
-                                <li>
-                                  <Link to={""}>Milk</Link>
-                                </li>
-                                <li>
-                                  <Link to={""}>Eggs</Link>
-                                </li>
-                                <li>
-                                  <Link to={""}>cream</Link>
-                                </li>
-                              </ul>
-                            </div>
-                          </div>
-                          <div className="col">
-                            <div className="megamenu-wrap">
-                              <h5 className="megamenu-title">seafoods</h5>
-                              <ul className="megamenu-list">
-                                <li>
-                                  <Link to={""}>Lobster</Link>
-                                </li>
-                                <li>
-                                  <Link to={""}>Octopus</Link>
-                                </li>
-                                <li>
-                                  <Link to={""}>Shrimp</Link>
-                                </li>
-                                <li>
-                                  <Link to={""}>Halabos</Link>
-                                </li>
-                                <li>
-                                  <Link to={""}>Maeuntang</Link>
-                                </li>
-                              </ul>
-                            </div>
-                          </div>
-                          <div className="col">
-                            <div className="megamenu-wrap">
-                              <h5 className="megamenu-title">diet foods</h5>
-                              <ul className="megamenu-list">
-                                <li>
-                                  <Link to={""}>Salmon</Link>
-                                </li>
-                                <li>
-                                  <Link to={""}>Avocados</Link>
-                                </li>
-                                <li>
-                                  <Link to={""}>Leafy Greens</Link>
-                                </li>
-                                <li>
-                                  <Link to={""}>Boiled Potatoes</Link>
-                                </li>
-                                <li>
-                                  <Link to={""}>Cottage Cheese</Link>
-                                </li>
-                              </ul>
-                            </div>
-                          </div>
-                          <div className="col">
-                            <div className="megamenu-wrap">
-                              <h5 className="megamenu-title">fast foods</h5>
-                              <ul className="megamenu-list">
-                                <li>
-                                  <Link to={""}>burger</Link>
-                                </li>
-                                <li>
-                                  <Link to={""}>milkshake</Link>
-                                </li>
-                                <li>
-                                  <Link to={""}>sandwich</Link>
-                                </li>
-                                <li>
-                                  <Link to={""}>doughnut</Link>
-                                </li>
-                                <li>
-                                  <Link to={""}>pizza</Link>
-                                </li>
-                              </ul>
-                            </div>
-                          </div>
-                          <div className="col">
-                            <div className="megamenu-wrap">
-                              <h5 className="megamenu-title">drinks</h5>
-                              <ul className="megamenu-list">
-                                <li>
-                                  <Link to={""}>cocktail</Link>
-                                </li>
-                                <li>
-                                  <Link to={""}>hard soda</Link>
-                                </li>
-                                <li>
-                                  <Link to={""}>shampain</Link>
-                                </li>
-                                <li>
-                                  <Link to={""}>Wine</Link>
-                                </li>
-                                <li>
-                                  <Link to={""}>barley</Link>
-                                </li>
-                              </ul>
-                            </div>
-                          </div>
-                          <div className="col">
-                            <div className="megamenu-wrap">
-                              <h5 className="megamenu-title">meats</h5>
-                              <ul className="megamenu-list">
-                                <li>
-                                  <Link to={""}>Meatball</Link>
-                                </li>
-                                <li>
-                                  <Link to={""}>Sausage</Link>
-                                </li>
-                                <li>
-                                  <Link to={""}>Poultry</Link>
-                                </li>
-                                <li>
-                                  <Link to={""}>chicken</Link>
-                                </li>
-                                <li>
-                                  <Link to={""}>Cows</Link>
-                                </li>
-                              </ul>
-                            </div>
-                          </div>
-                          <div className="col">
-                            <div className="megamenu-wrap">
-                              <h5 className="megamenu-title">fishes</h5>
-                              <ul className="megamenu-list">
-                                <li>
-                                  <Link to={""}>scads</Link>
-                                </li>
-                                <li>
-                                  <Link to={""}>pomfret</Link>
-                                </li>
-                                <li>
-                                  <Link to={""}>groupers</Link>
-                                </li>
-                                <li>
-                                  <Link to={""}>anchovy</Link>
-                                </li>
-                                <li>
-                                  <Link to={""}>mackerel</Link>
-                                </li>
-                              </ul>
-                            </div>
-                          </div>
-                          <div className="col">
-                            <div className="megamenu-wrap">
-                              <h5 className="megamenu-title">dry foods</h5>
-                              <ul className="megamenu-list">
-                                <li>
-                                  <Link to={""}>noodles</Link>
-                                </li>
-                                <li>
-                                  <Link to={""}>Powdered milk</Link>
-                                </li>
-                                <li>
-                                  <Link to={""}>nut &amp; yeast</Link>
-                                </li>
-                                <li>
-                                  <Link to={""}>almonds</Link>
-                                </li>
-                                <li>
-                                  <Link to={""}>pumpkin</Link>
-                                </li>
-                              </ul>
-                            </div>
-                          </div>
+                          ))}
                         </div>
                       </div>
                     </div>
