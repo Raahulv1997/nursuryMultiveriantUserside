@@ -119,6 +119,7 @@ export const FilterList = async (props) => {
 
 /*Api for Product list*/
 export const ProductList = async (to_product_price, from_product_price, rating, cateFilter, brandFilter, Pages, currentPage, sortByAlpha, sortByRating, sortByPrice , id) => {
+ console.log(id)
   const response = axios.post(`${API_URL}/search?page=${currentPage}&per_page=${Pages}`,
     {
       "price_from": from_product_price === undefined ? "" : from_product_price,
@@ -134,7 +135,7 @@ export const ProductList = async (to_product_price, from_product_price, rating, 
       "seo_tag": [],
       "vendor_id": [],
       "id": [],
-      "product_id": id === null ? [""]:[id],
+      "product_id": id === (null|| undefined) ? [""]:[id],
       "verient_name__": sortByAlpha,
       "verient_name" : ""
     },

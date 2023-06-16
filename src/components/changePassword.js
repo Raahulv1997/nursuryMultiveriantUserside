@@ -1,18 +1,9 @@
-<<<<<<< Updated upstream
-import React, { useState } from "react";
-import logo from "../image/logo.png";
-import { Link } from "react-router-dom";
-import { ChangeUserPassword } from "./api/api";
-import useValidation from "./common/useValidation";
-import { toast } from "react-toastify";
-=======
 import React, { useState } from 'react'
 import logo from "../image/logo.png"
 import { Link } from 'react-router-dom'
 import { UpdateUserPassword } from './api/api'
 import useValidation from './common/useValidation'
 import { toast ,ToastContainer} from 'react-toastify'
->>>>>>> Stashed changes
 export default function ChangePassword() {
   let [loading, setLoading] = useState(false);
   // USER CHANGE PASSWORD VALIDATION
@@ -50,23 +41,6 @@ export default function ChangePassword() {
   const { state, onInputChange, setState, setErrors, errors, validate } =
     useValidation(initialFormState, validators);
 
-<<<<<<< Updated upstream
-  // USER CHANGE PASSWORD SUBMIT BUTTON
-  const onUserChangePassClick = async (event) => {
-    event.preventDefault();
-    if (validate()) {
-      setLoading(true);
-      let Response = await ChangeUserPassword(state);
-      if (Response.response === "update your password successfully") {
-        toast.success("Password updated successfully", {
-          position: toast.POSITION.TOP_RIGHT,
-          autoClose: 1000,
-        });
-        setLoading(false);
-        setState(initialFormState);
-        setErrors("");
-      }
-=======
     // USER CHANGE PASSWORD SUBMIT BUTTON
     const onUserChangePassClick = async (event) => {
         event.preventDefault();
@@ -84,11 +58,9 @@ export default function ChangePassword() {
                 setErrors("")
             }
         }
->>>>>>> Stashed changes
     }
-  };
 
-<<<<<<< Updated upstream
+
   return (
     <div>
       <section className="user-form-part">
@@ -104,122 +76,6 @@ export default function ChangePassword() {
                 <div className="user-form-title">
                   <h2>any issue?</h2>
                   <p>Make sure your current password is strong</p>
-=======
-    return (
-        <div>
-            <section className="user-form-part">
-                <div className="container">
-                    <ToastContainer/>
-                    <div className="row justify-content-center">
-                        <div className="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
-                            <div className="user-form-logo">
-                                <Link href="/">
-                                    <img src={logo} alt="logo" />
-                                </Link>
-                            </div>
-                            <div className="user-form-card">
-                                <div className="user-form-title">
-                                    <h2>any issue?</h2>
-                                    <p>Make sure your current password is strong</p>
-                                </div>
-                                <form className="user-form" onSubmit={onUserChangePassClick}>
-                                    <div className="form-group">
-                                        <input type="password"
-                                            name='password'
-                                            className={
-                                                errors.password
-                                                    ? "form-control border border-danger"
-                                                    : "form-control"
-                                            }
-                                            onChange={onInputChange}
-                                            value={state.password}
-                                            placeholder="Old password" />
-                                        {/* ERROR MSG FOR OLD PASSWORD */}
-                                        {errors.password && (
-                                            <span
-                                                key={errors.password}
-                                                className="text-danger font-size-3"
-                                            >
-                                                {errors.password}
-                                            </span>
-                                        )}
-                                    </div>
-                                    <div className="form-group">
-                                        <input type="password"
-                                            name='new_password'
-                                            className={
-                                                errors.new_password
-                                                    ? "form-control border border-danger"
-                                                    : "form-control"
-                                            }
-                                            onChange={onInputChange}
-                                            value={state.new_password}
-                                            placeholder="Current password" />
-                                        {/* ERROR MSG FOR OLD PASSWORD */}
-                                        {errors.new_password && (
-                                            <span
-                                                key={errors.new_password}
-                                                className="text-danger font-size-3"
-                                            >
-                                                {errors.new_password}
-                                            </span>
-                                        )}
-                                    </div>
-                                    <div className="form-group">
-                                        <input type="password"
-                                            name='conf_password'
-                                            className={
-                                                errors.conf_password
-                                                    ? "form-control border border-danger"
-                                                    : "form-control"
-                                            }
-                                            onChange={onInputChange}
-                                            value={state.conf_password}
-                                            placeholder="reapet password" />
-                                        {/* ERROR MSG FOR OLD PASSWORD */}
-                                        {errors.conf_password && (
-                                            <span
-                                                key={errors.conf_password}
-                                                className="text-danger font-size-3"
-                                            >
-                                                {errors.conf_password}
-                                            </span>
-                                        )}
-                                    </div>
-                                    <div className="form-button">
-                                        {loading === true ? (
-                                            <button
-                                                type="button"
-                                                disabled
-                                            >
-                                                <span
-                                                    className="spinner-border spinner-border-sm "
-                                                    role="status"
-                                                    aria-hidden="true"
-                                                ></span>
-                                                <span className="sr-only">Loading...</span>
-                                            </button>
-                                        ) : (
-                                            <button
-                                                type="submit"
-                                            >
-                                                change password
-                                            </button>
-                                        )}
-                                    </div>
-                                </form>
-                            </div>
-                            <div className="user-form-remind">
-                                <p>Go Back To<Link to="/login">login here</Link>
-                                </p>
-                            </div>
-                            <div className="user-form-footer">
-                                <p>Greeny | © Copyright by <Link to="">Mironcoder</Link>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
->>>>>>> Stashed changes
                 </div>
                 <form className="user-form" onSubmit={onUserChangePassClick}>
                   <div className="form-group">

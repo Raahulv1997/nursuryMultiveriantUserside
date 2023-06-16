@@ -27,18 +27,6 @@ export default function Home() {
             </div>
           </div>
           <div className="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
-<<<<<<< Updated upstream
-            <ProductBox />
-            <ProductBox />
-            <ProductBox />
-            <ProductBox />
-            <ProductBox />
-            <ProductBox />
-            <ProductBox />
-            <ProductBox />
-            <ProductBox />
-            <ProductBox />
-=======
             <ProductBox 
             pricefilter={""}
             rating={""}
@@ -49,7 +37,6 @@ export default function Home() {
             sortByAlpha={""}
             sortByRating={""}
             sortByPrice={""}/>
->>>>>>> Stashed changes
           </div>
           <div className="row">
             <div className="col-lg-12">
