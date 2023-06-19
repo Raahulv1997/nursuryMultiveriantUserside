@@ -1,18 +1,32 @@
-import React, { useState } from 'react'
+import React, { useState , useEffect} from 'react'
 import user1 from "../../image/avatar/01.jpg"
 import user2 from "../../image/avatar/02.jpg"
 import user3 from "../../image/avatar/03.jpg"
 import user4 from "../../image/avatar/04.jpg"
 import videoimg from '../../image/video.jpg'
 import { Link } from 'react-router-dom'
-import { AddReview } from '../api/api'
-export default function Productdescription() {
+import { AddReview, ReviewList } from '../api/api'
+export default function Productdescription(props) {
+    console.log(props);
     const [activeTab, setActiveTab] = useState('tab-desc');
+    const [reviewListData, setReviewListData] = useState([]);
 
     /*Function to change the tab */
     const handleTabClick = (tabId) => {
         setActiveTab(tabId);
     };
+
+    /*Function to get Review List */
+    const GetReviewList = async () => {
+        let response = await ReviewList(props.id)
+        console.log(response);
+    };
+
+    /*Render method to get review list */
+    useEffect(() => {
+        GetReviewList()
+    }, [])
+    
     return (
         <div>
             <section className="inner-section">

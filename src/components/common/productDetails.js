@@ -200,14 +200,16 @@ export default function ProductDetails() {
                             </div>
                         </div>
                     </div> */}
-                     <ProductDetailsBox 
-         id={proData.product_id}
-          var={proData.product_verient_id}
-          page={"details"}/>
+                    <ProductDetailsBox
+                        id={proData.product_id}
+                        var={proData.product_verient_id}
+                        page={"details"} />
                 </div>
             </section>
             {/* Other details */}
-            <Productdescription />
+            <Productdescription
+                id={proData.product_id}
+            />
             {/* More Products */}
             <section className="inner-section">
                 <div className="container">
@@ -229,6 +231,16 @@ export default function ProductDetails() {
                         <ProductBox />
                         <ProductBox />
                         <ProductBox /> */}
+                        <ProductBox
+                            pricefilter={""}
+                            rating={""}
+                            cateFilter={""}
+                            brandFilter={""}
+                            Pages={"10"}
+                            currentPage={"0"}
+                            sortByAlpha={""}
+                            sortByRating={""}
+                            sortByPrice={""} />
                     </div>
                     <div className="row">
                         <div className="col-lg-12">

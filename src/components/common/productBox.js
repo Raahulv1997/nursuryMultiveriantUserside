@@ -21,7 +21,7 @@ const ProductBox = ({ pricefilter, rating, cateFilter, brandFilter, Pages, pagin
   const [qtyNo, setQtyNo] = useState(1)
   const [apicall, setapicall] = useState(false)
   let CatSearch = cateFilter.length === 0 ? category : cateFilter
-  console.log(cateFilter, category);
+  // console.log(cateFilter, category);
   /*Function to get the product list */
   let GetProductList = async () => {
     let response = await ProductList(pricefilter.to_product_price
@@ -53,7 +53,7 @@ const ProductBox = ({ pricefilter, rating, cateFilter, brandFilter, Pages, pagin
 
   /*Function to add to cart */
   const onAddToCart = async (id, varId) => {
-    console.log(id, varId, qtyNo);
+    // console.log(id, varId, qtyNo);
     let response = await AddToCart(id, varId, qtyNo)
     if (response.data.response === "add product successfull") {
       toast.success("Product Added Successfully", {
@@ -65,7 +65,7 @@ const ProductBox = ({ pricefilter, rating, cateFilter, brandFilter, Pages, pagin
   /* Function to update quantity */
   const updateQuantity = (productId, productVariantId, quantity) => {
     setQtyNo(quantity);
-    console.log(productId, productVariantId, quantity);
+    // console.log(productId, productVariantId, quantity);
     // onAddToCart(productId, productVariantId);
   };
   return (
@@ -87,6 +87,10 @@ const ProductBox = ({ pricefilter, rating, cateFilter, brandFilter, Pages, pagin
                   {/* <button className="product-wish wish">
               <i className="fas fa-heart"></i>
             </button> */}
+             <div className="product-label">
+            {item.discount === (undefined || null) ? null :
+            <label className="label-text sale bg-danger">{item?.discount}% off</label>}
+            </div>
                   <Link className="product-image" to='/productdetails' state={{ data: item }} >
                     <img src={item.cover_image === null
                       || item.cover_image === undefined
@@ -104,7 +108,7 @@ const ProductBox = ({ pricefilter, rating, cateFilter, brandFilter, Pages, pagin
                 </div>
                 <div className="product-content px-3 pb-3">
                   <div className="product-rating">
-                    {/* Ratind Component */ console.log(item.cart_count)}
+                    {/* Ratind Component */}
                     <ProductRating rating={item.rating} review={item.review} />
                   </div>
                   <h6 className="product-name">
@@ -113,10 +117,10 @@ const ProductBox = ({ pricefilter, rating, cateFilter, brandFilter, Pages, pagin
                   <h6 className="product-price">
                     <del>{item.mrp}</del>
                     <span>
-                      {item.price}<small>/piece</small>
+                      {item.price}
                     </span>
                   </h6>
-                  {item.cart_count === (null || undefined) ? (
+                  {item.cart_count === null || item.cart_count ===  undefined ? (
                     <button
                       className='product-add'
                       title='Add to Cart'

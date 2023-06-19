@@ -20,7 +20,7 @@ export default function Header() {
   /*Function to Get Category list */
   const GetCategoryList = async () => {
     let response = await CategoryList()
-    console.log(response.data.response);
+    // console.log(response.data.response);
     setCatData(response.data.response)
   }
   /*Function to get the data just by parent */

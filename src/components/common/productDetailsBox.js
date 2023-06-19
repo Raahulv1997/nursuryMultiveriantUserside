@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
-import { Modal } from 'react-bootstrap';
 import { Link ,useNavigate} from 'react-router-dom';
 import productImg from "../../image/product.jpg"
 import { ProductList, AddToCart } from '../api/api';
@@ -43,7 +42,7 @@ export default function ProductDetailsBox(props) {
   }
   /*Render Method to get another varient data */
   useEffect(() => {
-    AllData(varId, varList)
+    AllData(varId , varList)
   }, [datachange])
 
   /*Render method to get product list */
@@ -52,7 +51,7 @@ export default function ProductDetailsBox(props) {
   }, [qtyNo, props.id])
 
   /*Function to add to cart */
-  console.log(data.cart_count)
+  console.log("Whole data" ,varList)
   const onAddToCart = async (id, varId, quantity) => {
     
     let response = await AddToCart(id, varId, quantity)

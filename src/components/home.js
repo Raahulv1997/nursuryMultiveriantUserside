@@ -57,7 +57,7 @@ export default function Home() {
             <div className="col-lg-12">
               <div className="promo-img">
                 <Link>
-                  <img src={promo} alt="promo" />
+                  <img src={promo} alt="promo" className="img-fluid"/>
                 </Link>
               </div>
             </div>
