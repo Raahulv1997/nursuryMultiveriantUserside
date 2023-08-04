@@ -1,0 +1,19 @@
+.loader {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    bottom: 0;
+    z-index: 99999;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #00000078;
+}
+
+.loader img {
+    margin: auto;
+    width: 164px;
+}

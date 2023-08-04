@@ -7,6 +7,7 @@ function useValidation(initialState, validators) {
   const onInputChange = (event) => {
     const { name, value } = event.target;
     setState({ ...state, [name]: value });
+    setErrors({});
   };
 
   const DescriptionChange = (event, editor) => {

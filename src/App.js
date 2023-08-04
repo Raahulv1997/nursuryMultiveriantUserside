@@ -1,6 +1,7 @@
 import { React } from "react";
 import "./App.css";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+
 import Home from "./components/home";
 import Profile from "./components/profile";
 import Notfound from "./components/common/notfound";
@@ -14,6 +15,7 @@ import Invoice from "./components/invoice";
 import PrivacyPolicy from "./components/privacyPolicy";
 import ContactUs from "./components/contactUs";
 import ChangePassword from "./components/changePassword";
+
 function App() {
   return (
     <Router>

@@ -1,47 +1,83 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Footer from "./common/footer";
 import ProductBox from "./common/productBox";
 import promo from "../image/promoposter.jpg";
 import { Link } from "react-router-dom";
-import countdown from "../image/countdown.png";
+// import countdown from "../image/countdown.png";
 import BannerSlider from "./common/banner";
 import Header from "./common/header";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 export default function Home() {
+  const [cartcall, setcartcall] = useState(false);
+  const [productcall, setproductcall] = useState(false);
+  const [loading, setLoading] = useState(false);
+  let [noTreandingData, setNoTreandingData] = useState("");
+  let [noFeaturedData, setNoFeaturedData] = useState("");
+  // const [oneMonthBefore, setOneMonthBefore] = useState('');
+  // const currentDate = new Date();
+ 
+  // useEffect(()=> { 
+  //   const oneMonthBeforeDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, currentDate.getDate());
+  //   const formattedDate = oneMonthBeforeDate.toISOString().split('T')[0];
+  //   setOneMonthBefore(formattedDate);
+  // },[]) 
+  useEffect(()=>{
+    window.scrollTo(0, 0)
+  },[])
   return (
+    <>
+
     <div>
       {/* header */}
-      <Header />
+      <Header
+        cartcall={cartcall}
+        setcartcall={setcartcall}
+        setproductcall={setproductcall}
+        loading={loading}
+        setLoading={setLoading}
+      />
       <ToastContainer />
       {/* Banner */}
       <BannerSlider />
       {/* Recenlty sold item */}
-      <section className="section recent-part mt-5">
+      {noTreandingData === "no_treanding" ? null : 
+      <>
+       <section className="section recent-part pt-5 top_right_bg" id="trending">
         <div className="container">
           <div className="row">
             <div className="col-lg-12">
               <div className="section-heading">
-                <h2 className="account-title">recently sold items</h2>
+                <h2 className="account-title">Trending Products</h2>
               </div>
             </div>
           </div>
           <div className="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
-            <ProductBox 
-            pricefilter={""}
-            rating={""}
-            cateFilter={""}
-            brandFilter={""}
-            Pages={"10"}
-            currentPage={"0"}
-            sortByAlpha={""}
-            sortByRating={""}
-            sortByPrice={""}/>
+            <ProductBox
+            setNoTreandingData={setNoTreandingData}
+              pricefilter={""}
+              rating={""}
+              cateFilter={""}
+              brandFilter={""}
+              Pages={"10"}
+              currentPage={"0"}
+              sortByAlpha={""}
+              sortByRating={""}
+              sortByPrice={""}
+              cartcall={cartcall}
+              setcartcall={setcartcall}
+              productcall={productcall}
+              setproductcall={setproductcall}
+              treanding={"YES"}
+              setLoading={setLoading}
+              // start_date={currentDate}
+              // end_date={oneMonthBefore}
+            />
           </div>
           <div className="row">
             <div className="col-lg-12">
               <div className="section-btn-25">
-                <Link to={"/shop"} className="btn btn-outline">
+                <Link to={"/shop"} /*state={{treanding : true}}*/ className="btn btn-outline">
                   <i className="fas fa-eye"></i>
                   <span>show more</span>
                 </Link>
@@ -57,14 +93,57 @@ export default function Home() {
             <div className="col-lg-12">
               <div className="promo-img">
                 <Link>
-                  <img src={promo} alt="promo" className="img-fluid"/>
+                  <img src={promo} alt="promo" className="img-fluid" />
                 </Link>
               </div>
             </div>
           </div>
         </div>
-      </div>
-      <section className="section countdown-part">
+      </div></>}
+      <section className="section recent-part pt-5 " id="trending">
+        <div className="container">
+          <div className="row">
+            <div className="col-lg-12">
+              <div className="section-heading">
+                <h2 className="account-title">Latest Products</h2>
+              </div>
+            </div>
+          </div>
+          <div className="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
+            <ProductBox
+            // setNoData={setNoData}
+              pricefilter={""}
+              rating={""}
+              cateFilter={""}
+              brandFilter={""}
+              Pages={"10"}
+              currentPage={"0"}
+              sortByAlpha={""}
+              sortByRating={""}
+              sortByPrice={""}
+              cartcall={cartcall}
+              setcartcall={setcartcall}
+              productcall={productcall}
+              setproductcall={setproductcall}
+              setLoading={setLoading}
+              // treanding={true}
+              // start_date={currentDate}
+              // end_date={oneMonthBefore}
+            />
+          </div>
+          <div className="row">
+            <div className="col-lg-12">
+              <div className="section-btn-25">
+                <Link to={"/shop"} /*state={{treanding : true}}*/ className="btn btn-outline">
+                  <i className="fas fa-eye"></i>
+                  <span>show more</span>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      {/* <section className="section countdown-part">
         <div className="container">
           <div className="row align-items-center">
             <div className="col-lg-6 mx-auto">
@@ -114,43 +193,52 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
       {/* Collection sold */}
-      <section className="section recent-part">
+      {noFeaturedData === "no_featured" ? null : <section className="section recent-part">
         <div className="container">
           <div className="row">
             <div className="col-lg-12">
               <div className="section-heading">
-                <h2 className="account-title">collected new items</h2>
+                <h2 className="account-title">Featured Products</h2>
               </div>
             </div>
           </div>
           <div className="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
-          <ProductBox 
-            pricefilter={""}
-            rating={""}
-            cateFilter={""}
-            brandFilter={""}
-            Pages={"10"}
-            currentPage={"0"}
-            sortByAlpha={""}
-            sortByRating={""}
-            sortByPrice={""}/>
-          </div>
-          <div className="row">
-            <div className="col-lg-12">
-              <div className="section-btn-25">
-                <Link to={"/shop"} className="btn btn-outline">
-                  <i className="fas fa-eye"></i>
-                  <span>show more</span>
-                </Link>
+            <ProductBox
+            setNoFeaturedData={setNoFeaturedData}
+              pricefilter={""}
+              rating={""}
+              cateFilter={""}
+              brandFilter={""}
+              Pages={"10"}
+              currentPage={"0"}
+              sortByAlpha={""}
+              sortByRating={""}
+              sortByPrice={""}
+              cartcall={cartcall}
+              setcartcall={setcartcall}
+              productcall={productcall}
+              setproductcall={setproductcall}
+              feature={"yes"}
+              setLoading={setLoading}
+              />
+            </div>
+            <div className="row">
+              <div className="col-lg-12">
+                <div className="section-btn-25">
+                  <Link to={"/shop"} state={{feature :"yes"}} className="btn btn-outline">
+                    <i className="fas fa-eye"></i>
+                    <span>show more</span>
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+      </section>}
       {/* Footer */}
       <Footer />
     </div>
+    </>
   );
 }

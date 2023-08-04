@@ -75,57 +75,49 @@ const Banner = () => {
     //       </div>
     //     </div>
     // </Carousel>
-    <Carousel>
+    <div className="main_slider">
+    <Carousel >
       <Carousel.Item>
-        <img className="d-block w-100" src={SliderImg} alt="First slide" />
+        <img className="d-block w-100 " src={SliderImg} alt="First slide" />
         <Carousel.Caption>
-          <h3>First get your organic food with our dairy items</h3>
-          <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p>
-          <Link className="btn btn-inline me-3" to="" tabIndex="-1">
+          <Link className="btn btn-inline me-3 " to="/shop" tabIndex="-1">
             <i className="fas fa-shopping-basket"></i>
             <span>shop now</span>
           </Link>
-          <Link className="btn btn-outline" to="" tabIndex="-1">
+          {/* <Link className="btn btn-outline" to="" tabIndex="-1">
             <i className="icofont-sale-discount"></i>
             <span>get offer</span>
-          </Link>
+          </Link> */}
         </Carousel.Caption>
       </Carousel.Item>
       <Carousel.Item>
         <img className="d-block w-100" src={SliderImg} alt="Second slide" />
-
         <Carousel.Caption>
-          <h3>Second get your organic food with our dairy items</h3>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-          <Link className="btn btn-inline me-3" to="" tabIndex="-1">
+          <Link className="btn btn-inline me-3" to="/shop" tabIndex="-1">
             <i className="fas fa-shopping-basket"></i>
             <span>shop now</span>
           </Link>
-          <Link className="btn btn-outline" to="" tabIndex="-1">
+          {/* <Link className="btn btn-outline" to="" tabIndex="-1">
             <i className="icofont-sale-discount"></i>
             <span>get offer</span>
-          </Link>
+          </Link> */}
         </Carousel.Caption>
       </Carousel.Item>
       <Carousel.Item>
         <img className="d-block w-100" src={SliderImg} alt="Third slide" />
-
         <Carousel.Caption>
-          <h3>Third get your organic food with our dairy items</h3>
-          <p>
-            Praesent commodo cursus magna, vel scelerisque nisl consectetur.
-          </p>
-          <Link className="btn btn-inline me-3" to="" tabIndex="-1">
+          <Link className="btn btn-inline me-3" to="/shop" tabIndex="-1">
             <i className="fas fa-shopping-basket"></i>
             <span>shop now</span>
           </Link>
-          <Link className="btn btn-outline" to="" tabIndex="-1">
+          {/* <Link className="btn btn-outline" to="" tabIndex="-1">
             <i className="icofont-sale-discount"></i>
             <span>get offer</span>
-          </Link>
+          </Link> */}
         </Carousel.Caption>
       </Carousel.Item>
     </Carousel>
+    </div>
   );
 };
 

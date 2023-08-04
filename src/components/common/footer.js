@@ -1,18 +1,18 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import logo from "../../image/logo.png";
-import google from "../../image/google-store.png";
-import appStore from "../../image/app-store.png";
-import payment01 from "../../image/payment/jpg/01.jpg";
-import payment02 from "../../image/payment/jpg/02.jpg";
-import payment03 from "../../image/payment/jpg/03.jpg";
-import payment04 from "../../image/payment/jpg/04.jpg";
-import newspaper from "../../image/newsletter.jpg";
+// import logo from "../. ,ko0./image/logo.png";
+// import google from "../../image/google-store.png";
+// import appStore from "../../image/app-store.png";
+// import payment01 from "../../image/payment/jpg/01.jpg";
+// import payment02 from "../../image/payment/jpg/02.jpg";
+// import payment03 from "../../image/payment/jpg/03.jpg";
+// import payment04 from "../../image/payment/jpg/04.jpg";
+// import newspaper from "../../image/newsletter.jpg";
 const Footer = () => {
   return (
     <>
       {/* Discount */}
-      <section
+      {/* <section
         className="news-part"
         style={{ background: `url(${newspaper}) no-repeat center` }}
       >
@@ -36,9 +36,9 @@ const Footer = () => {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
       {/* Delivery */}
-      <section className="intro-part">
+      {/* <section className="intro-part">
         <div className="container">
           <div className="row intro-content">
             <div className="col-sm-6 col-lg-3">
@@ -87,11 +87,11 @@ const Footer = () => {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
       <footer className="footer-part">
         <div className="container">
-          <div className="row">
-            <div className="col-sm-6 col-xl-3">
+          <div className="row justify-content-between">
+            {/* <div className="col-sm-6 col-xl-3">
               <div className="footer-widget">
                 <Link className="footer-logo" to={""}>
                   <img src={logo} alt="logo" />
@@ -119,7 +119,7 @@ const Footer = () => {
                   </li>
                 </ul>
               </div>
-            </div>
+            </div> */}
             <div className="col-sm-6 col-xl-3">
               <div className="footer-widget contact">
                 <h3 className="footer-title">contact us</h3>
@@ -151,37 +151,37 @@ const Footer = () => {
                 <div className="footer-links">
                   <ul>
                     <li>
-                      <Link to={""}>My Account</Link>
+                      <Link to={"/profile"}>My Account</Link>
                     </li>
                     <li>
-                      <Link to={""}>Order History</Link>
+                      <Link to={"/profile"}>Order History</Link>
                     </li>
-                    <li>
+                    {/* <li>
                       <Link to={""}>Order Tracking</Link>
+                    </li> */}
+                    <li>
+                      <Link to={"/home#trending"}>Best Seller</Link>
                     </li>
                     <li>
-                      <Link to={""}>Best Seller</Link>
-                    </li>
-                    <li>
-                      <Link to={""}>New Arrivals</Link>
+                      <Link to={"/shop"}>New Arrivals</Link>
                     </li>
                   </ul>
                   <ul>
-                    <li>
+                    {/* <li>
                       <Link to={""}>Location</Link>
                     </li>
                     <li>
                       <Link to={""}>Affiliates</Link>
-                    </li>
+                    </li> */}
                     <li>
-                      <Link to={""}>Contact</Link>
+                      <Link to={"/contact"}>Contact</Link>
                     </li>
-                    <li>
+                    {/* <li>
                       <Link to={""}>Carrer</Link>
                     </li>
                     <li>
                       <Link to={""}>Faq</Link>
-                    </li>
+                    </li> */}
                   </ul>
                 </div>
               </div>
@@ -194,14 +194,14 @@ const Footer = () => {
                   autem obcaecati minus ducimus totam reprehenderit
                   exercitationem!
                 </p>
-                <div className="footer-app">
+                {/* <div className="footer-app">
                   <Link to={""}>
                     <img src={google} alt="google" />
                   </Link>
                   <Link to={""}>
                     <img src={appStore} alt="app" />
                   </Link>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>
@@ -212,7 +212,7 @@ const Footer = () => {
                   © All Copyrights Reserved by
                   <Link to={"/"}>WE2CODE</Link>
                 </p>
-                <div className="footer-card">
+                {/* <div className="footer-card">
                   <Link to={""}>
                     <img src={payment01} alt="payment" />
                   </Link>
@@ -225,12 +225,13 @@ const Footer = () => {
                   <Link to={""}>
                     <img src={payment04} alt="payment" />
                   </Link>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>
         </div>
       </footer>
+    
     </>
   );
 };

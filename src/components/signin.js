@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import logo from "../image/logo.png";
 import { Link, useNavigate } from "react-router-dom";
 import { UserSingin, SendOtp } from "./api/api";
@@ -7,40 +7,61 @@ import { toast, ToastContainer } from "react-toastify";
 export default function Signin() {
   const [loading, setLoading] = useState(false);
   const [term, setTerm] = useState(false);
-  const [termEWr, setTermErr] = useState(false);
+  const [termEWr, setTermErr] = useState("");
   let [otpBox, setOtpBox] = useState(false);
   let navigate = useNavigate();
+  const [seconds, setSeconds] = useState(0);
+
+  useEffect(() => {
+    if (seconds > 0) {
+    const countdownInterval = setInterval(() => {
+      setSeconds((prevSeconds) => prevSeconds - 1);
+    }, 1000);
+
+    return () => clearInterval(countdownInterval);
+  }
+  if(seconds === 0){
+    setOtpBox(false)
+  }
+  }, [seconds]);
+
+  const formatTime = (time) => {
+    const minutes = Math.floor(time / 60);
+    const seconds = time % 60;
+    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  };
+
   /*----USER SINGIN VALIDATION----*/
   const initialFormState = {
     email: "",
     password: "",
     confirm_password: "",
-    name: "",
+    // name: "",
     otp: "",
   };
   /*----VALIDATION CONTENT----*/
   const validators = {
-    name: [
-      (value) =>
-        value === null || value.trim() === "" ? "Name is required" : "",
-    ],
+    // name: [
+    //   (value) =>
+    //     value === null || value.trim() === "" ? "Name is required" : "",
+    // ],
     email: [
       (value) =>
         value === null || value.trim() === ""
           ? "Email is required"
           : /\S+@\S+\.\S+/.test(value)
-          ? null
-          : "Email is invalid",
+            ? null
+            : "Email is invalid",
     ],
     password: [
       (value) =>
         value === ""
           ? "Password is required"
-          : /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,16}$/.test(
-              value
-            )
-          ? null
-          : "Password must contain digit, one uppercase letter, one special character, no space, and it must be 8-16 characters long",
+          // : /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,16}$/.test(
+          //     value
+          //   )
+          : null
+      // : "Password must contain digit, one uppercase letter, one special character, no space, and it must be 8-16 characters long",
     ],
     confirm_password: [
       (value) => (value ? null : "Confirm Password is required"),
@@ -49,38 +70,40 @@ export default function Signin() {
           ? null || ""
           : "Confirm Password must be Same as Password",
     ],
+    otp: [
+      (value) => otpBox ?
+        (value ?
+          null :
+          "Confirm Password is required")
+        : null,
+    ]
   };
   /*----SININ ONCHANGE FUNCTION----*/
   const { state, onInputChange, setErrors, errors, validate } = useValidation(
     initialFormState,
     validators
   );
-  console.log(state);
 
   /*Function to singin user */
   const onUserSinginClick = async (event) => {
     event.preventDefault();
+    if (term === true) { setTermErr("") }
     if (validate() && state.otp) {
       if (term === true) {
-        setLoading(true);
         /*Api to singin */
+        setTermErr("")
         let response = await UserSingin(state);
-        console.log(
-          response,
-          "fgkdhftguhdr",
-          response.response === "not matched, credential issue"
-        );
         if (response.response === "successfully created your account") {
-          localStorage.setItem("token", response.token);
-          localStorage.setItem("userType", "user");
-          localStorage.setItem("user_id", response.user_id);
+          // localStorage.setItem("token", response.token);
+          // localStorage.setItem("userType", "user");
+          // localStorage.setItem("user_id", response.user_id);
           toast.success("Singin In Successfully", {
             position: toast.POSITION.TOP_RIGHT,
             autoClose: 1000,
           });
           setLoading(false);
           setErrors("");
-          navigate("/");
+          navigate("/login");
         } else if (response.response === "not matched, credential issue") {
           setErrors({ ...errors, otp: ["Invalid Otp"] });
           setLoading(false);
@@ -90,24 +113,32 @@ export default function Signin() {
         setTermErr("Accept terms and conditions");
       }
     } else if (otpBox === false && validate()) {
-      /*Api to send otp */
-      setLoading(true);
-      let response = await SendOtp(state);
-      if (response.response === "send otp on your mail") {
-        toast.success("Otp sent Successfully", {
-          position: toast.POSITION.TOP_RIGHT,
-          autoClose: 1000,
-        });
-        setOtpBox(true);
-        setLoading(false);
-      } else if (
-        response.response === "email already exists, please use logIn way"
-      ) {
-        setLoading(false);
-        setTermErr("Email already exists");
+      if (term === true) {
+        /*Api to send otp */
+        setLoading(true);
+        let response = await SendOtp(state);
+        if (response.response === "send otp on your mail") {
+          toast.success("Otp sent Successfully", {
+            position: toast.POSITION.TOP_RIGHT,
+            autoClose: 1000,
+          });
+          setSeconds(response.expire_time)
+          setOtpBox(true);
+          setLoading(false);
+          setErrors("")
+          setTermErr("")
+        } else if (
+          response.response === "email already exists, please use logIn way"
+        ) {
+          setLoading(false);
+          setTermErr("Email already exists");
+        }
+      } else {
+        setTermErr("Accept terms and conditions");
       }
     }
   };
+// console.log(seconds)
   return (
     <div>
       <section className="user-form-part">
@@ -152,7 +183,7 @@ export default function Signin() {
                     <p>or</p>
                   </div>
                   <form className="user-form" onSubmit={onUserSinginClick}>
-                    <div className="form-group">
+                    {/* <div className="form-group">
                       <input
                         type="text"
                         className={
@@ -165,7 +196,7 @@ export default function Signin() {
                         name="name"
                         value={state.name}
                       />
-                      {/*----ERROR MESSAGE FOR NAME----*/}
+                      ----ERROR MESSAGE FOR NAME----
                       {errors.name && (
                         <span>
                           {errors.name.map((error) => (
@@ -178,7 +209,7 @@ export default function Signin() {
                           ))}
                         </span>
                       )}
-                    </div>
+                    </div> */}
                     <div className="form-group">
                       <input
                         type="email"
@@ -314,6 +345,11 @@ export default function Signin() {
                     <span key={termEWr} className="text-danger font-size-3">
                       {termEWr}
                     </span>
+                    {otpBox ? seconds > 0 ? (
+                      <h5>Time Remaining: {formatTime(seconds)}</h5>
+                    ) : (
+                      <h5 className="text-danger">Time Expired!</h5>
+                    ) : null}
                     <div className="form-button">
                       {loading === true ? (
                         <button type="button" disabled>

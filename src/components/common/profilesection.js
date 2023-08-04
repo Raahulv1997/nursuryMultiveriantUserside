@@ -3,18 +3,32 @@ import { Link } from 'react-router-dom'
 import user from "../../image/user.png"
 import ProfileInfoModal from '../Modal/productInfo'
 import { UserData } from '../api/api'
-export default function Profilesection() {
+export default function Profilesection({setGetName ,setLoading}) {
     const [openProfileInfo, setOpenProfileInfo] = useState(false);
+    const [apicall, setApicall] = useState(false);
     const [data, setData] = useState("");
+    let Token = localStorage.getItem("token")
     /*Function to get user details */
     let GetUserData = async () => {
+        setLoading(true)
         let response = await UserData()
-        console.log(response.data[0])
-        setData(response.data[0])
+        if(response.data[0]){
+            localStorage.setItem("username", response.data[0].first_name);
+            localStorage.setItem("image", response.data[0].image);
+            setData(response.data[0])
+            setGetName(true)
+            setLoading(false)
+        }
     }
     useEffect(() => {
-        GetUserData()
-    }, [])
+        window.scrollTo(0, 0); 
+         if( Token ){
+        GetUserData()}
+        if(apicall === true){
+            setApicall(false)
+        }
+        // eslint-disable-next-line
+    }, [apicall])
 
     return (
         <div>
@@ -32,15 +46,22 @@ export default function Profilesection() {
                                         <div className="col-lg-2">
                                             <div className="profile-image">
                                                 <Link to="" onClick={() => setOpenProfileInfo(true)}>
-                                                    <img src={data.image ? data.image : user} alt="user"
-                                                    /></Link>
+                                                    <img 
+                                                    width={"75px"}
+                                                    height={"75px"}
+                                                    src={
+                                                        data.image === undefined || data.image === null || data.image === "undefined" ?
+                                                     user  : data.image
+                                                    } alt={data.user_log}
+                                                    />
+                                                    </Link>
                                             </div>
                                         </div>
                                         <div className="col-md-6 col-lg-4">
                                             <div className="form-group">
                                                 <label className="form-label">Name </label>
-                                                <p> {data.first_name}{data.last_name}</p>
-                                            </div>
+                                                <p className='text-capitalize'> {data.first_name} {data.last_name}</p>
+                                            </div> 
                                         </div>
                                         <div className="col-md-6 col-lg-4">
                                             <div className="form-group">
@@ -63,7 +84,7 @@ export default function Profilesection() {
                                         <div className="col-md-6 col-lg-4">
                                             <div className="form-group">
                                                 <label className="form-label">Address</label>
-                                                <p>{data.address} , {data.city} {data.pincode}</p>
+                                                <p className='text-capitalize'>{data.address} , {data.city} {data.pincode}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -76,7 +97,9 @@ export default function Profilesection() {
             {openProfileInfo ?
                 <ProfileInfoModal
                     show={openProfileInfo}
-                    close={() => setOpenProfileInfo(false)} />
+                    close={() => setOpenProfileInfo(false)}
+                    setApicall={setApicall}
+                    setLoading={setLoading} />
                 : null}
         </div>
     )

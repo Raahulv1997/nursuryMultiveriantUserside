@@ -4,10 +4,16 @@ import Footer from './common/footer'
 import Otherbannner from './common/otherbannner'
 import Profilesection from './common/profilesection'
 import Orderhistorysection from './common/orderhistorysection'
+import Complainthistorysection from './common/cmplainthistorysection'
+import { ToastContainer } from 'react-toastify'
 
 export default function Profile() {
     const [activeTab, setActiveTab] = useState('component1');
+    const [getname, setGetName] = useState('');
+    const [apicall, setApicall] = useState(false);
+    const [loading, setLoading] = useState(true);
 
+    /* Function to open diffrent tabs */
     const handleTabClick = (tab) => {
         setActiveTab(tab);
     };
@@ -15,7 +21,14 @@ export default function Profile() {
     return (
         <div>
             {/* header */}
-            <Header />
+            <Header getname={getname}
+                setGetName={setGetName}
+                cartcall={apicall}
+                setcartcall={setApicall}
+                setproductcall={setApicall}
+                loading={loading} 
+                setLoading={setLoading}/>
+            <ToastContainer />
             {/* Banner */}
             <Otherbannner heading={"My profile"} bread={"profile"} />
             {/* Main section */}
@@ -36,10 +49,19 @@ export default function Profile() {
                         Order History
                     </button>
                 </li>
+                <li className="nav-item">
+                    <button
+                        className={`nav-link ${activeTab === 'component3' ? 'active' : ''}`}
+                        onClick={() => handleTabClick('component3')}
+                    >
+                        Ticket History
+                    </button>
+                </li>
             </ul>
             <div>
-                {activeTab === 'component1' && <Profilesection />}
-                {activeTab === 'component2' && <Orderhistorysection />}
+                {activeTab === 'component1' && <Profilesection setGetName={setGetName} setLoading={setLoading}/>}
+                {activeTab === 'component2' && <Orderhistorysection setLoading={setLoading}/>}
+                {activeTab === 'component3' && <Complainthistorysection setLoading={setLoading}/>}
             </div>
             <Footer />
         </div>

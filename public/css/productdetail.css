@@ -347,6 +347,11 @@
     background: var(--primary)
 }
 
+.details-tag-list li .active {
+    color: var(--white);
+    background: var(--primary)
+}
+
 .details-share-list {
     display: -webkit-box;
     display: -ms-flexbox;
@@ -742,7 +747,8 @@
 }
 
 .table-scroll {
-    padding: 35px;
+    padding: 35px 0;
+    overflow-x: scroll;
     border-radius: 8px;
     background: var(--white)
 }

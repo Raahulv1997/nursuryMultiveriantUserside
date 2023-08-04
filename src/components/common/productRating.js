@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-function ProductRating({ rating , review}) {
+function ProductRating({ rating}) {
   const stars = [];
 
   // Create an array of stars based on the rating
@@ -12,7 +12,7 @@ function ProductRating({ rating , review}) {
   return (
     <div className="product-rating">
       {stars}
-      <Link to="">({review})</Link>
+      <Link to="">({rating})</Link>
     </div>
   );
 }

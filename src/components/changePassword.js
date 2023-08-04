@@ -1,33 +1,63 @@
 import React, { useState } from 'react'
 import logo from "../image/logo.png"
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { UpdateUserPassword } from './api/api'
 import useValidation from './common/useValidation'
-import { toast ,ToastContainer} from 'react-toastify'
+import { toast } from 'react-toastify'
 export default function ChangePassword() {
   let [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  let navigate = useNavigate()
+
+  /*Function to show hide password */
+  const toggleShowPassword = () => setShowPassword((prev) => !prev);
+  const toggleShowConfirmPassword = () => setShowConfirmPassword((prev) => !prev);
+
+  const renderIcon = () => {
+    if (state.new_password.length > 0) {
+      return showPassword ? (
+        <i className="fa fa-eye-slash"></i>
+      ) : (
+        <i className="fa fa-eye"></i>
+      );
+    }
+
+    return null;
+  };
+  const renderIconCon = () => {
+    if (state.conf_password.length > 0) {
+      return showConfirmPassword ? (
+        <i className="fa fa-eye-slash"></i>
+      ) : (
+        <i className="fa fa-eye"></i>
+      );
+    }
+    return null;
+  };
   // USER CHANGE PASSWORD VALIDATION
   // INITIAL STATE ASSIGNMENT
   const initialFormState = {
-    password: "",
+    // password: "",
     new_password: "",
     conf_password: "",
   };
   // VALIDATION CONDITIONS
   const validators = {
-    password: [
-      (value) =>
-        value === "" || value.trim() === "" ? "Old password is required" : null,
-    ],
+    // password: [
+    //   (value) =>
+    //   localStorage.getItem("temp") === "yes" ? null :
+    //     value === "" || value.trim() === "" ? "Old password is required" : null,
+    // ],
     new_password: [
       (value) =>
         value === ""
           ? "Password is required"
-          : /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,16}$/.test(
-              value
-            )
-          ? null
-          : "Password must contain digit, one uppercase letter, one special character, no space, and it must be 8-16 characters long",
+          // : /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,16}$/.test(
+          //     value
+          //   )
+          : null
+      // : "Password must contain digit, one uppercase letter, one special character, no space, and it must be 8-16 characters long",
     ],
     conf_password: [
       (value) => (value ? null : "Confirm Password is required"),
@@ -41,24 +71,28 @@ export default function ChangePassword() {
   const { state, onInputChange, setState, setErrors, errors, validate } =
     useValidation(initialFormState, validators);
 
-    // USER CHANGE PASSWORD SUBMIT BUTTON
-    const onUserChangePassClick = async (event) => {
-        event.preventDefault();
-        if (validate()) {
-            setLoading(true)
-            let Response = await UpdateUserPassword(state)
-            console.log(Response);
-            if(Response.data.response === "update your password successfully"){
-                toast.success("Password updated successfully", {
-                    position: toast.POSITION.TOP_RIGHT,
-                    autoClose: 1000,
-                });
-                setLoading(false)
-                setState(initialFormState)
-                setErrors("")
-            }
+  // USER CHANGE PASSWORD SUBMIT BUTTON
+  const onUserChangePassClick = async (event) => {
+    event.preventDefault();
+    if (validate()) {
+      setLoading(true)
+      let Response = await UpdateUserPassword(state)
+      if (Response.data.response === "update your password successfully") {
+        toast.success("Password updated successfully", {
+          position: toast.POSITION.TOP_RIGHT,
+          autoClose: 1000,
+        });
+        setLoading(false)
+        setState(initialFormState)
+        setErrors("")
+        if (localStorage.getItem("temp") === "yes") {
+          navigate("/login")
+        } else {
+          navigate("/profile")
         }
+      }
     }
+  }
 
 
   return (
@@ -78,7 +112,7 @@ export default function ChangePassword() {
                   <p>Make sure your current password is strong</p>
                 </div>
                 <form className="user-form" onSubmit={onUserChangePassClick}>
-                  <div className="form-group">
+                  {/* {localStorage.getItem("temp") === "yes" ? null :<div className="form-group">
                     <input
                       type="password"
                       name="password"
@@ -91,7 +125,7 @@ export default function ChangePassword() {
                       value={state.password}
                       placeholder="Old password"
                     />
-                    {/* ERROR MSG FOR OLD PASSWORD */}
+                    ERROR MSG FOR OLD PASSWORD
                     {errors.password && (
                       <span
                         key={errors.password}
@@ -100,20 +134,25 @@ export default function ChangePassword() {
                         {errors.password}
                       </span>
                     )}
-                  </div>
+                  </div>} */}
                   <div className="form-group">
-                    <input
-                      type="password"
-                      name="new_password"
-                      className={
-                        errors.new_password
-                          ? "form-control border border-danger"
-                          : "form-control"
-                      }
-                      onChange={onInputChange}
-                      value={state.new_password}
-                      placeholder="Current password"
-                    />
+                    <div className='position-relative'>
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        name="new_password"
+                        className={
+                          errors.new_password
+                            ? "form-control border border-danger"
+                            : "form-control"
+                        }
+                        onChange={onInputChange}
+                        value={state.new_password}
+                        placeholder="Current password"
+                      />
+                      <span className="password-icon" onClick={toggleShowPassword}>
+                        {renderIcon()}
+                      </span>
+                    </div>
                     {/* ERROR MSG FOR OLD PASSWORD */}
                     {errors.new_password && (
                       <span
@@ -125,18 +164,23 @@ export default function ChangePassword() {
                     )}
                   </div>
                   <div className="form-group">
-                    <input
-                      type="password"
-                      name="conf_password"
-                      className={
-                        errors.conf_password
-                          ? "form-control border border-danger"
-                          : "form-control"
-                      }
-                      onChange={onInputChange}
-                      value={state.conf_password}
-                      placeholder="reapet password"
-                    />
+                    <div className='position-relative'>
+                      <input
+                        type={showConfirmPassword ? "text" : "password"}
+                        name="conf_password"
+                        className={
+                          errors.conf_password
+                            ? "form-control border border-danger"
+                            : "form-control"
+                        }
+                        onChange={onInputChange}
+                        value={state.conf_password}
+                        placeholder="reapet password"
+                      />
+                      <span className="password-icon" onClick={toggleShowConfirmPassword}>
+                        {renderIconCon()}
+                      </span>
+                    </div>
                     {/* ERROR MSG FOR OLD PASSWORD */}
                     {errors.conf_password && (
                       <span

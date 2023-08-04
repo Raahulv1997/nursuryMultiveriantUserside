@@ -1,7 +1,113 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import OrderTable from "./orderTable"
 import { Link } from 'react-router-dom'
-export default function Orderhistorysection() {
+import { OrderList, Orderdetails } from "../api/api"
+import moment from 'moment'
+import TicketModal from '../Modal/ticket'
+
+export default function Orderhistorysection({ setLoading }) {
+    let [orderList, setOrderList] = useState([])
+    const [openTicketModal, setOpenTicketModal] = useState(false);
+    const [apicall, setApicall] = useState(false);
+    const [openOrderDetail, setOpenOrderDetail] = useState(null);
+    const [orderId, setOrderId] = useState(null);
+    let [orderProductList, setOrderProductList] = useState("")
+
+    /*Function to get Order data */
+    let GetData = async (OrderId) => {
+        let OrderRes = await Orderdetails(OrderId)
+        if (OrderRes.data === null || OrderRes.data === undefined || OrderRes.data === "" || OrderRes.data.response === "not found") {
+            setOrderProductList([])
+            setLoading(false)
+        } else {
+            setOrderProductList(OrderRes.data.order_product_detaile)
+            setLoading(false)
+        }
+    }
+    /*Function to Calculation the sum total price of all Order products */
+    let subtotal = 0;
+    let totalGst = 0;
+    let totalDiscount = 0;
+    let mrp = 0;
+    let qty = 0;
+    let taxablePrice = 0;
+
+    /*Function to get the totals */
+    const getTotalPrice = () => {
+        let totalAmount = 0;
+        if (orderProductList) {
+            mrp = 0;
+            subtotal = 0;
+            totalGst = 0;
+            totalDiscount = 0;
+            qty = 0;
+            taxablePrice = 0;
+            orderProductList.forEach((item) => {
+                mrp += item.mrp;
+                qty += item.order_cart_count
+                subtotal += item.price * item.order_cart_count;
+                taxablePrice += (((item.mrp) -
+                    ((item.mrp * item.discount) / 100)) * item.order_cart_count)
+                totalGst =
+                    totalGst + ((item.price * item.gst) / 100) * item.order_cart_count
+                totalDiscount =
+                    totalDiscount + ((item.mrp * item.discount) / 100) * item.order_cart_count;
+                totalAmount = subtotal + 100;
+            });
+        }
+        const totalPriceInfo = [
+            totalAmount,
+            totalGst,
+            totalDiscount,
+            subtotal,
+            mrp,
+            qty,
+            taxablePrice
+        ];
+        return totalPriceInfo;
+    };
+    let TotalPrice = getTotalPrice()
+
+    useEffect(() => {
+        GetData()
+        // eslint-disable-next-line
+    }, [])
+
+    /*Function to Open order detail box */
+    const toggleOrderDetail = (orderId, id) => {
+        if (openOrderDetail === orderId) {
+            setOpenOrderDetail(null);
+        } else {
+            setOpenOrderDetail(orderId);
+            GetData(id)
+        }
+    };
+    /*Function to get the order data */
+    const GetOrderData = async () => {
+        setLoading(true)
+        let response = await OrderList()
+        if (response.data.results === null || response.data.results === undefined || response.data.results === "" || response.data.results.length === 0) {
+            setOrderList([])
+            setLoading(false)
+        } else {
+            setLoading(false)
+            setOrderList(response.data.results)
+        }
+    }
+
+    /*Render method to get order data */
+    useEffect(() => {
+        window.scrollTo(0, 0);
+        GetOrderData()
+        // eslint-disable-next-line
+    }, [apicall])
+
+    /*Function to Open complaint modal */
+    let AddComplaintModal = (id) => {
+        setOpenTicketModal(true)
+        setOrderId(id)
+    }
+    
     return (
         <div>
             <section className="inner-section orderlist-part">
@@ -9,9 +115,9 @@ export default function Orderhistorysection() {
                     <div className="row">
                         <div className="col-lg-12">
                             <div className="orderlist-filter">
-                                <h5>total order <span>- (4)</span>
+                                <h5>total order <span>- ({orderList.length})</span>
                                 </h5>
-                                <div className="filter-short">
+                                {/* <div className="filter-short">
                                     <label className="form-label">short by:</label>
                                     <select className="form-select">
                                         <option value="all">all order</option>
@@ -20,20 +126,24 @@ export default function Orderhistorysection() {
                                         <option value="shipped">shipped order</option>
                                         <option value="delivered">delivered order</option>
                                     </select>
-                                </div>
+                                </div> */}
                             </div>
                         </div>
                     </div>
-                    <div className="row">
-                        <div className="col-lg-12">
-                            <div className="orderlist">
-                                <div className="orderlist-head">
-                                    <h5>order#01</h5>
-                                    <h5>order recieved</h5>
-                                </div>
-                                <div className="orderlist-body d-block">
-                                    <div className="row">
-                                        <div className="col-lg-12">
+                    {(orderList || []).map((item, index) => {
+                        const orderId = index;
+                        const isOrderDetailOpen = openOrderDetail === orderId;
+                        return (
+                            <div className="row" key={index}>
+                                <div className="col-lg-12">
+                                    <div className="orderlist">
+                                        <Link className="orderlist-head" onClick={() => toggleOrderDetail(orderId, item.order_id)}>
+                                            <h5>order #{item.order_id}</h5>
+                                            <h5>order {item.status_order}</h5>
+                                        </Link>
+                                        <div className={"orderlist-body d-block"}>
+                                            <div className="row">
+                                                {/* <div className="col-lg-12">
                                             <div className="order-track">
                                                 <ul className="order-track-list">
                                                     <li className="order-track-item active">
@@ -58,359 +168,104 @@ export default function Orderhistorysection() {
                                                     </li>
                                                 </ul>
                                             </div>
-                                        </div>
-                                        <div className="col-lg-5">
-                                            <ul className="orderlist-details">
-                                                <li>
-                                                    <h6>order id</h6>
-                                                    <p>14667</p>
+                                        </div> */}
+
+                                                {/* <Link to="" className='text-end text-decoration-none p-2' onClick={() => AddReviewModal(item)}> 
+                                                <button className='btn-sm btn-primary'>
+                                                    Add Review
+                                                    </button>
+                                                    </Link> */}
+                                                <div className="col-lg-6">
+                                                    <ul className="orderlist-details">
+                                                        <li>
+                                                            <h6>order id</h6>
+                                                            <p>{item.order_id}</p>
+                                                        </li>
+                                                        <li>
+                                                            <h6>Total Item</h6>
+                                                            <p>{item.only_this_order_product_quantity === 1 ? item.only_this_order_product_quantity + " Item" : item.only_this_order_product_quantity + " Items"}</p>
+                                                        </li>
+                                                        <li>
+                                                            <h6>Order Time</h6>
+                                                            <p>{moment(item.order_date).format("DD MMMM YYYY")}</p>
+                                                        </li>
+                                                        <li>
+                                                            <h6>Delivery Time</h6>
+                                                            <p>{moment(item.delivery_date).format("DD MMMM YYYY")}</p>
+                                                        </li>
+                                                        <li>
+                                                            <h6>Total</h6>
+                                                            <p>₹ {item.only_this_order_product_total}</p>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                {/* <div className="col-lg-4">
+                                                    <ul className="orderlist-details">
+                                                        <li>
+                                                            <h6>Sub Total</h6>
+                                                            <p>₹ {item.only_this_order_product_total - item.total_gst}</p>
+                                                        </li>
+                                                         <li>
+                                                    <h6>Discount</h6>
+                                                    <p className='text-danger'> ₹ Don't have in the api list</p>
                                                 </li>
-                                                <li>
-                                                    <h6>Total Item</h6>
-                                                    <p>6 Items</p>
-                                                </li>
-                                                <li>
-                                                    <h6>Order Time</h6>
-                                                    <p>7th February 2021</p>
-                                                </li>
-                                                <li>
-                                                    <h6>Delivery Time</h6>
-                                                    <p>12th February 2021</p>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                        <div className="col-lg-4">
-                                            <ul className="orderlist-details">
-                                                <li>
-                                                    <h6>Sub Total</h6>
-                                                    <p>$10,864.00</p>
-                                                </li>
-                                                <li>
-                                                    <h6>discount</h6>
-                                                    <p>$20.00</p>
-                                                </li>
-                                                <li>
-                                                    <h6>delivery fee</h6>
-                                                    <p>$49.00</p>
-                                                </li>
-                                                <li>
-                                                    <h6>Total<small>(Incl. VAT)</small>
-                                                    </h6>
-                                                    <p>$10,874.00</p>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                        <div className="col-lg-3">
-                                            <div className="orderlist-deliver">
-                                                <h6>Delivery location</h6>
-                                                <p>jalkuri, fatullah, narayanganj-1420. word no-09, road no-17/A</p>
+                                                        <li>
+                                                    <h6>Gst</h6>
+                                                    <p > ₹ {item.total_gst}</p>
+                                                </li> 
+                                                        <li>
+                                                            <h6>delivery fee</h6>
+                                                            <p>₹ {item.shipping_charges}</p>
+                                                        </li>
+                                                        <li>
+                                                            <h6>Total</h6>
+                                                            <p>₹ {item.only_this_order_product_total}</p>
+                                                        </li>
+                                                    </ul>
+                                                </div> */}
+                                                <div className="col-lg-6">
+                                                    <div className="orderlist-deliver">
+                                                        <h6>Delivery location</h6>
+                                                        <p>{item.address}, {item.city}-{item.pin_code}</p>
+                                                    </div>
+                                                </div>
+                                                <div className={isOrderDetailOpen ? "col-lg-12" : "d-none"}>
+                                                    <OrderTable
+                                                        invoice={"other"}
+                                                        getTotalGstPrice={(TotalPrice[1]).toFixed(2)}
+                                                        getTotalDiscountPrice={(TotalPrice[2].toFixed(2))}
+                                                        getSubTotalPrice={(TotalPrice[3].toFixed(2))}
+                                                        getTotalPrice={(TotalPrice[0].toFixed(2))}
+                                                        mrp={(TotalPrice[4].toFixed(2))}
+                                                        qty={TotalPrice[5]}
+                                                        taxablePrice={(TotalPrice[6].toFixed(2))}
+                                                        data={orderProductList}
+                                                        setLoading={setLoading}
+                                                        setApicall={setApicall} />
+                                                    <Link to="" className='text-end text-decoration-none' onClick={() => AddComplaintModal(item.order_id)}>
+                                                        <button className='blog-btn'>
+                                                            Generate Ticket
+                                                        </button></Link>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div className="col-lg-12">
-                                            <OrderTable invoice={"other"} />
-                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div className="orderlist">
-                            <div className="orderlist-head">
-                                <h5>order#02</h5>
-                                <h5>order Processed</h5>
-                            </div>
-                            <div className="orderlist-body d-none">
-                                <div className="row">
-                                    <div className="col-lg-12">
-                                        <div className="order-track">
-                                            <ul className="order-track-list">
-                                                <li className="order-track-item active">
-                                                    <i className="icofont-check">
-                                                    </i>
-                                                    <span>order recieved</span>
-                                                </li>
-                                                <li className="order-track-item active">
-                                                    <i className="icofont-check">
-                                                    </i>
-                                                    <span>order processed</span>
-                                                </li>
-                                                <li className="order-track-item">
-                                                    <i className="icofont-close">
-                                                    </i>
-                                                    <span>order shipped</span>
-                                                </li>
-                                                <li className="order-track-item">
-                                                    <i className="icofont-close">
-                                                    </i>
-                                                    <span>order delivered</span>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    <div className="col-lg-5">
-                                        <ul className="orderlist-details">
-                                            <li>
-                                                <h6>order id</h6>
-                                                <p>14667</p>
-                                            </li>
-                                            <li>
-                                                <h6>Total Item</h6>
-                                                <p>6 Items</p>
-                                            </li>
-                                            <li>
-                                                <h6>Order Time</h6>
-                                                <p>7th February 2021</p>
-                                            </li>
-                                            <li>
-                                                <h6>Delivery Time</h6>
-                                                <p>12th February 2021</p>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                    <div className="col-lg-4">
-                                        <ul className="orderlist-details">
-                                            <li>
-                                                <h6>Sub Total</h6>
-                                                <p>$10,864.00</p>
-                                            </li>
-                                            <li>
-                                                <h6>discount</h6>
-                                                <p>$20.00</p>
-                                            </li>
-                                            <li>
-                                                <h6>delivery fee</h6>
-                                                <p>$49.00</p>
-                                            </li>
-                                            <li>
-                                                <h6>Total<small>(Incl. VAT)</small>
-                                                </h6>
-                                                <p>$10,874.00</p>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                    <div className="col-lg-3">
-                                        <div className="orderlist-deliver">
-                                            <h6>Delivery location</h6>
-                                            <p>jalkuri, fatullah, narayanganj-1420. word no-09, road no-17/A</p>
-                                        </div>
-                                    </div>
-                                    <div className="col-lg-12">
-                                        <div className="table-scroll">
-                                            <OrderTable invoice={"other"} />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="orderlist">
-                            <div className="orderlist-head">
-                                <h5>order#03</h5>
-                                <h5>order shipped</h5>
-                            </div>
-                            <div className="orderlist-body d-none ">
-                                <div className="row">
-                                    <div className="col-lg-12">
-                                        <div className="order-track">
-                                            <ul className="order-track-list">
-                                                <li className="order-track-item active">
-                                                    <i className="icofont-check">
-                                                    </i>
-                                                    <span>order recieved</span>
-                                                </li>
-                                                <li className="order-track-item active">
-                                                    <i className="icofont-check">
-                                                    </i>
-                                                    <span>order processed</span>
-                                                </li>
-                                                <li className="order-track-item active">
-                                                    <i className="icofont-check">
-                                                    </i>
-                                                    <span>order shipped</span>
-                                                </li>
-                                                <li className="order-track-item">
-                                                    <i className="icofont-close">
-                                                    </i>
-                                                    <span>order delivered</span>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    <div className="col-lg-5">
-                                        <ul className="orderlist-details">
-                                            <li>
-                                                <h6>order id</h6>
-                                                <p>14667</p>
-                                            </li>
-                                            <li>
-                                                <h6>Total Item</h6>
-                                                <p>6 Items</p>
-                                            </li>
-                                            <li>
-                                                <h6>Order Time</h6>
-                                                <p>7th February 2021</p>
-                                            </li>
-                                            <li>
-                                                <h6>Delivery Time</h6>
-                                                <p>12th February 2021</p>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                    <div className="col-lg-4">
-                                        <ul className="orderlist-details">
-                                            <li>
-                                                <h6>Sub Total</h6>
-                                                <p>$10,864.00</p>
-                                            </li>
-                                            <li>
-                                                <h6>discount</h6>
-                                                <p>$20.00</p>
-                                            </li>
-                                            <li>
-                                                <h6>delivery fee</h6>
-                                                <p>$49.00</p>
-                                            </li>
-                                            <li>
-                                                <h6>Total<small>(Incl. VAT)</small>
-                                                </h6>
-                                                <p>$10,874.00</p>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                    <div className="col-lg-3">
-                                        <div className="orderlist-deliver">
-                                            <h6>Delivery location</h6>
-                                            <p>jalkuri, fatullah, narayanganj-1420. word no-09, road no-17/A</p>
-                                        </div>
-                                    </div>
-                                    <div className="col-lg-12">
-                                        <div className="table-scroll">
-                                            <OrderTable invoice={"other"} />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="orderlist">
-                            <div className="orderlist-head">
-                                <h5>order#04</h5>
-                                <h5>order delivered</h5>
-                            </div>
-                            <div className="orderlist-body d-none ">
-                                <div className="row">
-                                    <div className="col-lg-12">
-                                        <div className="order-track">
-                                            <ul className="order-track-list">
-                                                <li className="order-track-item active">
-                                                    <i className="icofont-check">
-                                                    </i>
-                                                    <span>order recieved</span>
-                                                </li>
-                                                <li className="order-track-item active">
-                                                    <i className="icofont-check">
-                                                    </i>
-                                                    <span>order processed</span>
-                                                </li>
-                                                <li className="order-track-item active">
-                                                    <i className="icofont-check">
-                                                    </i>
-                                                    <span>order shipped</span>
-                                                </li>
-                                                <li className="order-track-item active">
-                                                    <i className="icofont-check">
-                                                    </i>
-                                                    <span>order delivered</span>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    <div className="col-lg-5">
-                                        <ul className="orderlist-details">
-                                            <li>
-                                                <h6>order id</h6>
-                                                <p>14667</p>
-                                            </li>
-                                            <li>
-                                                <h6>Total Item</h6>
-                                                <p>6 Items</p>
-                                            </li>
-                                            <li>
-                                                <h6>Order Time</h6>
-                                                <p>7th February 2021</p>
-                                            </li>
-                                            <li>
-                                                <h6>Delivery Time</h6>
-                                                <p>12th February 2021</p>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                    <div className="col-lg-4">
-                                        <ul className="orderlist-details">
-                                            <li>
-                                                <h6>Sub Total</h6>
-                                                <p>$10,864.00</p>
-                                            </li>
-                                            <li>
-                                                <h6>discount</h6>
-                                                <p>$20.00</p>
-                                            </li>
-                                            <li>
-                                                <h6>delivery fee</h6>
-                                                <p>$49.00</p>
-                                            </li>
-                                            <li>
-                                                <h6>Total<small>(Incl. VAT)</small>
-                                                </h6>
-                                                <p>$10,874.00</p>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                    <div className="col-lg-3">
-                                        <div className="orderlist-deliver">
-                                            <h6>Delivery location</h6>
-                                            <p>jalkuri, fatullah, narayanganj-1420. word no-09, road no-17/A</p>
-                                        </div>
-                                    </div>
-                                    <div className="col-lg-12">
-                                        <div className="table-scroll">
-                                            <OrderTable invoice={"other"} />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div className="row">
-                    <div className="col-lg-12">
-                        <ul className="pagination">
-                            <li className="page-item">
-                                <Link className="page-link">
-                                    <i className="icofont-arrow-left">
-                                    </i>
-                                </Link>
-                            </li>
-                            <li className="page-item">
-                                <Link className="page-link active">1</Link>
-                            </li>
-                            <li className="page-item">
-                                <Link className="page-link">2</Link>
-                            </li>
-                            <li className="page-item">
-                                <Link className="page-link">3</Link>
-                            </li>
-                            <li className="page-item">...</li>
-                            <li className="page-item">
-                                <Link className="page-link">65</Link>
-                            </li>
-                            <li className="page-item">
-                                <Link className="page-link">
-                                    <i className="icofont-arrow-right">
-                                    </i>
-                                </Link>
-                            </li>
-                        </ul>
-                    </div>
+                        )
+                    })}
                 </div>
             </section >
+            {openTicketModal ?
+                <TicketModal
+                    show={openTicketModal}
+                    close={() => setOpenTicketModal(false)}
+                    order_id={orderId}
+                    setApicall={setApicall}
+                    setLoading={setLoading} />
+                : null
+            }
+           
         </div >
     )
 }

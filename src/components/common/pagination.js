@@ -2,7 +2,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 export default function Pagination({ nPages, currentPage, setCurrentPage, total, count }) {
-
     // Function to get dynamic page number of the pagination:
     const pageNumbers = [];
     for (let i = 0; i < nPages; i++) {
@@ -29,7 +28,7 @@ export default function Pagination({ nPages, currentPage, setCurrentPage, total,
                             {/* To change to the previous page: */}
                             <li className="page-item">
                                 <Link
-                                    className={"page-link"}
+                                    className={currentPage === 0 ? "" :"page-link"}
                                     onClick={prevPage}
                                     disabled={currentPage === 0}
                                 >
@@ -49,7 +48,7 @@ export default function Pagination({ nPages, currentPage, setCurrentPage, total,
                             ))}
                             <li className="page-item">
                                 <Link
-                                    className={"page-link"}
+                                    className={currentPage === nPages - 1 ? "" :"page-link"}
                                     onClick={nextPage}
                                     disabled={currentPage === nPages - 1}
                                 >
