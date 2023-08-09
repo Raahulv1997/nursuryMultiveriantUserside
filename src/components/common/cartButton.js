@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 
 const CartUpdate = (props) => {
   const [qytErr, setqytErr] = useState("");
-
+  const [disableqtyButton, setDisableQtyButton] = useState(false);
   // const onAddToCart = async (id, varId) => {
   //     console.log(id, varId, qtyNo);
   //     let response = await AddToCart(id, varId, qtyNo)
@@ -18,6 +18,7 @@ const CartUpdate = (props) => {
   /*Function to updt quantity */
   const updateQuantity = async (qty) => {
     props.setLoading(true);
+    setDisableQtyButton(true);
     let newqty = props.qty;
     if (qty === "inc") {
       newqty++;
@@ -38,6 +39,7 @@ const CartUpdate = (props) => {
           autoClose: 1000,
         });
         setqytErr("");
+        setDisableQtyButton(false);
         props.setApicall(true);
         props.setcartcall(true);
         props.setLoading(false);
@@ -48,6 +50,7 @@ const CartUpdate = (props) => {
           autoClose: 1000,
         });
         setqytErr("");
+        setDisableQtyButton(false);
         props.setApicall(true);
         props.setcartcall(true);
         props.setLoading(false);
@@ -58,6 +61,7 @@ const CartUpdate = (props) => {
           autoClose: 1000,
         });
         setqytErr("");
+        setDisableQtyButton(false);
         props.setApicall(true);
         props.setcartcall(true);
         props.setLoading(false);
@@ -70,6 +74,7 @@ const CartUpdate = (props) => {
         <button
           className="action-minus"
           title="Quantity Minus"
+          style={{ disabled: disableqtyButton ? true : false }}
           onClick={() => updateQuantity("dec")}
         >
           <i className="icofont-minus"></i>
@@ -85,6 +90,7 @@ const CartUpdate = (props) => {
         <button
           className="action-plus"
           title="Quantity Plus"
+          style={{ disabled: disableqtyButton ? true : false }}
           onClick={() => updateQuantity("inc")}
         >
           <i className="icofont-plus"></i>

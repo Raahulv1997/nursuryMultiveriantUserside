@@ -106,6 +106,7 @@ export default function ProductDetails() {
               setcartcall={setcartcall}
               setProductDetailCall={setProductDetailCall}
               setLoading={setLoading}
+              WishlistProduct={"no"}
             />
           </div>
           <div className="row">

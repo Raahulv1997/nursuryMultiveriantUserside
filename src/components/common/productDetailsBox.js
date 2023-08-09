@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { ProductList, AddToCart } from "../api/api";
+import { ProductList, AddToCart, Add_Remove_wishlist } from "../api/api";
 import ProductRating from "../common/productRating";
 import { toast } from "react-toastify";
 import CartUpdate from "./cartButton";
@@ -10,6 +10,7 @@ import Productdescription from "./productdescription";
 import ProductImage from "./product_image";
 
 export default function ProductDetailsBox(props) {
+  const [disableWishlist, setDisableWishlist] = useState(false);
   let [data, setData] = useState("");
   const [varList, setVarList] = useState([]);
   const [varId, setVarID] = useState(props.var);
@@ -117,6 +118,54 @@ export default function ProductDetailsBox(props) {
     .filter((item) => item !== "") // Remove empty strings
     .map((item) => item.replace(/^'|'$/g, "")); // Remove surrounding single quotes
 
+  console.log("data----ff" + JSON.stringify(data));
+
+  /*Function add product to wishlist */
+  const onWishlistAdd = async (id, verient_id, wishlist) => {
+    if (
+      Token === null ||
+      Token === "null" ||
+      Token === "" ||
+      Token === undefined ||
+      Token === "undefined"
+    ) {
+      navigate("/login");
+    } else {
+      props.setLoading(true);
+      if (wishlist > 0) {
+        setDisableWishlist(true);
+
+        let response = await Add_Remove_wishlist(id, verient_id);
+
+        if (
+          response.data.response ===
+          "already add in wishlist remove product to wishlist"
+        ) {
+          toast.success("Removed to wishlist", {
+            position: toast.POSITION.TOP_RIGHT,
+            autoClose: 1000,
+          });
+          setDisableWishlist(false);
+          props.setLoading(false);
+          setApicall(true);
+        }
+      } else {
+        setDisableWishlist(true);
+
+        let response = await Add_Remove_wishlist(id, verient_id);
+
+        if (response.data.response === "added in wishlist") {
+          toast.success("Added to wishlist", {
+            position: toast.POSITION.TOP_RIGHT,
+            autoClose: 1000,
+          });
+          setDisableWishlist(false);
+          props.setLoading(false);
+          setApicall(true);
+        }
+      }
+    }
+  };
   return (
     <>
       <div className="row product_detail_box">
@@ -375,6 +424,40 @@ export default function ProductDetailsBox(props) {
                 )}
               </div>
             </div>
+            {data.wishlist > 0 ? (
+              <button
+                className="product-add"
+                title="Add to Cart"
+                style={{ disabled: disableWishlist ? true : false }}
+                onClick={() =>
+                  onWishlistAdd(
+                    data.product_id,
+                    data.product_verient_id,
+                    data.wishlist
+                  )
+                }
+              >
+                {/* <i className="fas fa-shopping-basket"></i> */}
+                <span>Remove from wishlist</span>
+              </button>
+            ) : data.wishlist === null ? (
+              <button
+                className="product-add"
+                title="Add to Cart"
+                style={{ disabled: disableWishlist ? true : false }}
+                onClick={() =>
+                  onWishlistAdd(
+                    data.product_id,
+                    data.product_verient_id,
+                    data.wishlist
+                  )
+                }
+              >
+                {/* <i className="fas fa-shopping-basket"></i> */}
+                <span>Add to wishlist</span>
+              </button>
+            ) : null}
+
             {/* <div className={props.page === "details" ? "details-action-group" : "view-action-group"}>
             <Link to="" className={props.page === "details" ? "details-wish wish" : "view-wish wish"} title="Add Your Wishlist">
               <i className="icofont-heart">

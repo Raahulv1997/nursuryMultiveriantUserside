@@ -605,6 +605,7 @@ export default function Shop() {
                     setproductcall={setproductcall}
                     CloseBackDrop={CloseBackDrop}
                     setLoading={setLoading}
+                    WishlistProduct={"no"}
                   />
                 </div>
                 <div className="row">
