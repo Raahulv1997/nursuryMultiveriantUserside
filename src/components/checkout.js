@@ -30,6 +30,7 @@ function Checkout() {
   const [paymentErr, setPaymentErr] = useState(false);
   const [termErr, setTermErr] = useState(false);
   const [loading, setLoading] = useState(true);
+  // eslint-disable-next-line
   const [addPass, setAddPass] = useState(false);
   const [locationCheck, setLocationCheck] = useState(false);
   let navigate = useNavigate();
@@ -48,7 +49,7 @@ function Checkout() {
     let v = CartRes.data.map((item) => item.vendor_id);
     let pin = UserRes.data[0].pincode;
     // console.log(pin);
-    let responseCheck = await CheckUserAddress(999009, v);
+    let responseCheck = await CheckUserAddress(pin, v);
     console.log("kkk" + JSON.stringify(responseCheck));
     if (responseCheck.data.status === true) {
       setLocationCheck("avaliable");
@@ -103,11 +104,14 @@ function Checkout() {
         qty += item.cart_product_quantity;
         subtotal += item.price * item.cart_product_quantity;
         taxablePrice +=
-          (item.mrp - (item.mrp * item.discount) / 100) *
+          (item.price / (1 + item.gst / 100)).toFixed(2) *
           item.cart_product_quantity;
         totalGst =
           totalGst +
-          ((item.price * item.gst) / 100) * item.cart_product_quantity;
+          (item.price - (item.price / (1 + item.gst / 100)).toFixed(2)).toFixed(
+            2
+          ) *
+            item.cart_product_quantity;
         totalDiscount =
           totalDiscount +
           ((item.mrp * item.discount) / 100) * item.cart_product_quantity;
@@ -126,6 +130,7 @@ function Checkout() {
     return totalPriceInfo;
   };
   let TotalPrice = getTotalPrice();
+  console.log("total price--" + JSON.stringify(TotalPrice));
 
   /* Delivery Object*/
   const deliveryAddress = {
@@ -189,11 +194,21 @@ function Checkout() {
       total_order_product_quantity: cartData.length, //order qty
       cart_qty_of_this_product: item.cart_product_quantity,
       only_this_product_gst:
-        ((item.price * item.gst) / 100) * item.cart_product_quantity, //gst*cart_qty
+        (item.price - (item.price / (1 + item.gst / 100)).toFixed(2)).toFixed(
+          2
+        ) * item.cart_product_quantity, //gst*cart_qty
       only_this_product_cgst:
-        (((item.price * item.gst) / 100) * item.cart_product_quantity) / 2,
+        ((item.price - (item.price / (1 + item.gst / 100)).toFixed(2)).toFixed(
+          2
+        ) *
+          item.cart_product_quantity) /
+        2,
       only_this_product_sgst:
-        (((item.price * item.gst) / 100) * item.cart_product_quantity) / 2,
+        ((item.price - (item.price / (1 + item.gst / 100)).toFixed(2)).toFixed(
+          2
+        ) *
+          item.cart_product_quantity) /
+        2,
     };
   });
 
@@ -250,19 +265,23 @@ function Checkout() {
       //   ? data.pincode
       //   : pincode)
       // if (addPass === true) {
+      console.log("redi;ttt--" + JSON.stringify(result));
+
       let response = await PlaceOrder(result);
+      console.log("responseseee after order--" + JSON.stringify(response));
       if (response.data.response === "order successfully added") {
         toast.success("Order Placed Successfully", {
           position: toast.POSITION.TOP_RIGHT,
           autoClose: 1000,
         });
+
         setLoading(false);
         setPaymentErr(false);
         setTermErr(false);
         setAddPass(false);
         setcartcall(true);
         const url = `/invoice?id=${encodeURIComponent(
-          response.data.order_id[0]
+          response.data.invoice_id
         )}`;
         window.location.href = url;
       }
@@ -318,6 +337,7 @@ function Checkout() {
                     setApicall={setApicall}
                     data={cartData}
                     setLoading={setLoading}
+                    orderData={""}
                   />
                 </div>
               </div>
@@ -601,7 +621,10 @@ function Checkout() {
                           type="radio"
                           id="COD"
                           value={"Cash on Delivery"}
-                          onChange={(e) => setSelectedPayment(e.target.value)}
+                          onChange={(e) => {
+                            setSelectedPayment(e.target.value);
+                            setPaymentErr(false);
+                          }}
                         />
                         <label className="form-label">Cash on Delivery</label>
 
@@ -650,7 +673,10 @@ function Checkout() {
                   <input
                     type="checkbox"
                     id="checkout-check"
-                    onChange={(e) => setTerm(e.target.checked)}
+                    onChange={(e) => {
+                      setTerm(e.target.checked);
+                      setTermErr(false);
+                    }}
                   />
                   <label htmlFor="checkout-check">
                     By making this purchase you agree to our{" "}

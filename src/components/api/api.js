@@ -1,9 +1,9 @@
 import axios from "axios";
 import moment from "moment";
 // const API_URL = "https://nursery-verient-live.onrender.com";
-const API_URL = "http://indiakinursery.com:9999";
+// const API_URL = "http://indiakinursery.com:9999";
 // const API_URL = "http://www.indiakinursery.com:9999";
-// const API_URL = "http://192.168.29.108:9999";
+const API_URL = "http://192.168.29.108:9999";
 // const API_URL = "http://www.indiakinursery.com:3000"
 let Token = localStorage.getItem("token");
 const headers = {
@@ -273,7 +273,7 @@ export const OrderList = async () => {
 };
 /*Api for Order details*/
 export const Orderdetails = async (props) => {
-  const response = axios.get(`${API_URL}/order_details?id=${props}`, {
+  const response = axios.get(`${API_URL}/order_details?invoice_id=${props}`, {
     headers: headers,
   });
   return response;

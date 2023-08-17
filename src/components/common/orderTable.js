@@ -54,7 +54,7 @@ export default function CartTable(props) {
                 Name
               </th>
               <th scope="col" className="p-1">
-                MRP
+                Actual price(MRP)
               </th>
               <th scope="col" className="p-1">
                 Qty
@@ -142,7 +142,7 @@ export default function CartTable(props) {
                     )}
                   </td>
                   <td className="table-price p-1">
-                    <h6>₹ {item.mrp} </h6>
+                    <h6>₹ {item.mrp.toFixed(2)} </h6>
                   </td>
                   <td className="table-quantity p-1">
                     <h6>{qyt}</h6>
@@ -156,16 +156,20 @@ export default function CartTable(props) {
                   </td>
                   <td className="table-brand p-1">
                     <h6>
-                      ₹
-                      {(
+                      ₹{((item.price / (1 + item.gst / 100)) * qyt).toFixed(2)}
+                      {/* {(
                         (item.mrp - (item.mrp * item.discount) / 100) *
                         qyt
-                      ).toFixed(2)}
+                      ).toFixed(2)} */}
                     </h6>
                   </td>
                   <td className="table-brand p-1">
                     <h6>
-                      ₹ {(((item.price * item.gst) / 100) * qyt).toFixed(2)}
+                      {(
+                        item.price -
+                        (item.price / (1 + item.gst / 100)).toFixed(2)
+                      ).toFixed(2) * qyt}
+                      {/* 525/(1+5/100) = 525/1.05 = 500 */}{" "}
                       <small>
                         ({item.gst}
                         %)
@@ -173,7 +177,7 @@ export default function CartTable(props) {
                     </h6>
                   </td>
                   <td className="table-quantity p-1">
-                    <h6>₹{item.price * qyt}</h6>
+                    <h6>₹{(item.price * qyt).toFixed(2)}</h6>
                   </td>
                   {props.invoice === "other" ? (
                     <Link
