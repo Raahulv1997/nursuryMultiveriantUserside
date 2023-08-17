@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import ProductDetailModal from "../Modal/productDetail";
-import { ProductList, AddToCart, TreandingPro } from "../api/api";
+import {
+  ProductList,
+  AddToCart,
+  TreandingPro,
+  Add_Remove_wishlist,
+  getwishlist,
+} from "../api/api";
 import { useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import CartUpdate from "./cartButton";
@@ -24,6 +30,7 @@ const ProductBox = ({
   setcartcall,
   setproductcall,
   treanding,
+
   start_date,
   end_date,
   sort,
@@ -33,9 +40,11 @@ const ProductBox = ({
   setProductDetailCall,
   CloseBackDrop,
   setLoading,
+  WishlistProduct,
   id,
   varId,
 }) => {
+  const [disableWishlist, setDisableWishlist] = useState(false);
   const [productDetailModal, setProductDetailModal] = useState(false);
   const [data, setData] = useState([]);
   const [productId, setProductId] = useState();
@@ -50,6 +59,7 @@ const ProductBox = ({
   const searchParams = new URLSearchParams(location.search);
   const search = searchParams.get("search");
   const category = searchParams.get("category");
+
   let CatSearch =
     cateFilter === undefined ||
     cateFilter.length === 0 ||
@@ -104,6 +114,14 @@ const ProductBox = ({
         }
       } else {
         setData(response.data.results);
+        setLoading(false);
+      }
+    } else if (WishlistProduct === "yes") {
+      setLoading(true);
+      let response = await getwishlist();
+      let { data } = response;
+      if (data) {
+        setData(data.response);
         setLoading(false);
       }
     } else {
@@ -219,6 +237,60 @@ const ProductBox = ({
     }
   };
 
+  /*Function add product to wishlist */
+  const onWishlistAdd = async (id, verient_id, wishlist, wishlist_id) => {
+    if (
+      Token === null ||
+      Token === "null" ||
+      Token === "" ||
+      Token === undefined ||
+      Token === "undefined"
+    ) {
+      navigate("/login");
+    } else {
+      setLoading(true);
+      if (wishlist > 0 || wishlist_id > 0) {
+        console.log("in remove");
+        setDisableWishlist(true);
+
+        let response = await Add_Remove_wishlist(id, verient_id);
+
+        console.log("respoce- in remove-" + response.data.response);
+        if (
+          response.data.response ===
+          "already add in wishlist remove product to wishlist"
+        ) {
+          toast.success("Removed to wishlist", {
+            position: toast.POSITION.TOP_RIGHT,
+            autoClose: 1000,
+          });
+          setDisableWishlist(false);
+          setLoading(false);
+          setApicall(true);
+        }
+        // setDisableWishlist(false);
+        // setLoading(false);
+        // setApicall(true);
+      } else {
+        console.log("in add");
+        setDisableWishlist(true);
+
+        let response = await Add_Remove_wishlist(id, verient_id);
+
+        console.log("respoce in add--" + response.data.response);
+        if (response.data.response === "added in wishlist") {
+          toast.success("Added to wishlist", {
+            position: toast.POSITION.TOP_RIGHT,
+            autoClose: 1000,
+          });
+          setDisableWishlist(false);
+          setLoading(false);
+          setApicall(true);
+        }
+      }
+    }
+  };
+
   /*Function to Go detail page */
   // const ProductDetailClick = (item) => {
   //   if (location.pathname === "/productdetails") {
@@ -257,11 +329,40 @@ const ProductBox = ({
               >
                 <div className="product-media">
                   {/* <div className="product-label">
-              <label className="label-text sale bg-danger">sale</label>
-            </div> */}
-                  {/* <button className="product-wish wish">
-              <i className="fas fa-heart"></i>
-            </button> */}
+                    <label className="label-text sale bg-danger">sale</label>
+                  </div> */}
+                  {item.wishlist > 0 || item.wishlist_id > 0 ? (
+                    <button className="product-wish wish">
+                      <i
+                        className="fas fa-heart"
+                        style={{
+                          color: "red",
+                          disabled: disableWishlist ? true : false,
+                        }}
+                        onClick={() =>
+                          onWishlistAdd(
+                            item.id,
+                            item.product_verient_id,
+                            item.wishlist,
+                            item.wishlist_id
+                          )
+                        }
+                      ></i>
+                    </button>
+                  ) : (
+                    <button className="product-wish wish">
+                      <i
+                        className="fas fa-heart"
+                        style={{
+                          color: "",
+                          disabled: disableWishlist ? true : false,
+                        }}
+                        onClick={() =>
+                          onWishlistAdd(item.id, item.product_verient_id)
+                        }
+                      ></i>
+                    </button>
+                  )}
 
                   <div className="product-label">
                     {item.discount === (undefined || null || 0) ? null : (
@@ -287,9 +388,10 @@ const ProductBox = ({
                       <div
                         style={{
                           position: "absolute",
-                          top: "0px",
-                          right: "0px",
+                          // top: "0px",
+                          // right: "0px",
                           fontSize: "12px",
+                          bottom: "150px",
                           background: "#7C4DFF",
                         }}
                         className="product-rating label-text m-0 sale"

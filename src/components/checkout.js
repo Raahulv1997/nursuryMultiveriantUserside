@@ -31,7 +31,10 @@ function Checkout() {
   const [termErr, setTermErr] = useState(false);
   const [loading, setLoading] = useState(true);
   const [addPass, setAddPass] = useState(false);
+  const [locationCheck, setLocationCheck] = useState(false);
   let navigate = useNavigate();
+
+  const divElement = document.getElementById("myDiv");
   /*Function to get user details */
   let GetData = async () => {
     let UserRes = await UserData();
@@ -42,8 +45,22 @@ function Checkout() {
     if (CartRes.data.length === 0) {
       navigate("/");
     }
+    let v = CartRes.data.map((item) => item.vendor_id);
+    let pin = UserRes.data[0].pincode;
+    // console.log(pin);
+    let responseCheck = await CheckUserAddress(999009, v);
+    console.log("kkk" + JSON.stringify(responseCheck));
+    if (responseCheck.data.status === true) {
+      setLocationCheck("avaliable");
+    }
+    if (responseCheck.data.status === false) {
+      setLocationCheck("notAvalaible");
+    }
+
     setLoading(false);
   };
+  console.log(locationCheck);
+
   useEffect(() => {
     GetData();
     if (apicall === true) {
@@ -219,6 +236,12 @@ function Checkout() {
       setLoading(false);
       setPaymentErr(false);
       setTermErr(true);
+    } else if (locationCheck === "notAvalaible") {
+      setLoading(false);
+      setLocationCheck("notAvalaible");
+      setTermErr(true);
+
+      divElement.focus();
     } else {
       // CheckAddress(pincode === "" ||
       //   pincode === null ||
@@ -401,10 +424,15 @@ function Checkout() {
                 </div>
                 <div className="account-content">
                   <div className="row">
-                    <div className="col-md-6 col-lg-4 alert fade show">
+                    <div
+                      className="col-md-6 col-lg-4 alert fade show"
+                      id="myDiv"
+                    >
                       <div
                         className={
                           address === data.address
+                            ? "profile-card address active"
+                            : address === ""
                             ? "profile-card address active"
                             : "profile-card address"
                         }
@@ -442,7 +470,19 @@ function Checkout() {
                           </ul>
                         </Link>
                       </div>
+                      {locationCheck === "avaliable" ? (
+                        <span className="text-success">
+                          {" "}
+                          Area is available!!!
+                        </span>
+                      ) : locationCheck === "notAvalaible" ? (
+                        <span className="text-danger">
+                          {" "}
+                          Area is not available!!!
+                        </span>
+                      ) : null}
                     </div>
+
                     {data.alternate_address ? (
                       <div className="col-md-6 col-lg-4 alert fade show">
                         <div
@@ -483,6 +523,17 @@ function Checkout() {
                             </ul>
                           </Link>
                         </div>
+                        {/* {locationCheck === "avaliable" ? (
+                          <span className="text-success">
+                            {" "}
+                            Area is available!!!
+                          </span>
+                        ) : locationCheck === "notAvalaible" ? (
+                          <span className="text-danger">
+                            {" "}
+                            Area is not available!!!
+                          </span>
+                        ) : null} */}
                       </div>
                     ) : null}
                     {newAddess === "" ||
@@ -611,8 +662,7 @@ function Checkout() {
                     Please agree Term and condition
                   </small>
                 ) : null}
-
-                {addPass === false ? (
+                {/* {addPass === false ? (
                   <div className="checkout-proced">
                     <Link
                       to=""
@@ -631,17 +681,16 @@ function Checkout() {
                       Check Address
                     </Link>
                   </div>
-                ) : (
-                  <div className="checkout-proced">
-                    <Link
-                      to=""
-                      className="btn btn-inline"
-                      onClick={OnCheckOutCLick}
-                    >
-                      proced to checkout
-                    </Link>
-                  </div>
-                )}
+                ) : ( */}
+                <div className="checkout-proced">
+                  <Link
+                    to=""
+                    className="btn btn-inline"
+                    onClick={OnCheckOutCLick}
+                  >
+                    proced to checkout
+                  </Link>
+                </div>
               </div>
             </div>
           </div>

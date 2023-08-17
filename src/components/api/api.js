@@ -366,3 +366,26 @@ export const ComplaintList = async (email) => {
   );
   return response;
 };
+
+// api to add and remove from wishlist----------------------------
+export const Add_Remove_wishlist = async (id, varient_id) => {
+  // console.log(props);
+  const response = axios.post(
+    `${API_URL}/add_remove_to_wishlist`,
+
+    { product_id: id, product_verient_id: varient_id },
+    { headers: headers }
+  );
+  return response;
+};
+
+//for get the wishlist of product-----------------
+export const getwishlist = async () => {
+  // console.log(props);
+  const response = axios.get(
+    `${API_URL}/wishlist`,
+
+    { headers: headers }
+  );
+  return response;
+};

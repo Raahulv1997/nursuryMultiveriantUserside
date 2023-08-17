@@ -16,134 +16,146 @@ export default function Home() {
   let [noFeaturedData, setNoFeaturedData] = useState("");
   // const [oneMonthBefore, setOneMonthBefore] = useState('');
   // const currentDate = new Date();
- 
-  // useEffect(()=> { 
+
+  // useEffect(()=> {
   //   const oneMonthBeforeDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, currentDate.getDate());
   //   const formattedDate = oneMonthBeforeDate.toISOString().split('T')[0];
   //   setOneMonthBefore(formattedDate);
-  // },[]) 
-  useEffect(()=>{
-    window.scrollTo(0, 0)
-  },[])
+  // },[])
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   return (
     <>
+      <div>
+        {/* header */}
+        <Header
+          cartcall={cartcall}
+          setcartcall={setcartcall}
+          setproductcall={setproductcall}
+          loading={loading}
+          setLoading={setLoading}
+        />
+        <ToastContainer />
+        {/* Banner */}
+        <BannerSlider />
+        {/* Recenlty sold item */}
+        {noTreandingData === "no_treanding" ? null : (
+          <>
+            <section
+              className="section recent-part pt-5 top_right_bg"
+              id="trending"
+            >
+              <div className="container">
+                <div className="row">
+                  <div className="col-lg-12">
+                    <div className="section-heading">
+                      <h2 className="account-title">Trending Products</h2>
+                    </div>
+                  </div>
+                </div>
+                <div className="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
+                  <ProductBox
+                    setNoTreandingData={setNoTreandingData}
+                    pricefilter={""}
+                    rating={""}
+                    cateFilter={""}
+                    brandFilter={""}
+                    Pages={"10"}
+                    currentPage={"0"}
+                    sortByAlpha={""}
+                    sortByRating={""}
+                    sortByPrice={""}
+                    cartcall={cartcall}
+                    setcartcall={setcartcall}
+                    productcall={productcall}
+                    setproductcall={setproductcall}
+                    treanding={"YES"}
+                    setLoading={setLoading}
 
-    <div>
-      {/* header */}
-      <Header
-        cartcall={cartcall}
-        setcartcall={setcartcall}
-        setproductcall={setproductcall}
-        loading={loading}
-        setLoading={setLoading}
-      />
-      <ToastContainer />
-      {/* Banner */}
-      <BannerSlider />
-      {/* Recenlty sold item */}
-      {noTreandingData === "no_treanding" ? null : 
-      <>
-       <section className="section recent-part pt-5 top_right_bg" id="trending">
-        <div className="container">
-          <div className="row">
-            <div className="col-lg-12">
-              <div className="section-heading">
-                <h2 className="account-title">Trending Products</h2>
+                    // start_date={currentDate}
+                    // end_date={oneMonthBefore}
+                  />
+                </div>
+                <div className="row">
+                  <div className="col-lg-12">
+                    <div className="section-btn-25">
+                      <Link
+                        to={"/shop"}
+                        /*state={{treanding : true}}*/ className="btn btn-outline"
+                      >
+                        <i className="fas fa-eye"></i>
+                        <span>show more</span>
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+            {/*Promo*/}
+            <div className="section promo-part">
+              <div className="container">
+                <div className="row">
+                  <div className="col-lg-12">
+                    <div className="promo-img">
+                      <Link>
+                        <img src={promo} alt="promo" className="img-fluid" />
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </>
+        )}
+        <section className="section recent-part pt-5 " id="trending">
+          <div className="container">
+            <div className="row">
+              <div className="col-lg-12">
+                <div className="section-heading">
+                  <h2 className="account-title">Latest Products</h2>
+                </div>
+              </div>
+            </div>
+            <div className="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
+              <ProductBox
+                // setNoData={setNoData}
+                pricefilter={""}
+                rating={""}
+                cateFilter={""}
+                brandFilter={""}
+                Pages={"10"}
+                currentPage={"0"}
+                sortByAlpha={""}
+                sortByRating={""}
+                sortByPrice={""}
+                cartcall={cartcall}
+                setcartcall={setcartcall}
+                productcall={productcall}
+                setproductcall={setproductcall}
+                setLoading={setLoading}
+
+                // treanding={true}
+                // start_date={currentDate}
+                // end_date={oneMonthBefore}
+              />
+            </div>
+            <div className="row">
+              <div className="col-lg-12">
+                <div className="section-btn-25">
+                  <Link
+                    to={"/shop"}
+                    /*state={{treanding : true}}*/ className="btn btn-outline"
+                  >
+                    <i className="fas fa-eye"></i>
+                    <span>show more</span>
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
-          <div className="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
-            <ProductBox
-            setNoTreandingData={setNoTreandingData}
-              pricefilter={""}
-              rating={""}
-              cateFilter={""}
-              brandFilter={""}
-              Pages={"10"}
-              currentPage={"0"}
-              sortByAlpha={""}
-              sortByRating={""}
-              sortByPrice={""}
-              cartcall={cartcall}
-              setcartcall={setcartcall}
-              productcall={productcall}
-              setproductcall={setproductcall}
-              treanding={"YES"}
-              setLoading={setLoading}
-              // start_date={currentDate}
-              // end_date={oneMonthBefore}
-            />
-          </div>
-          <div className="row">
-            <div className="col-lg-12">
-              <div className="section-btn-25">
-                <Link to={"/shop"} /*state={{treanding : true}}*/ className="btn btn-outline">
-                  <i className="fas fa-eye"></i>
-                  <span>show more</span>
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-      {/*Promo*/}
-      <div className="section promo-part">
-        <div className="container">
-          <div className="row">
-            <div className="col-lg-12">
-              <div className="promo-img">
-                <Link>
-                  <img src={promo} alt="promo" className="img-fluid" />
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div></>}
-      <section className="section recent-part pt-5 " id="trending">
-        <div className="container">
-          <div className="row">
-            <div className="col-lg-12">
-              <div className="section-heading">
-                <h2 className="account-title">Latest Products</h2>
-              </div>
-            </div>
-          </div>
-          <div className="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
-            <ProductBox
-            // setNoData={setNoData}
-              pricefilter={""}
-              rating={""}
-              cateFilter={""}
-              brandFilter={""}
-              Pages={"10"}
-              currentPage={"0"}
-              sortByAlpha={""}
-              sortByRating={""}
-              sortByPrice={""}
-              cartcall={cartcall}
-              setcartcall={setcartcall}
-              productcall={productcall}
-              setproductcall={setproductcall}
-              setLoading={setLoading}
-              // treanding={true}
-              // start_date={currentDate}
-              // end_date={oneMonthBefore}
-            />
-          </div>
-          <div className="row">
-            <div className="col-lg-12">
-              <div className="section-btn-25">
-                <Link to={"/shop"} /*state={{treanding : true}}*/ className="btn btn-outline">
-                  <i className="fas fa-eye"></i>
-                  <span>show more</span>
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-      {/* <section className="section countdown-part">
+        </section>
+        {/* <section className="section countdown-part">
         <div className="container">
           <div className="row align-items-center">
             <div className="col-lg-6 mx-auto">
@@ -194,51 +206,57 @@ export default function Home() {
           </div>
         </div>
       </section> */}
-      {/* Collection sold */}
-      {noFeaturedData === "no_featured" ? null : <section className="section recent-part">
-        <div className="container">
-          <div className="row">
-            <div className="col-lg-12">
-              <div className="section-heading">
-                <h2 className="account-title">Featured Products</h2>
+        {/* Collection sold */}
+        {noFeaturedData === "no_featured" ? null : (
+          <section className="section recent-part">
+            <div className="container">
+              <div className="row">
+                <div className="col-lg-12">
+                  <div className="section-heading">
+                    <h2 className="account-title">Featured Products</h2>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-          <div className="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
-            <ProductBox
-            setNoFeaturedData={setNoFeaturedData}
-              pricefilter={""}
-              rating={""}
-              cateFilter={""}
-              brandFilter={""}
-              Pages={"10"}
-              currentPage={"0"}
-              sortByAlpha={""}
-              sortByRating={""}
-              sortByPrice={""}
-              cartcall={cartcall}
-              setcartcall={setcartcall}
-              productcall={productcall}
-              setproductcall={setproductcall}
-              feature={"yes"}
-              setLoading={setLoading}
-              />
-            </div>
-            <div className="row">
-              <div className="col-lg-12">
-                <div className="section-btn-25">
-                  <Link to={"/shop"} state={{feature :"yes"}} className="btn btn-outline">
-                    <i className="fas fa-eye"></i>
-                    <span>show more</span>
-                  </Link>
+              <div className="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
+                <ProductBox
+                  setNoFeaturedData={setNoFeaturedData}
+                  pricefilter={""}
+                  rating={""}
+                  cateFilter={""}
+                  brandFilter={""}
+                  Pages={"10"}
+                  currentPage={"0"}
+                  sortByAlpha={""}
+                  sortByRating={""}
+                  sortByPrice={""}
+                  cartcall={cartcall}
+                  setcartcall={setcartcall}
+                  productcall={productcall}
+                  setproductcall={setproductcall}
+                  feature={"yes"}
+                  setLoading={setLoading}
+                />
+              </div>
+              <div className="row">
+                <div className="col-lg-12">
+                  <div className="section-btn-25">
+                    <Link
+                      to={"/shop"}
+                      state={{ feature: "yes" }}
+                      className="btn btn-outline"
+                    >
+                      <i className="fas fa-eye"></i>
+                      <span>show more</span>
+                    </Link>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-      </section>}
-      {/* Footer */}
-      <Footer />
-    </div>
+          </section>
+        )}
+        {/* Footer */}
+        <Footer />
+      </div>
     </>
   );
 }

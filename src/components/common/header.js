@@ -222,13 +222,24 @@ export default function Header({
             </form>
             {Token ? (
               <div className="header-widget-group">
-                <Link
+                {/* <Link
                   to=""
                   onClick={OpenNotification}
                   className="header-widget"
                   title="Wishlist"
                 >
                   <i className="fas fa-bell"></i>
+                  {notificationData.length > 0 ? (
+                    <sup> {notificationData.length}</sup>
+                  ) : null} 
+                </Link> */}
+                <Link
+                  to="/wishlist"
+                  // onClick={OpenNotification}
+                  className="header-widget"
+                  title="Wishlist"
+                >
+                  <i className="fas fa-heart"></i>
                   {/* {notificationData.length > 0 ? (
                     <sup> {notificationData.length}</sup>
                   ) : null} */}
@@ -272,6 +283,14 @@ export default function Header({
                 >
                   <Dropdown.Item eventKey="1" href="/profile" title="profile">
                     My Account
+                  </Dropdown.Item>
+                  <Dropdown.Item
+                    eventKey="3"
+                    href=""
+                    title="profile"
+                    onClick={OpenNotification}
+                  >
+                    Notification
                   </Dropdown.Item>
                   <Dropdown.Item
                     eventKey="2"

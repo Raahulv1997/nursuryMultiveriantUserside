@@ -15,6 +15,7 @@ import Invoice from "./components/invoice";
 import PrivacyPolicy from "./components/privacyPolicy";
 import ContactUs from "./components/contactUs";
 import ChangePassword from "./components/changePassword";
+import Wishlist from "./components/Wishlist";
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
         <Route exact path="/reset" element={<Reset />} />
         <Route exact path="/singin" element={<Signin />} />
         <Route exact path="/shop" element={<Shop />} />
+        <Route exact path="/wishlist" element={<Wishlist />} />
         <Route exact path="/productdetails" element={<ProductDetails />} />
         <Route exact path="/checkout" element={<Checkout />} />
         <Route exact path="/invoice" element={<Invoice />} />
