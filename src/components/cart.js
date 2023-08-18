@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import CartBox from "./common/cartBox";
 import { CartList } from "./api/api";
+import CartEmpty from "../image/cartEmpty.jpg";
 
 export default function Cart({
   setLoading,
@@ -14,6 +15,8 @@ export default function Cart({
   setCartList,
   cartList,
 }) {
+  let navigate = useNavigate();
+  let location = useLocation();
   const [apicall, setApicall] = useState(false);
   const [cartcall, setcartcall] = useState(false);
   let [data, setData] = useState([]);
@@ -76,6 +79,7 @@ export default function Cart({
   //   // return navigate("/productdetails");
   //   // }
   // };
+  console.log("hhh-" + location.pathname);
   return (
     <div>
       <div className={show ? "cart-sidebar active" : "cart-sidebar"}>
@@ -88,24 +92,52 @@ export default function Cart({
             <i className="icofont-close"></i>
           </button>
         </div>
-        <ul className="cart-list">
-          {(data || []).map((item, index) => {
-            return (
-              // <Link key={index} onClick={() => ProductDetailClick(item)}>
-              <CartBox
-                data={item}
-                apicall={apicall}
-                setApicall={setApicall}
-                setCartApiCall={setCartApiCall}
-                setcartcall={setcartcall}
-                setproductcall={setproductcall}
-                setLoading={setLoading}
-                close={close}
-              />
-              // </Link>
-            );
-          })}
-        </ul>
+        {data.length === 0 ? (
+          <div className="cart_empty text-center pt-sm-5">
+            <div>
+              <img src={CartEmpty} />
+            </div>
+            <h3> Empty Cart</h3>
+            <button
+              className="btn btn-primary-sm"
+              onClick={() => {
+                if (location.pathname === "/shop") {
+                  // alert("ll");
+
+                  // var element = document.getElementById("main_body");
+                  // element.classList.add("body_overflow");
+                  RemoveBodyClass();
+                } else {
+                  navigate("/shop");
+                  RemoveBodyClass();
+                }
+              }}
+            >
+              {" "}
+              Shop Now
+            </button>
+          </div>
+        ) : (
+          <ul className="cart-list">
+            {(data || []).map((item, index) => {
+              return (
+                // <Link key={index} onClick={() => ProductDetailClick(item)}>
+                <CartBox
+                  data={item}
+                  apicall={apicall}
+                  setApicall={setApicall}
+                  setCartApiCall={setCartApiCall}
+                  setcartcall={setcartcall}
+                  setproductcall={setproductcall}
+                  setLoading={setLoading}
+                  close={close}
+                />
+                // </Link>
+              );
+            })}
+          </ul>
+        )}
+
         <div
           className="cart-footer"
           style={{ position: "absolute", width: "100%", bottom: "10px" }}
@@ -121,8 +153,11 @@ export default function Cart({
           </form> */}
           <Link
             className="cart-checkout-btn "
-            style={{ width: "100%" }}
-            to={data.length === 0 ? "" : "/checkout"}
+            style={{
+              width: "100%",
+              display: data.length === 0 ? "none" : "block",
+            }}
+            to={"/checkout"}
             onClick={() => RemoveBodyClass()}
           >
             <span className="checkout-label">Proceed to Checkout</span>

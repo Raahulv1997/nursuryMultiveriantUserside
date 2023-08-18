@@ -180,6 +180,7 @@ export default function Header({
   return (
     <div>
       {loading ? <Loadeer /> : null}
+
       <Navbar expand="lg" fixed="top" bg="white" className={"p-0"}>
         <Container className={""}>
           <Navbar.Brand>
