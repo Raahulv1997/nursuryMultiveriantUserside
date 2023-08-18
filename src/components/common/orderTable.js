@@ -59,7 +59,7 @@ export default function CartTable(props) {
               <th scope="col" className="p-1">
                 Qty
               </th>
-              <th scope="col" className="p-1">
+              <th scope="col" className="p-1" style={{ display: "none" }}>
                 Dis Amt(%)
               </th>
               <th scope="col" className="p-1">
@@ -97,7 +97,8 @@ export default function CartTable(props) {
                             ? productImg
                             : CoverImg(item.cover_image)
                         }
-                        alt={item.verient_description}
+                        alt={"product_image"}
+                        // alt={item.verient_description}
                       />
                     ) : (
                       <Link
@@ -147,7 +148,10 @@ export default function CartTable(props) {
                   <td className="table-quantity p-1">
                     <h6>{qyt}</h6>
                   </td>
-                  <td className="table-discount p-1">
+                  <td
+                    className="table-discount p-1"
+                    style={{ display: "none" }}
+                  >
                     <h6 className="text-danger">
                       - ₹{" "}
                       {(((item.mrp * item.discount) / 100) * qyt).toFixed(2)}
@@ -218,7 +222,7 @@ export default function CartTable(props) {
               <td className="table-price p-1 ">
                 <h6>{props.qty}</h6>
               </td>
-              <td className="table-brand p-1 ">
+              <td className="table-brand p-1 " style={{ display: "none" }}>
                 <h6 className="text-danger">
                   - ₹ {props.getTotalDiscountPrice}
                 </h6>

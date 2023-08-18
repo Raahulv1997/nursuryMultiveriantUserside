@@ -95,27 +95,29 @@ export default function Cart({
         {data.length === 0 ? (
           <div className="cart_empty text-center pt-sm-5">
             <div>
-              <img src={CartEmpty} />
+              <img src={CartEmpty} alt={"cart"} />
             </div>
             <h3> Empty Cart</h3>
-            <button
-              className="btn btn-primary-sm"
-              onClick={() => {
-                if (location.pathname === "/shop") {
-                  // alert("ll");
+            {location.pathname === "/shop" ? null : (
+              <button
+                className="btn btn-primary-sm"
+                onClick={() => {
+                  if (location.pathname === "/shop") {
+                    // alert("ll");
 
-                  // var element = document.getElementById("main_body");
-                  // element.classList.add("body_overflow");
-                  RemoveBodyClass();
-                } else {
-                  navigate("/shop");
-                  RemoveBodyClass();
-                }
-              }}
-            >
-              {" "}
-              Shop Now
-            </button>
+                    // var element = document.getElementById("main_body");
+                    // element.classList.add("body_overflow");
+                    RemoveBodyClass();
+                  } else {
+                    navigate("/shop");
+                    RemoveBodyClass();
+                  }
+                }}
+              >
+                {" "}
+                Shop Now
+              </button>
+            )}
           </div>
         ) : (
           <ul className="cart-list">

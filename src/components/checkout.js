@@ -269,6 +269,7 @@ function Checkout() {
 
       let response = await PlaceOrder(result);
       console.log("responseseee after order--" + JSON.stringify(response));
+
       if (response.data.response === "order successfully added") {
         toast.success("Order Placed Successfully", {
           position: toast.POSITION.TOP_RIGHT,
@@ -280,10 +281,11 @@ function Checkout() {
         setTermErr(false);
         setAddPass(false);
         setcartcall(true);
-        const url = `/invoice?id=${encodeURIComponent(
-          response.data.invoice_id
-        )}`;
-        window.location.href = url;
+        navigate("/profile");
+        // const url = `/invoice?order_id=${encodeURIComponent(
+        //   response.data.invoice_id
+        // )}`;
+        // window.location.href = url;
       }
     }
     // else {

@@ -33,7 +33,6 @@ export default function Orderhistorysection({ setLoading }) {
 
       setLoading(false);
     } else {
-      console.log("ordddddgffg--" + JSON.stringify(OrderRes.data));
       setOrderProductList(OrderRes.data.order_product_detaile);
 
       if (OrderId) {
@@ -85,7 +84,7 @@ export default function Orderhistorysection({ setLoading }) {
     }
 
     if (orderDataList.length !== 0) {
-      newTotalGSt = orderDataList[0].total_gst;
+      newTotalGSt = orderDataList[0].only_this_product_gst;
       newTotalAmount = orderDataList[0].total_amount;
       newTotalDiscount = orderDataList[0].total_discount;
       newSubTotal = orderDataList[0].only_this_order_product_total;
@@ -141,6 +140,7 @@ export default function Orderhistorysection({ setLoading }) {
       setLoading(false);
     } else {
       setLoading(false);
+      console.log("ordddddgffg--" + JSON.stringify(response.data.results));
       setOrderList(response.data.results);
     }
   };
@@ -246,13 +246,13 @@ export default function Orderhistorysection({ setLoading }) {
                               </p>
                             </li>
                             <li>
-                              <h6>Order Time</h6>
+                              <h6>Order Date</h6>
                               <p>
                                 {moment(item.order_date).format("DD MMMM YYYY")}
                               </p>
                             </li>
                             <li>
-                              <h6>Delivery Time</h6>
+                              <h6>Delivery Date</h6>
                               <p>
                                 {moment(item.delivery_date).format(
                                   "DD MMMM YYYY"
@@ -260,8 +260,27 @@ export default function Orderhistorysection({ setLoading }) {
                               </p>
                             </li>
                             <li>
-                              <h6>Total</h6>
-                              <p>₹ {item.total_amount}</p>
+                              <h6>Driver OTP</h6>
+                              <p>{item.delivery_verify_code}</p>
+                            </li>
+                            <li>
+                              <h6>Sub Total</h6>
+                              <p> ₹ {item.only_this_order_product_total}</p>
+                            </li>
+                            <li>
+                              <h6>Delivery Charges</h6>
+                              <p> ₹ {item.shipping_charges}</p>
+                            </li>
+
+                            <li>
+                              <h6>Grand Total</h6>
+                              <p>
+                                ₹{" "}
+                                {(
+                                  Number(item.only_this_order_product_total) +
+                                  Number(item.shipping_charges)
+                                ).toFixed(2)}
+                              </p>
                             </li>
                           </ul>
                         </div>
