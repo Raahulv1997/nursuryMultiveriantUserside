@@ -160,7 +160,7 @@ export default function CartTable(props) {
                   </td>
                   <td className="table-brand p-1">
                     <h6>
-                      ₹{((item.price / (1 + item.gst / 100)) * qyt).toFixed(2)}
+                      ₹ {((item.price / (1 + item.gst / 100)) * qyt).toFixed(2)}
                       {/* {(
                         (item.mrp - (item.mrp * item.discount) / 100) *
                         qyt
@@ -169,6 +169,7 @@ export default function CartTable(props) {
                   </td>
                   <td className="table-brand p-1">
                     <h6>
+                      ₹{" "}
                       {(
                         item.price -
                         (item.price / (1 + item.gst / 100)).toFixed(2)
@@ -181,7 +182,7 @@ export default function CartTable(props) {
                     </h6>
                   </td>
                   <td className="table-quantity p-1">
-                    <h6>₹{(item.price * qyt).toFixed(2)}</h6>
+                    <h6>₹ {(item.price * qyt).toFixed(2)}</h6>
                   </td>
                   {props.invoice === "other" ? (
                     <Link

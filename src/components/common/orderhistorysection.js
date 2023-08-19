@@ -87,7 +87,9 @@ export default function Orderhistorysection({ setLoading }) {
       newTotalGSt = orderDataList[0].only_this_product_gst;
       newTotalAmount = orderDataList[0].total_amount;
       newTotalDiscount = orderDataList[0].total_discount;
-      newSubTotal = orderDataList[0].only_this_order_product_total;
+      newSubTotal =
+        orderDataList[0].only_this_order_product_total -
+        orderDataList[0].shipping_charges;
       newTotalTaxableAmount = newSubTotal - newTotalGSt;
       newTotalQty = orderDataList[0].only_this_order_product_quantity;
     } else {
@@ -263,25 +265,30 @@ export default function Orderhistorysection({ setLoading }) {
                               <h6>Driver OTP</h6>
                               <p>{item.delivery_verify_code}</p>
                             </li>
-                            <li>
-                              <h6>Sub Total</h6>
-                              <p> ₹ {item.only_this_order_product_total}</p>
-                            </li>
+
                             <li>
                               <h6>Delivery Charges</h6>
                               <p> ₹ {item.shipping_charges}</p>
                             </li>
-
                             <li>
                               <h6>Grand Total</h6>
                               <p>
+                                {" "}
                                 ₹{" "}
-                                {(
-                                  Number(item.only_this_order_product_total) +
-                                  Number(item.shipping_charges)
+                                {Number(
+                                  item.only_this_order_product_total
                                 ).toFixed(2)}
                               </p>
                             </li>
+                            {/* <li>
+                              <h6>Grand Total</h6>
+                              <p>
+                                ₹{" "}
+                                {Number(
+                                  item.only_this_order_product_total
+                                ).toFixed(2)}
+                              </p>
+                            </li> */}
                           </ul>
                         </div>
                         {/* <div className="col-lg-4">
