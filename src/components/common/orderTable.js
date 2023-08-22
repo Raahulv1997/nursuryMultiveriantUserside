@@ -171,10 +171,9 @@ export default function CartTable(props) {
                   <td className="table-brand p-1">
                     <h6>
                       ₹{" "}
-                      {(
-                        item.price -
-                        (item.price / (1 + item.gst / 100)).toFixed(2)
-                      ).toFixed(2) * qyt}
+                      {Number(
+                        (item.price - item.price / (1 + item.gst / 100)) * qyt
+                      ).toFixed(2)}
                       {/* 525/(1+5/100) = 525/1.05 = 500 */}{" "}
                       <small>
                         ({item.gst}
