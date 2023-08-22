@@ -265,7 +265,6 @@ function Checkout() {
       //   ? data.pincode
       //   : pincode)
       // if (addPass === true) {
-      console.log("redi;ttt--" + JSON.stringify(result));
 
       let response = await PlaceOrder(result);
       console.log("responseseee after order--" + JSON.stringify(response));

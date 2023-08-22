@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import OrderTable from "./orderTable";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { OrderList, Orderdetails } from "../api/api";
 import moment from "moment";
 import TicketModal from "../Modal/ticket";
 
 export default function Orderhistorysection({ setLoading }) {
+  let nevigate = useNavigate();
   let [orderList, setOrderList] = useState([]);
   const [openTicketModal, setOpenTicketModal] = useState(false);
   const [apicall, setApicall] = useState(false);
@@ -36,7 +37,9 @@ export default function Orderhistorysection({ setLoading }) {
       setOrderProductList(OrderRes.data.order_product_detaile);
 
       if (OrderId) {
-        console.log("orddddd--" + JSON.stringify(OrderRes.data.order_detaile));
+        console.log(
+          "in history--" + JSON.stringify(OrderRes.data.order_detaile)
+        );
         setOrderDataList(OrderRes.data.order_detaile);
       } else {
         setOrderDataList([]);
@@ -158,6 +161,10 @@ export default function Orderhistorysection({ setLoading }) {
   let AddComplaintModal = (id) => {
     setOpenTicketModal(true);
     setOrderId(id);
+  };
+
+  let onInvoiceClick = (id) => {
+    nevigate(`/invoice?id=${id}`);
   };
 
   return (
@@ -322,6 +329,17 @@ export default function Orderhistorysection({ setLoading }) {
                               {item.address}, {item.city}-{item.pin_code}
                             </p>
                           </div>
+                          {item.status_order === "Delivered" ? (
+                            <button
+                              className="btn btn-sm"
+                              onClick={() => {
+                                onInvoiceClick(item.order_id);
+                              }}
+                            >
+                              {" "}
+                              Invoice
+                            </button>
+                          ) : null}
                         </div>
                         <div
                           className={isOrderDetailOpen ? "col-lg-12" : "d-none"}

@@ -98,6 +98,7 @@ export default function CartTable(props) {
                             : CoverImg(item.cover_image)
                         }
                         alt={"product_image"}
+
                         // alt={item.verient_description}
                       />
                     ) : (

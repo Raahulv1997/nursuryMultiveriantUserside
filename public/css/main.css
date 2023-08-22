@@ -7420,7 +7420,7 @@ a.product-image {
 }
 
 .orderlist-deliver {
-  height: 215px;
+  /* height: 215px; */
   padding: 16px;
   border-radius: 8px;
   margin-bottom: 25px;

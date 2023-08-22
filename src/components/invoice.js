@@ -7,12 +7,19 @@ import { Orderdetails } from "./api/api";
 import moment from "moment/moment";
 import OrderTable from "../components/common/orderTable";
 function Invoice() {
-  let [orderDetails, setOrderDetails] = useState("");
-  let [orderList, setOrderList] = useState("");
   let [loading, setLoading] = useState(true);
   let location = useLocation();
+  let [orderProductList, setOrderProductList] = useState("");
+  let [orderDataList, setOrderDataList] = useState([]);
   const searchParams = new URLSearchParams(location.search);
   const OrderId = searchParams.get("id");
+
+  let newTotalGSt = 0;
+  let newTotalAmount = 0;
+  let newTotalDiscount = 0;
+  let newSubTotal = 0;
+  let newTotalTaxableAmount = 0;
+  let newTotalQty = 0;
 
   /*Function to get Order data */
   let GetData = async () => {
@@ -23,19 +30,18 @@ function Invoice() {
       OrderRes.data === "" ||
       OrderRes.data.response === "not found"
     ) {
-      setOrderDetails("");
-      setOrderList([]);
+      // setOrderDetails("");
+      // setOrderList([]);
+      setOrderProductList([]);
+      orderDataList([]);
       setLoading(false);
     } else {
-      console.log(
-        "Aall data--" + JSON.stringify(OrderRes.data.order_detaile[0])
-      );
-      setOrderDetails(OrderRes.data.order_detaile[0]);
+      // setOrderDetails(OrderRes.data.order_detaile[0]);
+      console.log("orddddd--" + JSON.stringify(OrderRes.data.order_detaile));
+      setOrderProductList(OrderRes.data.order_product_detaile);
+      setOrderDataList(OrderRes.data.order_detaile[0]);
+      // setOrderList(OrderRes.data.order_product_detaile);
 
-      setOrderList(OrderRes.data.order_product_detaile);
-      console.log(
-        "Order list" + JSON.stringify(OrderRes.data.order_product_detaile)
-      );
       setLoading(false);
     }
   };
@@ -50,14 +56,14 @@ function Invoice() {
   /*Function to get the totals */
   const getTotalPrice = () => {
     let totalAmount = 0;
-    if (orderList) {
+    if (orderProductList) {
       mrp = 0;
       subtotal = 0;
       totalGst = 0;
       totalDiscount = 0;
       qty = 0;
       taxablePrice = 0;
-      orderList.forEach((item) => {
+      orderProductList.forEach((item) => {
         mrp += item.mrp;
         qty += item.order_cart_count;
         subtotal += item.price * item.order_cart_count;
@@ -90,7 +96,17 @@ function Invoice() {
   };
   let TotalPrice = getTotalPrice();
 
+  newTotalGSt = orderDataList.only_this_product_gst;
+  newTotalAmount = orderDataList.total_amount;
+  newTotalDiscount = orderDataList.total_discount;
+  newSubTotal =
+    orderDataList.only_this_order_product_total -
+    orderDataList.shipping_charges;
+  newTotalTaxableAmount = newSubTotal - newTotalGSt;
+  newTotalQty = orderDataList.only_this_order_product_quantity;
+
   useEffect(() => {
+    window.scrollTo(0, 0);
     GetData();
     // eslint-disable-next-line
   }, [OrderId]);
@@ -128,19 +144,21 @@ function Invoice() {
                 <div className="account-content">
                   <div className="invoice-recieved">
                     <h6>
-                      order number <span>{orderDetails.order_id}</span>
+                      order number <span>{orderDataList.order_id}</span>
                     </h6>
                     <h6>
                       order date{" "}
                       <span>
-                        {moment(orderDetails.order_date).format("MMMM DD,YYYY")}
+                        {moment(orderDataList.order_date).format(
+                          "MMMM DD,YYYY"
+                        )}
                       </span>
                     </h6>
                     <h6>
-                      total amount <span>₹{orderDetails.total_amount}</span>
+                      total amount <span>₹{orderDataList.total_amount}</span>
                     </h6>
                     <h6>
-                      payment method <span>{orderDetails.payment_mode}</span>
+                      payment method <span>{orderDataList.payment_mode}</span>
                     </h6>
                   </div>
                 </div>
@@ -148,22 +166,15 @@ function Invoice() {
             </div>
             <div className="col-lg-12">
               <OrderTable
-                getTotalGstPrice={Number(orderDetails.total_gst).toFixed(2)}
-                getTotalDiscountPrice={Number(
-                  orderDetails.total_discount
-                ).toFixed(2)}
-                getSubTotalPrice={Number(
-                  orderDetails.only_this_order_product_total
-                ).toFixed(2)}
-                getTotalPrice={TotalPrice[0].toFixed(2)}
+                getTotalGstPrice={Number(newTotalGSt).toFixed(2)}
+                getTotalDiscountPrice={Number(newTotalDiscount).toFixed(2)}
+                getSubTotalPrice={Number(newSubTotal).toFixed(2)}
+                getTotalPrice={Number(newTotalAmount).toFixed(2)}
                 mrp={TotalPrice[4].toFixed(2)}
-                qty={orderDetails.only_this_order_product_quantity}
-                taxablePrice={Number(
-                  orderDetails.only_this_order_product_total -
-                    orderDetails.total_gst
-                ).toFixed(2)}
+                qty={newTotalQty}
+                taxablePrice={Number(newTotalTaxableAmount).toFixed(2)}
                 invoice={"invoice"}
-                data={orderList}
+                data={orderProductList}
               />
             </div>
             <div className="col-lg-6 m-auto pt-3">
@@ -176,15 +187,15 @@ function Invoice() {
                     <li>
                       <h6>Total Item</h6>
                       <p>
-                        {orderDetails.total_order_product_quantity > 1
-                          ? orderDetails.total_order_product_quantity + "Items"
-                          : orderDetails.total_order_product_quantity}
+                        {orderDataList.total_order_product_quantity > 1
+                          ? orderDataList.total_order_product_quantity + "Items"
+                          : orderDataList.total_order_product_quantity}
                       </p>
                     </li>
                     <li>
                       <h6>Order Time</h6>
                       <p>
-                        {moment(orderDetails.order_date).format(
+                        {moment(orderDataList.order_date).format(
                           "h:mm A, MM-DD-YYYY"
                         )}
                       </p>
@@ -192,15 +203,15 @@ function Invoice() {
                     <li>
                       <h6>Delivery Time</h6>
                       <p>
-                        {moment(orderDetails.delivery_date).fromNow()} Express
+                        {moment(orderDataList.delivery_date).fromNow()} Express
                         Delivery
                       </p>
                     </li>
                     <li>
                       <h6>Delivery Location</h6>
                       <p>
-                        {orderDetails.address} {orderDetails.pin_code},
-                        {orderDetails.city}
+                        {orderDataList.address} {orderDataList.pin_code},
+                        {orderDataList.city}
                       </p>
                     </li>
                   </ul>
@@ -217,29 +228,29 @@ function Invoice() {
                     <li>
                       <h6>Sub Total</h6>
                       {/* Sub total calculation */}
-                      <p>₹ {orderDetails.only_this_order_product_total}</p>
+                      <p>₹ {orderDataList.only_this_order_product_total}</p>
                     </li>
                     <li>
                       <h6>Discount</h6>
                       {/* Discount Calculation */}
                       <p className="text-danger">
-                        - ₹ {orderDetails.total_discount}
+                        - ₹ {orderDataList.total_discount}
                       </p>
                     </li>
                     <li>
                       <h6>GST</h6>
                       {/* Gst Calculation */}
-                      <p>₹ {orderDetails.total_gst}</p>
+                      <p>₹ {orderDataList.total_gst}</p>
                     </li>
                     <li>
                       <h6>Delivery charges</h6>
                       {/* Gst Calculation */}
-                      <p>₹ 100</p>
+                      <p>₹ {orderDataList.shipping_charges}</p>
                     </li>
                     <li>
                       <h6>Total</h6>
                       {/* Calculation of total amount */}
-                      <p>₹ {orderDetails.total_amount}</p>
+                      <p>₹ {orderDataList.total_amount}</p>
                     </li>
                   </ul>
                 </div>
@@ -253,7 +264,7 @@ function Invoice() {
                 <span>download invoice</span>
               </Link>
               <div className="back-home">
-                <Link to="/">Back to Home</Link>
+                <Link to="/profile">Back to Orders</Link>
               </div>
             </div>
           </div>

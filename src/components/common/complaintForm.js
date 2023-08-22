@@ -108,7 +108,7 @@ export default function ComplaintForm({
           setErrors("");
           setState(initialFormStateuser);
           setApicall(true);
-          // close();
+          close();
         }
       }
     } else {
