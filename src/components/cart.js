@@ -139,35 +139,40 @@ export default function Cart({
             })}
           </ul>
         )}
-
-        <div
-          className="cart-footer"
-          style={{ position: "absolute", width: "100%", bottom: "10px" }}
-        >
-          {/* <button className="coupon-btn">Do you have a coupon code?
-          </button>
-          <form className="coupon-form">
-            <input type="text" placeholder="Enter your coupon code" readOnly />
-            <button type="submit">
-              <span>apply
-              </span>
-            </button>
-          </form> */}
-          <Link
-            className="cart-checkout-btn "
+        {location.pathname === "/checkout" ? null : (
+          <div
+            className="cart-footer"
             style={{
+              position: "absolute",
               width: "100%",
-              display: data.length === 0 ? "none" : "block",
+              bottom: "10px",
             }}
-            to={"/checkout"}
-            onClick={() => RemoveBodyClass()}
           >
-            <span className="checkout-label">Proceed to Checkout</span>
-            <span className="checkout-price">
-              ₹{getTotalPrice().toFixed(2)}
-            </span>
-          </Link>
-        </div>
+            {/* <button className="coupon-btn">Do you have a coupon code?
+  </button>
+  <form className="coupon-form">
+    <input type="text" placeholder="Enter your coupon code" readOnly />
+    <button type="submit">
+      <span>apply
+      </span>
+    </button>
+  </form> */}
+            <Link
+              className="cart-checkout-btn "
+              style={{
+                width: "100%",
+                display: data.length === 0 ? "none" : "block",
+              }}
+              to={"/checkout"}
+              onClick={() => RemoveBodyClass()}
+            >
+              <span className="checkout-label">Proceed to Checkout</span>
+              <span className="checkout-price">
+                ₹{getTotalPrice().toFixed(2)}
+              </span>
+            </Link>
+          </div>
+        )}
       </div>
     </div>
   );

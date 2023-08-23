@@ -44,6 +44,7 @@ const ProductBox = ({
   id,
   varId,
 }) => {
+  const [prevVendorID, setPrevVendorID] = useState("");
   const [disableWishlist, setDisableWishlist] = useState(false);
   const [productDetailModal, setProductDetailModal] = useState(false);
   const [data, setData] = useState([]);
@@ -221,7 +222,23 @@ const ProductBox = ({
   };
 
   /*Function to add to cart */
-  const onAddToCart = async (id, varId) => {
+  const onAddToCart = async (id, varId, vendor_id) => {
+    console.log("venodr idd by funtion--" + vendor_id);
+    console.log("venodr idd--" + prevVendorID);
+    if (prevVendorID === "") {
+    } else {
+      if (vendor_id === prevVendorID) {
+      } else {
+        toast.success("vendor is change charges might increases", {
+          position: toast.POSITION.TOP_RIGHT,
+          autoClose: 1000,
+        });
+      }
+    }
+
+    // Store the current vendor_id for future comparison
+    setPrevVendorID(vendor_id);
+
     setLoading(true);
     setDisableCart(true);
     let response = await AddToCart(id, varId, 1);
@@ -465,7 +482,8 @@ const ProductBox = ({
                           ? () =>
                               onAddToCart(
                                 item.product_id,
-                                item.product_verient_id
+                                item.product_verient_id,
+                                item.vendor_id
                               )
                           : () => navigate("/login")
                       }
