@@ -3,7 +3,6 @@ import moment from "moment";
 // const API_URL = "https://nursery-verient-live.onrender.com";
 const API_URL = "http://indiakinursery.com:9999";
 
-// const API_URL = "http://www.indiakinursery.com:9999";
 // const API_URL = "http://192.168.29.108:9999";
 // const API_URL = "http://www.indiakinursery.com:3000"
 let Token = localStorage.getItem("token");

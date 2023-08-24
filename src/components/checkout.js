@@ -280,7 +280,7 @@ function Checkout() {
         setTermErr(false);
         setAddPass(false);
         setcartcall(true);
-        navigate("/profile");
+        navigate("/profile?ClickedBy=checkout");
         // const url = `/invoice?order_id=${encodeURIComponent(
         //   response.data.invoice_id
         // )}`;

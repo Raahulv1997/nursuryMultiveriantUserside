@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Header from "./common/header";
 import Footer from "./common/footer";
 import Otherbannner from "./common/otherbannner";
@@ -6,12 +6,27 @@ import Profilesection from "./common/profilesection";
 import Orderhistorysection from "./common/orderhistorysection";
 import Complainthistorysection from "./common/cmplainthistorysection";
 import { ToastContainer } from "react-toastify";
+import { useSearchParams } from "react-router-dom";
 
 export default function Profile() {
-  const [activeTab, setActiveTab] = useState("component2");
+  const [activeTab, setActiveTab] = useState("component1");
   const [getname, setGetName] = useState("");
   const [apicall, setApicall] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [searchparams] = useSearchParams();
+
+  useEffect(() => {
+    if (
+      searchparams.get("ClickedBy") === null ||
+      searchparams.get("ClickedBy") === "" ||
+      searchparams.get("ClickedBy") === undefined
+    ) {
+      setActiveTab("component1");
+    } else {
+      setActiveTab("component2");
+    }
+    // eslint-disable-next-line
+  }, []);
 
   /* Function to open diffrent tabs */
   const handleTabClick = (tab) => {
