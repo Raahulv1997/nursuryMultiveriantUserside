@@ -394,7 +394,11 @@ const ProductBox = ({
                     // onClick={() => ProductDetailClick(item)}
                   >
                     <ProductImage
-                      src={item.cover_image}
+                      src={
+                        item.cover_image !== null
+                          ? item.cover_image
+                          : item.all_images_url
+                      }
                       className={""}
                       alt={item.seo_tag}
                     />

@@ -26,14 +26,6 @@ export const ReviewModal = (props) => {
           ? "Rating is required"
           : "",
     ],
-    comment: [
-      (value) =>
-        value === "" || value === null || value.trim() === ""
-          ? "comment is required"
-          : value.length < 5
-          ? "comment should have 5 or more letter"
-          : null,
-    ],
   };
 
   // CUSTOM VALIDATIONS IMPORT
@@ -45,8 +37,6 @@ export const ReviewModal = (props) => {
     // console.log(state)
     event.preventDefault();
     if (validate()) {
-      console.log("kkkk----" + JSON.stringify(state));
-
       let response = await AddReview(state);
       if (response.data.message === "Review Rating Data Insert Succecsfully") {
         toast.success("Review Rating Data Insert Succecsfully", {
@@ -150,22 +140,10 @@ export const ReviewModal = (props) => {
                   name="comment"
                   value={"" || state.comment}
                   onChange={onInputChange}
-                  className={
-                    errors.comment
-                      ? "form-control border-danger"
-                      : "form-control"
-                  }
+                  className={"form-control"}
                   placeholder="Describe"
                 ></textarea>
                 {/*----ERROR MESSAGE FOR comment----*/}
-                {errors.comment && (
-                  <span
-                    key={errors.comment}
-                    className="text-danger font-size-3"
-                  >
-                    {errors.comment}
-                  </span>
-                )}
               </div>
             </div>
 
