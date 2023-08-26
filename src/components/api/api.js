@@ -2,7 +2,7 @@ import axios from "axios";
 import moment from "moment";
 // const API_URL = "https://nursery-verient-live.onrender.com";
 const API_URL = "http://indiakinursery.com:9999";
-
+// const API_URL_3_0 = "http://192.168.29.108:8888";
 // const API_URL = "http://192.168.29.108:9999";
 // const API_URL = "http://www.indiakinursery.com:3000"
 let Token = localStorage.getItem("token");
@@ -237,9 +237,15 @@ export const UpdateCart = async (id, varId, qty) => {
   return response;
 };
 /*Api to get Cart list */
+// export const CartList = async (props) => {
+//   // console.log(props)
+//   const response = axios.get(`${API_URL}/cart_list`, { headers: headers });
+//   return response;
+// };
+
 export const CartList = async (props) => {
   // console.log(props)
-  const response = axios.get(`${API_URL}/cart_list`, { headers: headers });
+  const response = axios.get(`${API_URL}/cart_list_1`, { headers: headers });
   return response;
 };
 /*Api to Delete Cart item */
@@ -283,6 +289,7 @@ export const Orderdetails = async (props) => {
 export const CheckUserAddress = async (pin, vendor) => {
   const pincode = parseInt(pin, 10);
   const vendorId = vendor.map((item) => item.toString());
+  console.log("in api vendro---" + JSON.stringify(vendorId));
   const response = axios.post(
     `${API_URL}/check_vendor_service_avaibility`,
     {

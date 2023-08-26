@@ -49,7 +49,7 @@ function CartBox({
   // };
   const ProductDetailsClick = () => {
     navigate(
-      `/productdetails?product_id=${data.product_id}&&variant_id=${data.product_verient_id}`
+      `/productdetails?product_id=${data.cart_product_id}&&variant_id=${data.cart_product_verient_id}`
     );
     close();
   };
@@ -63,7 +63,9 @@ function CartBox({
               data.cover_image === undefined ||
               data.cover_image === "undefined"
                 ? productImg
-                : CoverImg(data.cover_image)
+                : data.cover_image !== null
+                ? CoverImg(data.cover_image)
+                : CoverImg(data.all_images_url)
             }
             alt={data.seo_tag}
             width={"100px"}
@@ -72,7 +74,10 @@ function CartBox({
           <button
             className="cart-delete"
             onClick={() =>
-              DeleteCartClick(data.product_id, data.product_verient_id)
+              DeleteCartClick(
+                data.cart_product_id,
+                data.cart_product_verient_id
+              )
             }
           >
             <i className="far fa-trash-alt"></i>
@@ -90,8 +95,8 @@ function CartBox({
           <div className="cart-action-group">
             <CartUpdate
               qty={data.cart_product_quantity}
-              id={data.product_id}
-              vid={data.product_verient_id}
+              id={data.cart_product_id}
+              vid={data.cart_product_verient_id}
               setApicall={setApicall}
               setCartApiCall={setCartApiCall}
               setcartcall={setcartcall}

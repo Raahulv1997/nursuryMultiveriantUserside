@@ -59,7 +59,7 @@ export default function CartTable(props) {
               <th scope="col" className="p-1">
                 Qty
               </th>
-              <th scope="col" className="p-1" style={{ display: "none" }}>
+              <th scope="col" className="p-1">
                 Dis Amt(%)
               </th>
               <th scope="col" className="p-1">
@@ -78,11 +78,6 @@ export default function CartTable(props) {
           </thead>
           <tbody>
             {(props.data || []).map((item, index) => {
-              console.log();
-              let qyt =
-                location.pathname === "/checkout"
-                  ? item.cart_product_quantity
-                  : item.order_cart_count;
               return (
                 <tr key={index}>
                   <td className="table-image p-0">
@@ -147,21 +142,17 @@ export default function CartTable(props) {
                     <h6>₹ {item.mrp.toFixed(2)} </h6>
                   </td>
                   <td className="table-quantity p-1">
-                    <h6>{qyt}</h6>
+                    <h6>{item.cart_product_quantity}</h6>
                   </td>
-                  <td
-                    className="table-discount p-1"
-                    style={{ display: "none" }}
-                  >
+                  <td className="table-discount p-1">
                     <h6 className="text-danger">
-                      - ₹{" "}
-                      {(((item.mrp * item.discount) / 100) * qyt).toFixed(2)}
+                      - ₹ {item.discount_amount.toFixed(2)}
                       <small>({item.discount}%)</small>
                     </h6>
                   </td>
                   <td className="table-brand p-1">
                     <h6>
-                      ₹ {((item.price / (1 + item.gst / 100)) * qyt).toFixed(2)}
+                      ₹ {item.taxable_amount.toFixed(2)}
                       {/* {(
                         (item.mrp - (item.mrp * item.discount) / 100) *
                         qyt
@@ -170,11 +161,7 @@ export default function CartTable(props) {
                   </td>
                   <td className="table-brand p-1">
                     <h6>
-                      ₹{" "}
-                      {Number(
-                        (item.price - item.price / (1 + item.gst / 100)) * qyt
-                      ).toFixed(2)}
-                      {/* 525/(1+5/100) = 525/1.05 = 500 */}{" "}
+                      ₹ {item.gst_amount.toFixed(2)}
                       <small>
                         ({item.gst}
                         %)
@@ -182,7 +169,7 @@ export default function CartTable(props) {
                     </h6>
                   </td>
                   <td className="table-quantity p-1">
-                    <h6>₹ {(item.price * qyt).toFixed(2)}</h6>
+                    <h6>₹ {item.price_x_cart_qty.toFixed(2)}</h6>
                   </td>
                   {props.invoice === "other" ? (
                     <Link
@@ -211,34 +198,34 @@ export default function CartTable(props) {
                 </tr>
               );
             })}
-
             <tr>
-              <td className="table-image p-1 ">
-                <h5>Total</h5>
-              </td>
+              <td className="table-image p-1 "></td>
               <td className="table-name p-1 "></td>
               <td className="table-price p-1 ">
-                <h6>₹ {props.mrp}</h6>
+                <h5 className="text-success"> &nbsp;Total -</h5>
               </td>
               <td className="table-price p-1 ">
                 <h6>{props.qty}</h6>
               </td>
-              <td className="table-brand p-1 " style={{ display: "none" }}>
+              <td className="table-brand p-1 ">
                 <h6 className="text-danger">
-                  - ₹ {props.getTotalDiscountPrice}
+                  - ₹ {Number(props.getTotalDiscountPrice).toFixed(2)}
                 </h6>
               </td>
               <td className="table-price p-1 ">
-                <h6>₹ {props.taxablePrice}</h6>
+                <h6>₹ {Number(props.taxablePrice).toFixed(2)}</h6>
               </td>
               <td className="table-quantity p-1 ">
-                <h6>₹ {props.getTotalGstPrice}</h6>
+                <h6>₹ {Number(props.getTotalGstPrice).toFixed(2)}</h6>
               </td>
               <td className="table-price p-1 ">
-                <h6> ₹ {props.getSubTotalPrice}</h6>
+                <h6> ₹ {Number(props.getSubTotalPrice).toFixed(2)}</h6>
               </td>
             </tr>
           </tbody>
+          <p className="text-danger text-end">
+            Shipping Charges:-₹ {Number(props.deliveryCharges).toFixed(2)}
+          </p>
         </table>
       </div>
       {props.invoice === "other" ? null : (
@@ -252,37 +239,58 @@ export default function CartTable(props) {
                     </button>
                 </form>
             </div> */}
-          <div className="checkout-charge">
-            <ul>
-              <li>
-                <span className="text-danger">discount</span>
-                <span className="text-danger">
-                  - ₹ {props.getTotalDiscountPrice}{" "}
-                </span>
-              </li>
-              <li>
-                <span>Total GST</span>
-                <span> ₹ {props.getTotalGstPrice} </span>
-              </li>
-              <li>
-                <span>
-                  Sub Total
-                  <small>(including GST)</small>
-                </span>
-                <span>₹ {props.getSubTotalPrice} </span>
-              </li>
-              <li>
-                <span>delivery fee</span>
-                <span> ₹100 </span>
-              </li>
-              <li>
-                <span>Total</span>
-                <span>₹ {props.getTotalPrice} </span>
-              </li>
-            </ul>
-          </div>
         </>
       )}
+      <div className="checkout-charge">
+        <ul>
+          <li>
+            <span className="text-danger">discount</span>
+            <span className="text-danger">
+              {/* - ₹ {Number(cartTotalData.total_discount).toFixed(2)} */}
+            </span>
+          </li>
+          <li>
+            <span>Total GST</span>
+            {
+              <span>
+                {" "}
+                {/* ₹ {Number(cartTotalData.total_gst).toFixed(2)}{" "} */}
+              </span>
+            }
+          </li>
+          <li>
+            <span>
+              Sub Total
+              <small>(including GST)</small>
+            </span>
+            {
+              <span>
+                {/* ₹ {Number(cartTotalData.sub_total).toFixed(2)}{" "} */}
+              </span>
+            }
+          </li>
+          <li>
+            <span>delivery fee</span>
+            <span>
+              {/* ₹{" "}
+                          {Number(cartTotalData.total_delivery_charge).toFixed(
+                            2
+                          )}{" "} */}
+            </span>
+          </li>
+          <li>
+            <span>Total</span>
+            {
+              <span>
+                {/* ₹{" "}
+                            {Number(
+                              cartTotalData.sub_total_with_shipping_charges
+                            ).toFixed(2)}{" "} */}
+              </span>
+            }
+          </li>
+        </ul>
+      </div>
       {productDetailModal ? (
         <ProductDetailModal
           show={productDetailModal}

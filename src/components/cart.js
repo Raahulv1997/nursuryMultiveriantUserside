@@ -20,6 +20,9 @@ export default function Cart({
   const [apicall, setApicall] = useState(false);
   const [cartcall, setcartcall] = useState(false);
   let [data, setData] = useState([]);
+  let [subTotal, setsubTotal] = useState("");
+  let [totalQty, settotalQty] = useState("");
+
   let Token = localStorage.getItem("token");
   /*Function to get the Cart list */
   let GetCartList = async () => {
@@ -35,7 +38,11 @@ export default function Cart({
         setData([]);
         setLoading(false);
       } else {
-        setData(response.data);
+        setData(response.data.response);
+        setsubTotal(response.data.sub_total);
+        settotalQty(response.data.total_product_count);
+        // setData(response.data);
+
         setLoading(false);
       }
     }
@@ -58,35 +65,21 @@ export default function Cart({
   }, [apicall, cartcall, cartApicCall, cartList]);
 
   /*Function to Calculation the sum total price of all cart products */
-  const getTotalPrice = () => {
-    let totalPrice = 0;
-    data.forEach((item) => {
-      totalPrice += item.price * item.cart_product_quantity;
-    });
-    return totalPrice;
-  };
-
-  /*Function to Go detail page */
-  // const ProductDetailClick = (item) => {
-  //   // if (location.pathname === "/productdetails") {
-  //   //   setId(item.id)
-  //   //   setVar_Id(item.product_verient_id)
-  //   //   setProductDetailCall(true)
-  //   // } else {
-  //   localStorage.setItem("product_id", item.product_id);
-  //   localStorage.setItem("product_var_id", item.product_verient_id);
-  //   close();
-  //   // return navigate("/productdetails");
-  //   // }
+  // const getTotalPrice = () => {
+  //   let totalPrice = 0;
+  //   data.forEach((item) => {
+  //     totalPrice += item.price * item.cart_product_quantity;
+  //   });
+  //   return totalPrice;
   // };
-  console.log("hhh-" + location.pathname);
+
   return (
     <div>
       <div className={show ? "cart-sidebar active" : "cart-sidebar"}>
         <div className="cart-header">
           <div className="cart-total">
             <i className="fas fa-shopping-basket"></i>
-            <span>total item ({data.length})</span>
+            <span>total item ({totalQty})</span>
           </div>
           <button className="cart-close" onClick={close}>
             <i className="icofont-close"></i>
@@ -124,16 +117,68 @@ export default function Cart({
             {(data || []).map((item, index) => {
               return (
                 // <Link key={index} onClick={() => ProductDetailClick(item)}>
-                <CartBox
-                  data={item}
-                  apicall={apicall}
-                  setApicall={setApicall}
-                  setCartApiCall={setCartApiCall}
-                  setcartcall={setcartcall}
-                  setproductcall={setproductcall}
-                  setLoading={setLoading}
-                  close={close}
-                />
+                <>
+                  <b>{item.owner_name}</b>
+                  <div>
+                    {(item.cart_products || []).map((item) => {
+                      return (
+                        <CartBox
+                          data={item}
+                          apicall={apicall}
+                          setApicall={setApicall}
+                          setCartApiCall={setCartApiCall}
+                          setcartcall={setcartcall}
+                          setproductcall={setproductcall}
+                          setLoading={setLoading}
+                          close={close}
+                        />
+                      );
+                    })}
+                    <h4 style={{ marginTop: "10px" }}>Summury</h4>
+
+                    <div
+                      style={{
+                        justifyContent: "space-between",
+                        display: "flex",
+                        marginTop: "10px",
+                      }}
+                    >
+                      {" "}
+                      <small> SubTotal</small>
+                      <small>{`${item[
+                        item.vendor_id + "_price_x_cart_qty_amount"
+                      ].toFixed(2)}`}</small>
+                    </div>
+                    <div
+                      style={{
+                        justifyContent: "space-between",
+                        display: "flex",
+                      }}
+                    >
+                      <small> Delivery charge</small>
+                      <small>{Number(item.delivery_charges).toFixed(2)}</small>
+                    </div>
+                    <div
+                      style={{
+                        justifyContent: "space-between",
+                        display: "flex",
+                      }}
+                    >
+                      {" "}
+                      <b>Total</b>
+                      <b className="text-danger">
+                        {(
+                          Number(
+                            ` ${
+                              item[item.vendor_id + "_price_x_cart_qty_amount"]
+                            } `
+                          ) + Number(item.delivery_charges)
+                        ).toFixed(2)}
+                      </b>
+                    </div>
+                    <hr style={{ margin: "10px 0 5px 0" }} />
+                  </div>
+                </>
                 // </Link>
               );
             })}
@@ -168,7 +213,7 @@ export default function Cart({
             >
               <span className="checkout-label">Proceed to Checkout</span>
               <span className="checkout-price">
-                ₹{getTotalPrice().toFixed(2)}
+                ₹ {Number(subTotal).toFixed(2)}
               </span>
             </Link>
           </div>

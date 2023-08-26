@@ -14,7 +14,9 @@ import { ToastContainer, toast } from "react-toastify";
 function Checkout() {
   const [data, setData] = useState("");
   const [cartData, setCartData] = useState("");
+  const [cartTotalData, setTotalCartData] = useState("");
   const [vendorId, setVendorId] = useState([]);
+  const [afterAreaCheck, setAfterAreaCheck] = useState([]);
   const [openProfileInfo, setOpenProfileInfo] = useState(false);
   const [openAddressForm, setOpenAddressForm] = useState(false);
   const [apicall, setApicall] = useState(false);
@@ -36,21 +38,30 @@ function Checkout() {
   let navigate = useNavigate();
 
   const divElement = document.getElementById("myDiv");
+
   /*Function to get user details */
   let GetData = async () => {
     let UserRes = await UserData();
     let CartRes = await CartList();
+
     setData(UserRes.data[0]);
-    setCartData(CartRes.data);
-    setVendorId(CartRes.data.map((item) => item.vendor_id));
-    if (CartRes.data.length === 0) {
-      navigate("/");
-    }
-    let v = CartRes.data.map((item) => item.vendor_id);
+    setCartData(CartRes.data.response);
+    setTotalCartData(CartRes.data);
+    // setCartData(CartRes.response.cart_products);
+    // console.log(
+    //   "dddddddd-" + JSON.stringify(CartRes.data.response[0].cart_products)
+    // );
+    setVendorId(CartRes.data.response.map((item) => item.vendor_id));
+    // if (CartRes.data.length === 0) {
+    //   navigate("/");
+    // }
+
     let pin = UserRes.data[0].pincode;
-    // console.log(pin);
+    let v = CartRes.data.response.map((item) => item.vendor_id);
+
     let responseCheck = await CheckUserAddress(pin, v);
-    console.log("kkk" + JSON.stringify(responseCheck));
+    console.log("after callll----" + JSON.stringify(responseCheck));
+    setAfterAreaCheck(responseCheck.data.service_available);
     if (responseCheck.data.status === true) {
       setLocationCheck("avaliable");
     }
@@ -60,7 +71,8 @@ function Checkout() {
 
     setLoading(false);
   };
-  console.log(locationCheck);
+
+  console.log(afterAreaCheck);
 
   useEffect(() => {
     GetData();
@@ -81,56 +93,6 @@ function Checkout() {
     setFirst_name(data.first_name);
     setPhone_no(data.phone_no);
   };
-
-  /*Function to Calculation the sum total price of all cart products */
-  let subtotal = 0;
-  let totalGst = 0;
-  let totalDiscount = 0;
-  let mrp = 0;
-  let qty = 0;
-  let taxablePrice = 0;
-
-  const getTotalPrice = () => {
-    let totalAmount = 0;
-    if (cartData) {
-      mrp = 0;
-      subtotal = 0;
-      totalGst = 0;
-      totalDiscount = 0;
-      qty = 0;
-      taxablePrice = 0;
-      cartData.forEach((item) => {
-        mrp += item.mrp;
-        qty += item.cart_product_quantity;
-        subtotal += item.price * item.cart_product_quantity;
-        taxablePrice +=
-          (item.price / (1 + item.gst / 100)).toFixed(2) *
-          item.cart_product_quantity;
-        totalGst =
-          totalGst +
-          (item.price - (item.price / (1 + item.gst / 100)).toFixed(2)).toFixed(
-            2
-          ) *
-            item.cart_product_quantity;
-        totalDiscount =
-          totalDiscount +
-          ((item.mrp * item.discount) / 100) * item.cart_product_quantity;
-        totalAmount = subtotal + 100;
-      });
-    }
-    const totalPriceInfo = [
-      totalAmount,
-      totalGst,
-      totalDiscount,
-      subtotal,
-      mrp,
-      qty,
-      taxablePrice,
-    ];
-    return totalPriceInfo;
-  };
-  let TotalPrice = getTotalPrice();
-  console.log("total price--" + JSON.stringify(TotalPrice));
 
   /* Delivery Object*/
   const deliveryAddress = {
@@ -174,41 +136,8 @@ function Checkout() {
   /*Order object */
   const order = (cartData || []).map((item) => {
     return {
-      product_id: item.product_id,
       vendor_id: item.vendor_id,
-      product_verient_id: item.product_verient_id,
-      total_gst: TotalPrice[1],
-      total_cgst: TotalPrice[1] / 2,
-      total_sgst: TotalPrice[1] / 2,
-      total_discount: TotalPrice[2],
-      shipping_charges: 100,
-      invoice_id: 0,
-      payment_mode: selectedPayment,
-      payment_ref_id: 0,
-      discount_coupon: 0,
-      discount_coupon_value: 0,
-      sub_total: TotalPrice[3],
-      total_amount: TotalPrice[0],
-      total_of_this_prodoct: item.price * item.cart_product_quantity, //price*cart_qty
-      product_cart_qty_total: item.cart_product_quantity,
-      total_order_product_quantity: cartData.length, //order qty
-      cart_qty_of_this_product: item.cart_product_quantity,
-      only_this_product_gst:
-        (item.price - (item.price / (1 + item.gst / 100)).toFixed(2)).toFixed(
-          2
-        ) * item.cart_product_quantity, //gst*cart_qty
-      only_this_product_cgst:
-        ((item.price - (item.price / (1 + item.gst / 100)).toFixed(2)).toFixed(
-          2
-        ) *
-          item.cart_product_quantity) /
-        2,
-      only_this_product_sgst:
-        ((item.price - (item.price / (1 + item.gst / 100)).toFixed(2)).toFixed(
-          2
-        ) *
-          item.cart_product_quantity) /
-        2,
+      coupan_code: "",
     };
   });
 
@@ -265,7 +194,7 @@ function Checkout() {
       //   ? data.pincode
       //   : pincode)
       // if (addPass === true) {
-
+      return false;
       let response = await PlaceOrder(result);
       console.log("responseseee after order--" + JSON.stringify(response));
 
@@ -323,23 +252,291 @@ function Checkout() {
                         </div> */}
             <div className="col-lg-12">
               <div className="account-card">
+                <div className="col-lg-12">
+                  <div className="account-card">
+                    <div className="account-title">
+                      <h4>delivery address</h4>
+                      <button onClick={() => setOpenAddressForm(true)}>
+                        add address
+                      </button>
+                    </div>
+                    <div className="account-content">
+                      <div className="row">
+                        <div
+                          className="col-md-6 col-lg-4 alert fade show"
+                          id="myDiv"
+                        >
+                          <div
+                            className={
+                              address === data.address
+                                ? "profile-card address active"
+                                : address === ""
+                                ? "profile-card address active"
+                                : "profile-card address"
+                            }
+                          >
+                            <Link
+                              to=""
+                              onClick={() => {
+                                setAddress(data.address);
+                                CheckAddress(data.pincode);
+                              }}
+                              className="text-dark"
+                            >
+                              <h6>Home</h6>
+
+                              <p>
+                                <h5>
+                                  {data.first_name} {data.last_name}
+                                </h5>
+                                +91 {data.phone_no}
+                                <br />
+                                {data.address} , {data.pincode} {data.city}
+                              </p>
+                              <ul className="user-action">
+                                <li>
+                                  <button
+                                    className="edit icofont-edit"
+                                    title="Edit This"
+                                    onClick={() => setOpenProfileInfo(true)}
+                                  ></button>
+                                </li>
+                                {/* <li>
+                             <button className="trash icofont-ui-delete" title="Remove This" data-bs-dismiss="alert">
+                              </button>
+                                </li> */}
+                              </ul>
+                            </Link>
+                          </div>
+                          {locationCheck === "avaliable" ? (
+                            <span className="text-success">
+                              {" "}
+                              Area is available!!!
+                            </span>
+                          ) : locationCheck === "notAvalaible" ? (
+                            <span className="text-danger">
+                              {" "}
+                              Area is not available!!!
+                            </span>
+                          ) : null}
+                        </div>
+
+                        {data.alternate_address ? (
+                          <div className="col-md-6 col-lg-4 alert fade show">
+                            <div
+                              className={
+                                address === data.alternate_address
+                                  ? "profile-card address active"
+                                  : "profile-card address"
+                              }
+                            >
+                              <Link
+                                to=""
+                                onClick={() => {
+                                  setAddress(data.alternate_address);
+                                  CheckAddress(data.pincode);
+                                }}
+                                className="text-dark"
+                              >
+                                <h6>Other</h6>
+                                <p>
+                                  <h5>
+                                    {data.first_name} {data.last_name}
+                                  </h5>
+                                  {data.alternate_address} , {data.pincode}{" "}
+                                  {data.city}
+                                </p>
+                                <ul className="user-action">
+                                  <li>
+                                    <button
+                                      className="edit icofont-edit"
+                                      title="Edit This"
+                                      onClick={() => setOpenProfileInfo(true)}
+                                    ></button>
+                                  </li>
+                                  {/* <li>
+                                                        <button className="trash icofont-ui-delete" title="Remove This" data-bs-dismiss="alert">
+                                                        </button>
+                                                    </li> */}
+                                </ul>
+                              </Link>
+                            </div>
+                            {/* {locationCheck === "avaliable" ? (
+                          <span className="text-success">
+                            {" "}
+                            Area is available!!!
+                          </span>
+                        ) : locationCheck === "notAvalaible" ? (
+                          <span className="text-danger">
+                            {" "}
+                            Area is not available!!!
+                          </span>
+                        ) : null} */}
+                          </div>
+                        ) : null}
+                        {newAddess === "" ||
+                        newAddess === undefined ||
+                        newAddess === null ? null : (
+                          <div className="col-md-6 col-lg-4 alert fade show">
+                            <div
+                              className={
+                                address === newAddess
+                                  ? "profile-card address active"
+                                  : "profile-card address"
+                              }
+                            >
+                              <Link
+                                to=""
+                                onClick={() => {
+                                  setAddress(newAddess);
+                                  setCity(city);
+                                  setPincode(pincode);
+                                  CheckAddress(pincode);
+                                }}
+                                className="text-dark"
+                              >
+                                <h6>New Address</h6>
+                                <p>
+                                  <h5>{first_name}</h5>
+                                  +91 {phone_no}
+                                  <br />
+                                  {newAddess} , {pincode} {city}
+                                </p>
+                                {/* <ul className="user-action">
+                                                    <li>
+                                                        <button className="edit icofont-edit" title="Edit This" 
+                                                         onClick={() => setOpenProfileInfo(true)}>
+                                                        </button>
+                                                    </li>
+                                                    <li>
+                                                        <button className="trash icofont-ui-delete" title="Remove This" data-bs-dismiss="alert">
+                                                        </button>
+                                                    </li>
+                                                </ul> */}
+                              </Link>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 <div className="account-title">
                   <h4>Your Product</h4>
                 </div>
                 <div className="account-content">
-                  <OrderTable
-                    getTotalGstPrice={TotalPrice[1].toFixed(2)}
-                    getTotalDiscountPrice={TotalPrice[2].toFixed(2)}
-                    getSubTotalPrice={TotalPrice[3].toFixed(2)}
-                    getTotalPrice={TotalPrice[0].toFixed(2)}
-                    mrp={TotalPrice[4].toFixed(2)}
-                    qty={TotalPrice[5]}
-                    taxablePrice={TotalPrice[6].toFixed(2)}
-                    setApicall={setApicall}
-                    data={cartData}
-                    setLoading={setLoading}
-                    orderData={""}
-                  />
+                  {(cartData || []).map((item) => {
+                    var iddd = Number(item.vendor_id);
+                    return (
+                      <>
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "row",
+
+                            justifyContent: "space-between",
+                          }}
+                        >
+                          <p>Vendor--{item.owner_name}</p>
+                          <div
+                            style={{
+                              display: "flex",
+                              flexDirection: "row",
+                              justifyContent: "end",
+                            }}
+                          >
+                            {afterAreaCheck.map((item1, index) => {
+                              if (item1 == iddd) {
+                                return (
+                                  <>
+                                    <span className="label-text sale bg-danger">
+                                      available
+                                    </span>
+                                    <span className="label-text sale bg-success">
+                                      order this
+                                    </span>
+                                  </>
+                                );
+                              }
+                            })}
+                          </div>
+                        </div>
+
+                        <OrderTable
+                          getTotalGstPrice={`${
+                            item[item.vendor_id + "_gst_amount"]
+                          }`}
+                          getTotalDiscountPrice={`${
+                            item[item.vendor_id + "_discount_amount"]
+                          }`}
+                          getSubTotalPrice={`${
+                            item[item.vendor_id + "_price_x_cart_qty_amount"]
+                          }`}
+                          getTotalPrice={""}
+                          mrp={""}
+                          qty={`${item[item.vendor_id + "_product_qty_total"]}`}
+                          taxablePrice={`${
+                            item[item.vendor_id + "_taxable_amount"]
+                          }`}
+                          deliveryCharges={item.delivery_charges}
+                          setApicall={setApicall}
+                          data={item.cart_products}
+                          setLoading={setLoading}
+                          orderData={""}
+                        />
+                      </>
+                    );
+                  })}
+                  <div className="checkout-charge">
+                    <ul>
+                      <li>
+                        <span className="text-danger">discount</span>
+                        <span className="text-danger">
+                          - ₹ {Number(cartTotalData.total_discount).toFixed(2)}
+                        </span>
+                      </li>
+                      <li>
+                        <span>Total GST</span>
+                        {
+                          <span>
+                            {" "}
+                            ₹ {Number(cartTotalData.total_gst).toFixed(2)}{" "}
+                          </span>
+                        }
+                      </li>
+                      <li>
+                        <span>
+                          Sub Total
+                          <small>(including GST)</small>
+                        </span>
+                        {
+                          <span>
+                            ₹ {Number(cartTotalData.sub_total).toFixed(2)}{" "}
+                          </span>
+                        }
+                      </li>
+                      <li>
+                        <span>delivery fee</span>
+                        <span>
+                          ₹{" "}
+                          {Number(cartTotalData.total_delivery_charge).toFixed(
+                            2
+                          )}{" "}
+                        </span>
+                      </li>
+                      <li>
+                        <span>Total</span>
+                        {
+                          <span>
+                            ₹{" "}
+                            {Number(
+                              cartTotalData.sub_total_with_shipping_charges
+                            ).toFixed(2)}{" "}
+                          </span>
+                        }
+                      </li>
+                    </ul>
+                  </div>
                 </div>
               </div>
             </div>
@@ -435,175 +632,7 @@ function Checkout() {
                 </div>
               </div>
             </div> */}
-            <div className="col-lg-12">
-              <div className="account-card">
-                <div className="account-title">
-                  <h4>delivery address</h4>
-                  <button onClick={() => setOpenAddressForm(true)}>
-                    add address
-                  </button>
-                </div>
-                <div className="account-content">
-                  <div className="row">
-                    <div
-                      className="col-md-6 col-lg-4 alert fade show"
-                      id="myDiv"
-                    >
-                      <div
-                        className={
-                          address === data.address
-                            ? "profile-card address active"
-                            : address === ""
-                            ? "profile-card address active"
-                            : "profile-card address"
-                        }
-                      >
-                        <Link
-                          to=""
-                          onClick={() => {
-                            setAddress(data.address);
-                            CheckAddress(data.pincode);
-                          }}
-                          className="text-dark"
-                        >
-                          <h6>Home</h6>
 
-                          <p>
-                            <h5>
-                              {data.first_name} {data.last_name}
-                            </h5>
-                            +91 {data.phone_no}
-                            <br />
-                            {data.address} , {data.pincode} {data.city}
-                          </p>
-                          <ul className="user-action">
-                            <li>
-                              <button
-                                className="edit icofont-edit"
-                                title="Edit This"
-                                onClick={() => setOpenProfileInfo(true)}
-                              ></button>
-                            </li>
-                            {/* <li>
-                             <button className="trash icofont-ui-delete" title="Remove This" data-bs-dismiss="alert">
-                              </button>
-                                </li> */}
-                          </ul>
-                        </Link>
-                      </div>
-                      {locationCheck === "avaliable" ? (
-                        <span className="text-success">
-                          {" "}
-                          Area is available!!!
-                        </span>
-                      ) : locationCheck === "notAvalaible" ? (
-                        <span className="text-danger">
-                          {" "}
-                          Area is not available!!!
-                        </span>
-                      ) : null}
-                    </div>
-
-                    {data.alternate_address ? (
-                      <div className="col-md-6 col-lg-4 alert fade show">
-                        <div
-                          className={
-                            address === data.alternate_address
-                              ? "profile-card address active"
-                              : "profile-card address"
-                          }
-                        >
-                          <Link
-                            to=""
-                            onClick={() => {
-                              setAddress(data.alternate_address);
-                              CheckAddress(data.pincode);
-                            }}
-                            className="text-dark"
-                          >
-                            <h6>Other</h6>
-                            <p>
-                              <h5>
-                                {data.first_name} {data.last_name}
-                              </h5>
-                              {data.alternate_address} , {data.pincode}{" "}
-                              {data.city}
-                            </p>
-                            <ul className="user-action">
-                              <li>
-                                <button
-                                  className="edit icofont-edit"
-                                  title="Edit This"
-                                  onClick={() => setOpenProfileInfo(true)}
-                                ></button>
-                              </li>
-                              {/* <li>
-                                                        <button className="trash icofont-ui-delete" title="Remove This" data-bs-dismiss="alert">
-                                                        </button>
-                                                    </li> */}
-                            </ul>
-                          </Link>
-                        </div>
-                        {/* {locationCheck === "avaliable" ? (
-                          <span className="text-success">
-                            {" "}
-                            Area is available!!!
-                          </span>
-                        ) : locationCheck === "notAvalaible" ? (
-                          <span className="text-danger">
-                            {" "}
-                            Area is not available!!!
-                          </span>
-                        ) : null} */}
-                      </div>
-                    ) : null}
-                    {newAddess === "" ||
-                    newAddess === undefined ||
-                    newAddess === null ? null : (
-                      <div className="col-md-6 col-lg-4 alert fade show">
-                        <div
-                          className={
-                            address === newAddess
-                              ? "profile-card address active"
-                              : "profile-card address"
-                          }
-                        >
-                          <Link
-                            to=""
-                            onClick={() => {
-                              setAddress(newAddess);
-                              setCity(city);
-                              setPincode(pincode);
-                              CheckAddress(pincode);
-                            }}
-                            className="text-dark"
-                          >
-                            <h6>New Address</h6>
-                            <p>
-                              <h5>{first_name}</h5>
-                              +91 {phone_no}
-                              <br />
-                              {newAddess} , {pincode} {city}
-                            </p>
-                            {/* <ul className="user-action">
-                                                    <li>
-                                                        <button className="edit icofont-edit" title="Edit This" 
-                                                         onClick={() => setOpenProfileInfo(true)}>
-                                                        </button>
-                                                    </li>
-                                                    <li>
-                                                        <button className="trash icofont-ui-delete" title="Remove This" data-bs-dismiss="alert">
-                                                        </button>
-                                                    </li>
-                                                </ul> */}
-                          </Link>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
             <div className="col-lg-12">
               <div className="account-card mb-0">
                 <div className="account-title">

@@ -71,20 +71,11 @@ export default function Header({
     setCatData(response.data.response);
   };
 
-  /*Function to Calculation the sum total price of all cart products */
-  const getTotalPrice = () => {
-    let totalPrice = 0;
-    cartData.forEach((item) => {
-      totalPrice += item.price * item.cart_product_quantity;
-    });
-    return totalPrice;
-  };
-
   /*Function to get the data just by parent */
   const parentCategories = catData.filter(
     (category) => category.parent_id === 0
   );
-
+  console.log("cart data----" + JSON.stringify(cartData.sub_total));
   /*Render method of getting category list */
   useEffect(() => {
     // window.scrollTo(0, 0)
@@ -251,9 +242,9 @@ export default function Header({
                   onClick={() => OpenCart()}
                 >
                   <i className="fas fa-shopping-basket"></i>
-                  <sup>{cartData.length}</sup>
+                  <sup>{cartData.total_product_count}</sup>
                   <span>
-                    Total price<small>₹{getTotalPrice().toFixed(2)}</small>
+                    Total price<small>₹{cartData.sub_total}</small>
                   </span>
                 </button>
               </div>
