@@ -5,7 +5,7 @@ import { DeleteCart } from "../api/api";
 import { toast } from "react-toastify";
 import productImg from "../../image/product_demo.png";
 import { ReviewModal } from "../Modal/reviewModal";
-export default function CartTable(props) {
+export default function OrderDetailsTable(props) {
   // const [active, setActive] = useState(false)
   const [productDetailModal, setProductDetailModal] = useState(false);
   const [productId, setProductId] = useState();
@@ -42,6 +42,7 @@ export default function CartTable(props) {
     setToReviewData(e);
   };
 
+  console.log("product details in ordre---" + JSON.stringify(props.data));
   return (
     <div>
       <div className="">
@@ -60,7 +61,7 @@ export default function CartTable(props) {
               <th scope="col" className="p-1">
                 Qty
               </th>
-              <th scope="col" className="p-1">
+              <th scope="col" className="p-1" style={{ display: "none" }}>
                 Dis Amt(%)
               </th>
               <th scope="col" className="p-1">
@@ -79,6 +80,10 @@ export default function CartTable(props) {
           </thead>
           <tbody>
             {(props.data || []).map((item, index) => {
+              let qyt =
+                location.pathname === "/checkout"
+                  ? item.cart_product_quantity
+                  : item.order_cart_count;
               return (
                 <tr key={index}>
                   <td className="table-image p-0">
@@ -143,20 +148,33 @@ export default function CartTable(props) {
                     <h6>₹ {item.mrp.toFixed(2)} </h6>
                   </td>
                   <td className="table-quantity p-1">
-                    <h6>{item.cart_product_quantity}</h6>
+                    <h6>{qyt}</h6>
                   </td>
-                  <td className="table-discount p-1">
+                  <td
+                    className="table-discount p-1"
+                    style={{ display: "none" }}
+                  >
                     <h6 className="text-danger">
-                      - ₹ {item.discount_amount.toFixed(2)}
+                      {/* - ₹ {item.discount_amount.toFixed(2)} */}- ₹{" "}
+                      {item.discount_amount}
                       <small>({item.discount}%)</small>
                     </h6>
                   </td>
                   <td className="table-brand p-1">
-                    <h6>₹ {item.taxable_amount.toFixed(2)}</h6>
+                    <h6>
+                      <h6>
+                        ₹{" "}
+                        {((item.price / (1 + item.gst / 100)) * qyt).toFixed(2)}
+                      </h6>
+                    </h6>
                   </td>
                   <td className="table-brand p-1">
                     <h6>
-                      ₹ {item.gst_amount.toFixed(2)}
+                      ₹{" "}
+                      {Number(
+                        (item.price - item.price / (1 + item.gst / 100)) * qyt
+                      ).toFixed(2)}
+                      {/* 525/(1+5/100) = 525/1.05 = 500 */}{" "}
                       <small>
                         ({item.gst}
                         %)
@@ -164,7 +182,7 @@ export default function CartTable(props) {
                     </h6>
                   </td>
                   <td className="table-quantity p-1">
-                    <h6>₹ {item.price_x_cart_qty.toFixed(2)}</h6>
+                    <h6>₹ {(item.price * qyt).toFixed(2)}</h6>
                   </td>
                   {props.invoice === "other" ? (
                     <Link
@@ -209,6 +227,46 @@ export default function CartTable(props) {
             </div> */}
         </>
       )}
+
+      <div
+        className="checkout-charge checkout-charge-order"
+        style={{
+          width: "356px",
+        }}
+      >
+        <ul>
+          <li className="py-1">
+            <span className="text-danger">discount</span>
+            <span className="text-danger">₹ {props.getTotalDiscountPrice}</span>
+          </li>
+          <li className="py-1">
+            <span>Total GST</span>
+            {<span> ₹ {props.getTotalGstPrice}</span>}
+          </li>
+          <li className="py-1">
+            <span>
+              Sub Total
+              <small>(including GST)</small>
+            </span>
+            {<span>₹ {props.getSubTotalPrice}</span>}
+          </li>
+          <li className="py-1">
+            <span>delivery fee</span>
+            <span>₹ {props.deliveryCharges} </span>
+          </li>
+          <li className="py-1">
+            <span>Total</span>
+            {
+              <span>
+                ₹{" "}
+                {(
+                  Number(props.getSubTotalPrice) + Number(props.deliveryCharges)
+                ).toFixed(2)}{" "}
+              </span>
+            }
+          </li>
+        </ul>
+      </div>
 
       {productDetailModal ? (
         <ProductDetailModal

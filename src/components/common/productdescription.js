@@ -16,7 +16,9 @@ export default function Productdescription(props) {
   /*Function to get Review List */
   const GetReviewList = async () => {
     let response = await ReviewList(props.id);
-    if(reviewListData.length === 0){setReviewListData(response.data);}
+    if (reviewListData.length === 0) {
+      setReviewListData(response.data);
+    }
   };
 
   /*Render method to get review list */
@@ -24,6 +26,8 @@ export default function Productdescription(props) {
     GetReviewList();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab]);
+
+  // console.log("des image--" + JSON.stringify(props.data.cover_image));
   return (
     <div>
       <section className="inner-section">
@@ -51,16 +55,18 @@ export default function Productdescription(props) {
                     Specifications
                   </Link>
                 </li>
-               {reviewListData.length === 0 ? null : <li>
-                  <Link
-                    className={`tab-link ${
-                      activeTab === "tab-reve" ? "active" : ""
-                    }`}
-                    onClick={() => handleTabClick("tab-reve")}
-                  >
-                    reviews ({reviewListData.length})
-                  </Link>
-                </li>}
+                {reviewListData.length === 0 ? null : (
+                  <li>
+                    <Link
+                      className={`tab-link ${
+                        activeTab === "tab-reve" ? "active" : ""
+                      }`}
+                      onClick={() => handleTabClick("tab-reve")}
+                    >
+                      reviews ({reviewListData.length})
+                    </Link>
+                  </li>
+                )}
               </ul>
             </div>
           </div>
@@ -91,11 +97,16 @@ export default function Productdescription(props) {
               <div className="col-lg-6">
                 <div className="product-details-frame">
                   <div className="tab-descrip">
-                  <ProductImage
-                          src={props.data.cover_image}
-                          className={"img-fluid"}
-                          alt={props.data.description + ", " + props.data.seo_tag}
-                        />
+                    <ProductImage
+                      src={
+                        props.data.cover_image !== null
+                          ? props.data.cover_image
+                          : props.data.all_images_url
+                      }
+                      //       src={props.data.cover_image}
+                      className={"img-fluid"}
+                      alt={props.data.description + ", " + props.data.seo_tag}
+                    />
                     {/* <Link title="Product Video" className="venobox fas fa-play vbox-item" data-autoplay="true" data-vbtype="video">
                                         </Link> */}
                   </div>
@@ -140,7 +151,8 @@ export default function Productdescription(props) {
             className={`tab-pane fade ${
               activeTab === "tab-reve" ? "show active" : ""
             }`}
-            id="tab-reve">
+            id="tab-reve"
+          >
             <div className="row">
               <div className="col-lg-12">
                 <div className="product-details-frame">

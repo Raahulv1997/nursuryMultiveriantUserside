@@ -5,7 +5,8 @@ import Header from "./common/header";
 import Otherbannner from "./common/otherbannner";
 import { Orderdetails } from "./api/api";
 import moment from "moment/moment";
-import OrderTable from "../components/common/orderTable";
+
+import OrderDetailsTable from "./common/OrderDetailsTable";
 function Invoice() {
   let [loading, setLoading] = useState(true);
   let location = useLocation();
@@ -20,7 +21,7 @@ function Invoice() {
   let newSubTotal = 0;
   let newTotalTaxableAmount = 0;
   let newTotalQty = 0;
-
+  let newDelivaryCharge = 0;
   /*Function to get Order data */
   let GetData = async () => {
     let OrderRes = await Orderdetails(OrderId);
@@ -99,9 +100,8 @@ function Invoice() {
   newTotalGSt = orderDataList.only_this_product_gst;
   newTotalAmount = orderDataList.total_amount;
   newTotalDiscount = orderDataList.total_discount;
-  newSubTotal =
-    orderDataList.only_this_order_product_total -
-    orderDataList.shipping_charges;
+  newSubTotal = orderDataList.only_this_order_product_total;
+  newDelivaryCharge = orderDataList.shipping_charges;
   newTotalTaxableAmount = newSubTotal - newTotalGSt;
   newTotalQty = orderDataList.only_this_order_product_quantity;
 
@@ -155,7 +155,14 @@ function Invoice() {
                       </span>
                     </h6>
                     <h6>
-                      total amount <span>₹{orderDataList.total_amount}</span>
+                      total amount{" "}
+                      <span>
+                        ₹
+                        {(
+                          Number(orderDataList.only_this_order_product_total) +
+                          Number(orderDataList.shipping_charges)
+                        ).toFixed(2)}
+                      </span>
                     </h6>
                     <h6>
                       payment method <span>{orderDataList.payment_mode}</span>
@@ -165,7 +172,7 @@ function Invoice() {
               </div>
             </div>
             <div className="col-lg-12">
-              <OrderTable
+              <OrderDetailsTable
                 getTotalGstPrice={Number(newTotalGSt).toFixed(2)}
                 getTotalDiscountPrice={Number(newTotalDiscount).toFixed(2)}
                 getSubTotalPrice={Number(newSubTotal).toFixed(2)}
@@ -175,6 +182,7 @@ function Invoice() {
                 taxablePrice={Number(newTotalTaxableAmount).toFixed(2)}
                 invoice={"invoice"}
                 data={orderProductList}
+                deliveryCharges={Number(newDelivaryCharge).toFixed(2)}
               />
             </div>
             <div className="col-lg-6 m-auto pt-3">

@@ -1,6 +1,6 @@
 import OrderTable from "./common/orderTable";
 import { Link, useNavigate } from "react-router-dom";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Otherbannner from "./common/otherbannner";
 import Header from "./common/header";
 import Footer from "./common/footer";
@@ -12,11 +12,16 @@ import { ToastContainer, toast } from "react-toastify";
 // import visa from "../image/payment/png/02.png"
 // import debit from "../image/payment/png/03.png"
 function Checkout() {
+  var shouldApplyRef;
   const [data, setData] = useState("");
   const [cartData, setCartData] = useState("");
   const [cartTotalData, setTotalCartData] = useState("");
   const [vendorId, setVendorId] = useState([]);
   const [afterAreaCheck, setAfterAreaCheck] = useState([]);
+  const [afterAreaCheckNotAvailable, setAfterAreaCheckNotAvailable] = useState(
+    []
+  );
+
   const [openProfileInfo, setOpenProfileInfo] = useState(false);
   const [openAddressForm, setOpenAddressForm] = useState(false);
   const [apicall, setApicall] = useState(false);
@@ -27,7 +32,7 @@ function Checkout() {
   const [first_name, setFirst_name] = useState("");
   const [phone_no, setPhone_no] = useState("");
   const [newAddess, setNewAddress] = useState("");
-  const [selectedPayment, setSelectedPayment] = useState(false);
+
   const [term, setTerm] = useState(false);
   const [paymentErr, setPaymentErr] = useState(false);
   const [termErr, setTermErr] = useState(false);
@@ -36,9 +41,7 @@ function Checkout() {
   const [addPass, setAddPass] = useState(false);
   const [locationCheck, setLocationCheck] = useState(false);
   let navigate = useNavigate();
-
-  const divElement = document.getElementById("myDiv");
-
+  const divRef = useRef(null);
   /*Function to get user details */
   let GetData = async () => {
     let UserRes = await UserData();
@@ -62,6 +65,7 @@ function Checkout() {
     let responseCheck = await CheckUserAddress(pin, v);
     console.log("after callll----" + JSON.stringify(responseCheck));
     setAfterAreaCheck(responseCheck.data.service_available);
+    setAfterAreaCheckNotAvailable(responseCheck.data.service_not_available);
     if (responseCheck.data.status === true) {
       setLocationCheck("avaliable");
     }
@@ -71,8 +75,6 @@ function Checkout() {
 
     setLoading(false);
   };
-
-  console.log(afterAreaCheck);
 
   useEffect(() => {
     GetData();
@@ -170,9 +172,69 @@ function Checkout() {
     }
   };
 
+  const [singleVendorID, setSingleVendor] = useState("");
+  const [showSinglePayment, setShowSinglePayment] = useState(null);
+  const [selectedPayment, setSelectedPayment] = useState(false);
+  const [SingleSelectedPayment, setSingleSelectedPayment] = useState(false);
+  const [SinglePaymentErr, setSinglePaymentErr] = useState(false);
+
+  const OnSingleCLick = async (vendor_id) => {
+    if (singleVendorID === null || singleVendorID === "") {
+      setShowSinglePayment(vendor_id);
+      setSingleVendor(vendor_id);
+      setSinglePaymentErr(false);
+      setSingleSelectedPayment(false);
+      return;
+    }
+
+    if (SingleSelectedPayment === false) {
+      setSinglePaymentErr(true);
+    } else {
+      // setLoading(true);
+      console.log("call  api");
+      return false;
+    }
+  };
+
+  const onSingleCheckout = async (vendor_id) => {
+    const result = {
+      delivery_address: deliveryAddress,
+      order: [
+        {
+          vendor_id: vendor_id,
+          coupan_code: "",
+        },
+      ],
+    };
+    if (SingleSelectedPayment === false) {
+      setSinglePaymentErr(true);
+    } else {
+      return false;
+      let response = await PlaceOrder(result);
+
+      if (response.data.response === "order successfully added") {
+        toast.success("Order Placed Successfully", {
+          position: toast.POSITION.TOP_RIGHT,
+          autoClose: 1000,
+        });
+
+        navigate("/profile?ClickedBy=checkout");
+        // const url = `/invoice?order_id=${encodeURIComponent(
+        //   response.data.invoice_id
+        // )}`;
+        // window.location.href = url;
+      }
+    }
+  };
+  useEffect(() => {
+    if (shouldApplyRef && divRef.current) {
+      divRef.current.focus();
+    }
+  }, [shouldApplyRef]);
   /*Function to pace the order */
   const OnCheckOutCLick = async () => {
-    setLoading(true);
+    setNotavailable(false);
+
     if (selectedPayment === false) {
       setLoading(false);
       setPaymentErr(true);
@@ -180,26 +242,20 @@ function Checkout() {
       setLoading(false);
       setPaymentErr(false);
       setTermErr(true);
-    } else if (locationCheck === "notAvalaible") {
-      setLoading(false);
-      setLocationCheck("notAvalaible");
-      setTermErr(true);
-
-      divElement.focus();
+    } else if (afterAreaCheckNotAvailable.length > 0 || shouldApplyRef) {
+      if (divRef.current) {
+        divRef.current.scrollIntoView({ behavior: "smooth" });
+      }
+      // divRef.current.scrollIntoView({ behavior: "smooth" });
+      setNotavailable(true);
+      return;
     } else {
-      // CheckAddress(pincode === "" ||
-      //   pincode === null ||
-      //   pincode === undefined ||
-      //   pincode === "undefined"
-      //   ? data.pincode
-      //   : pincode)
-      // if (addPass === true) {
-      return false;
-      let response = await PlaceOrder(result);
-      console.log("responseseee after order--" + JSON.stringify(response));
+      setLoading(true);
 
-      if (response.data.response === "order successfully added") {
-        toast.success("Order Placed Successfully", {
+      let response = await PlaceOrder(result);
+
+      if (response.data.response === "placed order successfull") {
+        toast.success("placed order successfull", {
           position: toast.POSITION.TOP_RIGHT,
           autoClose: 1000,
         });
@@ -226,6 +282,28 @@ function Checkout() {
     // }
     // }
   };
+
+  let [isNotAvaibale, setNotavailable] = useState(false);
+  function arraysAreEqual(id) {
+    if (isNotAvaibale === false) return false;
+
+    for (let i = 0; i < afterAreaCheckNotAvailable.length; i++) {
+      if (afterAreaCheckNotAvailable[i] == id) {
+        console.log(" i---" + afterAreaCheckNotAvailable[i], id);
+        return true;
+      }
+    }
+
+    // afterAreaCheckNotAvailable.map((item) => {
+    //   if (item === id) {
+    //     console.log("not id--" + item);
+    //     console.log("vendor id--" + id);
+    //     return true;
+    //   }
+    // });
+
+    return false;
+  }
 
   return (
     <div>
@@ -421,72 +499,361 @@ function Checkout() {
                     </div>
                   </div>
                 </div>
+              </div>
+              <div className="account-card">
                 <div className="account-title">
                   <h4>Your Product</h4>
                 </div>
                 <div className="account-content">
                   {(cartData || []).map((item) => {
                     var iddd = Number(item.vendor_id);
-                    return (
-                      <>
-                        <div
-                          style={{
-                            display: "flex",
-                            flexDirection: "row",
+                    shouldApplyRef = arraysAreEqual(item.vendor_id);
 
-                            justifyContent: "space-between",
-                          }}
-                        >
-                          <p>Vendor--{item.owner_name}</p>
+                    console.log(shouldApplyRef);
+                    return (
+                      <div
+                        ref={shouldApplyRef ? divRef : null}
+                        tabIndex={shouldApplyRef ? "0" : null} // Make the div focusable
+                        key={iddd} // Add a unique key for each div
+                        style={{
+                          border:
+                            arraysAreEqual(item.vendor_id) == true
+                              ? "2px solid red"
+                              : "none",
+                        }}
+                      >
+                        <div className="checkout_page">
                           <div
+                            className="checkout_vander_name"
                             style={{
                               display: "flex",
                               flexDirection: "row",
-                              justifyContent: "end",
+
+                              justifyContent: "space-between",
                             }}
                           >
-                            {afterAreaCheck.map((item1, index) => {
-                              if (item1 == iddd) {
-                                return (
-                                  <>
-                                    <span className="label-text sale bg-danger">
-                                      available
-                                    </span>
-                                    <span className="label-text sale bg-success">
-                                      order this
-                                    </span>
-                                  </>
-                                );
+                            <b>{item.owner_name}</b>
+                            <div
+                              style={{
+                                display: "flex",
+                                flexDirection: "row",
+                                justifyContent: "end",
+                              }}
+                            >
+                              {
+                                // eslint-disable-next-line
+                                afterAreaCheck.map((item1, index) => {
+                                  // eslint-disable-next-line
+                                  if (item1 == iddd) {
+                                    return (
+                                      <>
+                                        <span className="text-success">
+                                          Delivery is available
+                                        </span>
+                                      </>
+                                    );
+                                  } else if (item1 !== iddd) {
+                                    <span className="text-danger">
+                                      Not available
+                                    </span>;
+                                  }
+                                })
                               }
-                            })}
+                              {afterAreaCheckNotAvailable.map(
+                                (item2, index) => {
+                                  // eslint-disable-next-line
+                                  if (item2 == iddd) {
+                                    return (
+                                      <>
+                                        <span className="text-danger">
+                                          Delivery not available
+                                        </span>
+                                      </>
+                                    );
+                                  }
+                                }
+                              )}
+                            </div>
+                          </div>
+
+                          <OrderTable
+                            getTotalGstPrice={`${
+                              item[item.vendor_id + "_gst_amount"]
+                            }`}
+                            getTotalDiscountPrice={`${
+                              item[item.vendor_id + "_discount_amount"]
+                            }`}
+                            getSubTotalPrice={`${
+                              item[item.vendor_id + "_price_x_cart_qty_amount"]
+                            }`}
+                            getTotalPrice={""}
+                            mrp={""}
+                            qty={`${
+                              item[item.vendor_id + "_product_qty_total"]
+                            }`}
+                            taxablePrice={`${
+                              item[item.vendor_id + "_taxable_amount"]
+                            }`}
+                            deliveryCharges={item.delivery_charges}
+                            setApicall={setApicall}
+                            data={item.cart_products}
+                            setLoading={setLoading}
+                            orderData={""}
+                          />
+
+                          <div
+                            className="table-responsive"
+                            style={{
+                              display: "flex",
+                              flexDirection: "row",
+                              justifyContent: "space-between",
+                              marginBottom: "4px",
+                              alignItems: "center",
+                            }}
+                          >
+                            <table className="table-list-amount">
+                              <thead className="amount-table-header ">
+                                <tr>
+                                  <th scope="col" className="p-1 ">
+                                    Discount
+                                  </th>
+                                  <th scope="col" className="p-1">
+                                    Total Gst
+                                  </th>
+                                  <th scope="col" className="p-1">
+                                    SubTotal
+                                  </th>
+                                  <th scope="col" className="p-1">
+                                    Delivary Fee
+                                  </th>
+                                  <th scope="col" className="p-1">
+                                    Total
+                                  </th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr>
+                                  <td className="table-image p-0">
+                                    {" "}
+                                    <h6 className="text-danger">
+                                      {" "}
+                                      - ₹{" "}
+                                      {Number(
+                                        `${
+                                          item[
+                                            item.vendor_id + "_discount_amount"
+                                          ]
+                                        }`
+                                      ).toFixed(2)}
+                                    </h6>
+                                  </td>
+
+                                  <td className="table-price p-1">
+                                    <h6>
+                                      {" "}
+                                      ₹{" "}
+                                      {Number(
+                                        `${
+                                          item[
+                                            item.vendor_id + "_discount_amount"
+                                          ]
+                                        }`
+                                      ).toFixed(2)}
+                                    </h6>
+                                  </td>
+                                  <td className="table-quantity p-1">
+                                    <h6>
+                                      ₹{" "}
+                                      {Number(
+                                        `${
+                                          item[
+                                            item.vendor_id +
+                                              "_price_x_cart_qty_amount"
+                                          ]
+                                        }`
+                                      ).toFixed(2)}
+                                    </h6>
+                                  </td>
+                                  <td className="table-discount p-1">
+                                    <h6>
+                                      ₹{" "}
+                                      {Number(item.delivery_charges).toFixed(2)}
+                                    </h6>
+                                  </td>
+                                  <td className="table-brand p-1">
+                                    <h6 className="text-success">
+                                      ₹{" "}
+                                      {(
+                                        Number(
+                                          `${
+                                            item[
+                                              item.vendor_id +
+                                                "_price_x_cart_qty_amount"
+                                            ]
+                                          }`
+                                        ) + Number(item.delivery_charges)
+                                      ).toFixed(2)}{" "}
+                                    </h6>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                            <div
+                              style={{
+                                flexDirection: "row",
+                                display: "flex",
+                                alignItems: "start",
+                                gap: "6px",
+                              }}
+                            >
+                              {
+                                // eslint-disable-next-line
+                                afterAreaCheck.map((item1, index) => {
+                                  // eslint-disable-next-line
+                                  if (item1 == iddd) {
+                                    return (
+                                      <>
+                                        <div
+                                          className="payment-card-signle-order"
+                                          style={{
+                                            display:
+                                              showSinglePayment ===
+                                              item.vendor_id
+                                                ? "block"
+                                                : "none",
+                                          }}
+                                        >
+                                          <select
+                                            class="form-select"
+                                            aria-label="Default select example"
+                                            value={SingleSelectedPayment}
+                                            onChange={(e) => {
+                                              setSingleSelectedPayment(
+                                                e.target.value
+                                              );
+                                              setSinglePaymentErr(false);
+                                            }}
+                                          >
+                                            <option>
+                                              Select Payment Mathod
+                                            </option>
+                                            <option value="COD">
+                                              Case on Delivary
+                                            </option>
+                                          </select>
+                                          {SinglePaymentErr === true ? (
+                                            <small className="text-danger">
+                                              Payment method is required
+                                            </small>
+                                          ) : null}
+                                        </div>
+
+                                        <div
+                                          className="payment-card-signle-order"
+                                          style={{
+                                            display:
+                                              showSinglePayment ===
+                                              item.vendor_id
+                                                ? "none"
+                                                : "block",
+                                          }}
+                                        >
+                                          <button
+                                            onClick={() => {
+                                              if (singleVendorID === "") {
+                                                OnSingleCLick(item.vendor_id);
+                                              } else {
+                                                setSingleVendor("");
+                                                setShowSinglePayment(null);
+
+                                                setSinglePaymentErr(false);
+                                                setSingleSelectedPayment("");
+                                              }
+                                              // if (
+                                              //   singleVendorID !==
+                                              //   item.vendor_id
+                                              // ) {
+                                              //   console.log(
+                                              //     "if first time from new venfor"
+                                              //   );
+                                              //   setSingleVendor("");
+                                              //   setShowSinglePayment(null);
+
+                                              //   setSinglePaymentErr(false);
+                                              //   setSingleSelectedPayment(false);
+
+                                              //   console.log(
+                                              //     "after clcik showSinglePayment-----" +
+                                              //       showSinglePayment
+                                              //   );
+                                              // } else {
+                                              //   OnSingleCLick(item.vendor_id);
+                                              // }
+                                            }}
+                                          >
+                                            Order Now
+                                          </button>
+                                        </div>
+
+                                        <div
+                                          className="payment-card-signle-order"
+                                          style={{
+                                            display:
+                                              showSinglePayment ===
+                                              item.vendor_id
+                                                ? "block"
+                                                : "none",
+                                          }}
+                                        >
+                                          <button
+                                            className="btn"
+                                            onClick={() => {
+                                              onSingleCheckout(item.vendor_id);
+                                            }}
+                                            // onClick={() => {
+                                            //   if (
+                                            //     singleVendorID !==
+                                            //     item.vendor_id
+                                            //   ) {
+                                            //     console.log(
+                                            //       "if first time from new venfor"
+                                            //     );
+                                            //     setSingleVendor("");
+                                            //     setShowSinglePayment(null);
+
+                                            //     setSinglePaymentErr(false);
+                                            //     setSingleSelectedPayment(false);
+
+                                            //     console.log(
+                                            //       "after clcik showSinglePayment-----" +
+                                            //         showSinglePayment
+                                            //     );
+                                            //   }
+                                            //   console.log(
+                                            //     "showSinglePayment-----" +
+                                            //       showSinglePayment
+                                            //   );
+                                            //   OnSingleCLick(item.vendor_id);
+                                            // }}
+                                          >
+                                            checkout
+                                          </button>
+                                        </div>
+                                      </>
+                                    );
+                                  }
+                                })
+                              }
+                            </div>
                           </div>
                         </div>
-
-                        <OrderTable
-                          getTotalGstPrice={`${
-                            item[item.vendor_id + "_gst_amount"]
-                          }`}
-                          getTotalDiscountPrice={`${
-                            item[item.vendor_id + "_discount_amount"]
-                          }`}
-                          getSubTotalPrice={`${
-                            item[item.vendor_id + "_price_x_cart_qty_amount"]
-                          }`}
-                          getTotalPrice={""}
-                          mrp={""}
-                          qty={`${item[item.vendor_id + "_product_qty_total"]}`}
-                          taxablePrice={`${
-                            item[item.vendor_id + "_taxable_amount"]
-                          }`}
-                          deliveryCharges={item.delivery_charges}
-                          setApicall={setApicall}
-                          data={item.cart_products}
-                          setLoading={setLoading}
-                          orderData={""}
-                        />
-                      </>
+                      </div>
                     );
                   })}
+
+                  <div className="account-title">
+                    <h4>Grand Totals</h4>
+                  </div>
                   <div className="checkout-charge">
                     <ul>
                       <li>
@@ -653,10 +1020,11 @@ function Checkout() {
                           value={"Cash on Delivery"}
                           onChange={(e) => {
                             setSelectedPayment(e.target.value);
-                            setPaymentErr(false);
                           }}
                         />
-                        <label className="form-label">Cash on Delivery</label>
+                        <label className="form-label mb-0">
+                          Cash on Delivery
+                        </label>
 
                         {/* <button className="trash icofont-ui-delete" title="Remove This" data-bs-dismiss="alert">
                                                 </button> */}

@@ -19,6 +19,8 @@ export default function Header({
   setproductcall,
   getname,
   setGetName,
+  searchValue,
+  CategoryValue,
 }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [cartApicCall, setCartApiCall] = useState(false);
@@ -30,7 +32,7 @@ export default function Header({
   const [notificationData, setNotificationData] = useState([]);
   const [cartData, setCartData] = useState([]);
   const [allApicall, setAllApicall] = useState(false);
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState(searchValue);
   const [searchErr, setSearchErr] = useState("");
   const [diableOther, setDiableOther] = useState(false);
 
@@ -51,7 +53,7 @@ export default function Header({
   const handleDropdownToggle = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
-
+  console.log("cat val---" + CategoryValue);
   /*Function to Get Category list */
   const GetCategoryList = async () => {
     let response = await CategoryList();
@@ -75,7 +77,7 @@ export default function Header({
   const parentCategories = catData.filter(
     (category) => category.parent_id === 0
   );
-  console.log("cart data----" + JSON.stringify(cartData.sub_total));
+
   /*Render method of getting category list */
   useEffect(() => {
     // window.scrollTo(0, 0)
@@ -168,6 +170,7 @@ export default function Header({
     setNotificationOpen(false);
     RemoveBodyClass();
   };
+
   return (
     <div>
       {loading ? <Loadeer /> : null}
@@ -242,9 +245,17 @@ export default function Header({
                   onClick={() => OpenCart()}
                 >
                   <i className="fas fa-shopping-basket"></i>
-                  <sup>{cartData.total_product_count}</sup>
+                  {cartData.total_product_count === undefined ? null : (
+                    <sup>{cartData.total_product_count}</sup>
+                  )}{" "}
                   <span>
-                    Total price<small>₹{cartData.sub_total}</small>
+                    Total price
+                    <small>
+                      ₹
+                      {cartData.sub_total === undefined
+                        ? (0).toFixed(2)
+                        : Number(cartData.sub_total).toFixed(2)}
+                    </small>
                   </span>
                 </button>
               </div>
@@ -310,7 +321,7 @@ export default function Header({
               title={Token ? "logout" : "login"}
               onClick={OnLogout}
             >
-              <i className="fas fa-sign-out-alt fs-4  "></i>
+              <i className="fas fa-sign-in-alt fs-4  "></i>
             </Link>
           )}
         </Container>
@@ -349,7 +360,11 @@ export default function Header({
                                 <h5 className="megamenu-title">
                                   <Link
                                     to={""}
-                                    className="text-muted"
+                                    className={
+                                      CategoryValue == category.id
+                                        ? "gourav"
+                                        : ""
+                                    }
                                     onClick={() =>
                                       OnCategorySearch(category.id)
                                     }
@@ -365,16 +380,17 @@ export default function Header({
                                     .map((child) => (
                                       <li key={child.id}>
                                         <Link
+                                          className={
+                                            CategoryValue == child.id
+                                              ? "gourav"
+                                              : ""
+                                          }
                                           to={""}
                                           onClick={() =>
                                             OnCategorySearch(child.id)
                                           }
                                         >
                                           {child.category_name}
-
-                                          {/* <label className="label-text sale bg-success">
-                                            <small>OFF</small>
-                                          </label> */}
                                         </Link>
                                       </li>
                                     ))}

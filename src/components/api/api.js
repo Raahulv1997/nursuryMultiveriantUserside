@@ -152,7 +152,8 @@ export const ProductList = async (
   sort,
   id,
   search,
-  feature
+  feature,
+  verientId
 ) => {
   let SortKey = sort ? sort.split(",")[0] : "product_id";
   let SorValue = sort ? sort.split(",")[1] : "ASC";
@@ -179,6 +180,7 @@ export const ProductList = async (
       product_id: id === (null || undefined) ? [""] : [id],
       // verient_name__: sortByAlpha,
       verient_name: "",
+      product_verient_id: verientId === (null || undefined) ? [] : verientId,
       // order_count: treanding === ["Yes"] ? treanding : ["NO"]
       // "is_trending": treanding === ["Yes"] ? treanding : ["NO"]
     },
@@ -304,7 +306,7 @@ export const CheckUserAddress = async (pin, vendor) => {
 /*Api to palace order*/
 export const PlaceOrder = async (props) => {
   // console.log(props);
-  const response = axios.post(`${API_URL}/add_order`, JSON.stringify(props), {
+  const response = axios.post(`${API_URL}/add_order_1`, JSON.stringify(props), {
     headers: headers,
   });
   return response;

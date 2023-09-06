@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import Header from "./common/header";
 import Otherbannner from "./common/otherbannner";
 import ProductBox from "./common/productBox";
@@ -30,7 +30,12 @@ export default function Shop() {
     to_product_price: 0,
     from_product_price: 0,
   });
+  const location = useLocation();
 
+  const searchParams = new URLSearchParams(location.search);
+  const search = searchParams.get("search");
+  const CategoryValue = searchParams.get("category");
+  console.log("seee--" + CategoryValue);
   /*Function to add and remove class */
   const AddBodyClass = () => {
     var element = document.getElementById("main_body");
@@ -89,9 +94,6 @@ export default function Shop() {
       Number(pricefilter.from_product_price) >=
       Number(pricefilter.to_product_price)
     ) {
-      console.log("min----(" + pricefilter.from_product_price);
-      console.log("max----(" + pricefilter.to_product_price);
-
       setPriceError("Min les than max");
     } else {
       setPrice(pricefilter);
@@ -222,6 +224,8 @@ export default function Shop() {
           setproductcall={setproductcall}
           loading={loading}
           setLoading={setLoading}
+          searchValue={search}
+          CategoryValue={CategoryValue}
         />
         <ToastContainer />
         {/* Banner */}

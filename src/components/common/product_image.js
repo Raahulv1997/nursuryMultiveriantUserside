@@ -3,9 +3,11 @@ import productImg from "../../image/product_demo.png";
 
 const ProductImage = (props) => {
   const CoverImg = (img) => {
-    const result = img.replace(/,+/g, ',');
+    const result = img.replace(/,+/g, ",");
+
     return result.split(",")[0];
   };
+
   return (
     <img
       src={

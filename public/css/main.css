@@ -688,6 +688,9 @@ button:focus {
   text-transform: capitalize;
   border-bottom: 1px solid var(--border);
 }
+.megamenu-title a {
+  color: #6c757d;
+}
 
 .megamenu-title::before {
   position: absolute;
@@ -716,7 +719,8 @@ button:focus {
   -ms-transition: all linear 0.3s;
   -o-transition: all linear 0.3s;
 }
-
+.megamenu-title a.gourav,
+.megamenu-list li a.gourav,
 .megamenu-list li a:hover {
   color: var(--primary);
   background: var(--chalk);
@@ -727,9 +731,9 @@ button:focus {
   border-radius: 3px;
 }
 
-.generate_ticket .modal-dialog {
+/* .generate_ticket .modal-dialog {
   max-width: 500px;
-}
+} */
 
 @media (max-width: 1199px) {
   .megamenu {
@@ -1307,9 +1311,27 @@ button:focus {
   background: var(--primary);
   text-shadow: var(--primary-tshadow);
 }
+.checkout_page .checkout_vander_name {
+  padding-bottom: 6px;
+  font-size: 18px;
+}
+.checkout_page {
+  border-bottom: 2px solid #cac4c4;
+  padding-bottom: 11px;
+  margin-bottom: 30px;
+  overflow-x: auto;
+}
 
 .table-list {
   width: 100%;
+}
+
+.table-list-amount {
+  width: 70%;
+}
+
+.amount-table-header tr {
+  background: rgb(52, 86, 60);
 }
 
 thead tr {
@@ -1478,11 +1500,11 @@ tbody tr td:last-child {
   }
 }
 
-.modal-dialog {
+/* .modal-dialog {
   max-width: -webkit-max-content;
   max-width: -moz-max-content;
   max-width: max-content;
-}
+} */
 
 .modal-content {
   border: none;
@@ -1518,7 +1540,7 @@ tbody tr td:last-child {
 }
 
 .modal-form {
-  width: 400px;
+  /* width: 400px; */
   padding: 30px;
   border-radius: 8px;
   background: var(--white);
@@ -3598,6 +3620,15 @@ a.product-image {
   cursor: pointer;
 }
 
+.payment-card-signle-order {
+  padding: 10px;
+  border-radius: 6px;
+  /* width: 6%; */
+  background: var(--chalk);
+  border: 1px solid var(--border);
+  position: relative;
+  cursor: pointer;
+}
 .payment-card:hover button {
   visibility: visible;
   opacity: 1;

@@ -21,7 +21,20 @@ export default function ProductDetailsBox(props) {
   let location = useLocation();
   /*Function to get the product list */
   let GetProductDetails = async () => {
-    let response = await ProductList("", "", "", "", "10", "0", "", props.id);
+    let response = await ProductList(
+      "",
+      "",
+      "",
+      "",
+      "10",
+      "0",
+      "",
+      props.id,
+      "",
+      ""
+      // [props.var]
+    );
+    console.log("ressss--" + JSON.stringify(response.data.results));
     if (
       response.data.results === undefined ||
       response.data.results === "undefined" ||
@@ -31,7 +44,14 @@ export default function ProductDetailsBox(props) {
       setData([]);
       props.setLoading(false);
     } else {
+      //   console.log("jjjjj");
+      // setData(response.data.results[0]);
       setVarList(response.data.results);
+      setData(
+        response.data.results.find(
+          (response) => response.product_verient_id === Number(props.var)
+        )
+      );
       AllData(varId, response.data.results);
       props.setLoading(false);
     }
@@ -39,11 +59,13 @@ export default function ProductDetailsBox(props) {
 
   /*Function to get another varient data */
   const AllData = (id, vdata) => {
+    // console.log("al data coallingh");
     props.setLoading(true);
     // console.log(
-    //   "id",  id , "data" , vdata,
-    // "var data =>",
-    // vdata.filter((vdata) => vdata.product_verient_id === Number(id))
+    //   "id",
+    //   id,
+    //   "data",
+    //   vdata.filter((vdata) => vdata.product_verient_id === Number(id))
     // );
     if (
       vdata === undefined ||
@@ -53,13 +75,18 @@ export default function ProductDetailsBox(props) {
       vdata.filter((vdata) => vdata.product_verient_id === Number(id))
         .length === 0
     ) {
-      setData([]);
+      // setData(vdata[0]);
       props.setLoading(false);
     } else {
       setData(vdata.find((vdata) => vdata.product_verient_id === Number(id)));
       props.setLoading(false);
-      if (location.pathname === "/productdetails" && props.modal === "no") {
-        console.log("pop");
+      if (
+        location.pathname ===
+          `/productdetails?product_id=${vdata.id}&variant_id=${vdata.product_verient_id}` &&
+        props.modal === "no"
+      ) {
+        console.log("in navigate from cart");
+
         props.setproCate(vdata[0].category.split(",")[0]);
       }
     }
@@ -87,7 +114,7 @@ export default function ProductDetailsBox(props) {
       setVarID(props.var);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.id, apicall, props.productDetailCall]);
+  }, [props.id, props.var, apicall, props.productDetailCall]);
   /*Function to add to cart */
   const onAddToCart = async (id, varId) => {
     props.setLoading(true);
@@ -104,21 +131,23 @@ export default function ProductDetailsBox(props) {
   };
 
   /*Function to convert image object in array */
-  const imageUrl = data?.cover_image + data?.all_images_url;
+
+  const imageUrl = data?.cover_image + "," + data?.all_images_url;
+  // const imageUrl =
+  //   data.cover_image == null ? "" : data.cover_image + data?.all_images_url;
+  // console.log("image url--" + JSON.stringify(imageUrl));
   const imageArray =
     imageUrl && typeof imageUrl === "string" ? imageUrl.split(",") : [];
   // const imageArray = imageUrl && typeof imageUrl === "string" ? imageUrl.replace(/,+/g, ',').split(",") : [];
   // const  imageArray = result.split(",")
   const uniqueImages = imageArray.filter((item, index) => {
     // Remove empty strings and keep only the first occurrence of each image path
-    return item !== "" && imageArray.indexOf(item) === index;
+    return item !== "null" && item !== "" && imageArray.indexOf(item) === index;
   });
 
   let filteredData = uniqueImages
     .filter((item) => item !== "") // Remove empty strings
     .map((item) => item.replace(/^'|'$/g, "")); // Remove surrounding single quotes
-
-  console.log("data----ff" + JSON.stringify(data));
 
   /*Function add product to wishlist */
   const onWishlistAdd = async (id, verient_id, wishlist) => {
@@ -166,6 +195,7 @@ export default function ProductDetailsBox(props) {
       }
     }
   };
+  console.log(data, "dataaaaaaaaaaaaa");
   return (
     <>
       <div className="row product_detail_box">
@@ -347,8 +377,7 @@ export default function ProductDetailsBox(props) {
                 {(varList || []).map((item, index) => {
                   return (
                     <li key={index}>
-                      <Link
-                        to=""
+                      <div
                         onClick={() => {
                           setVarID(item.product_verient_id);
                           setdatachange(true);
@@ -365,7 +394,12 @@ export default function ProductDetailsBox(props) {
                           alt={item.description + ", " + item.seo_tag}
                         /> */}
                         <ProductImage
-                          src={item.cover_image}
+                          src={
+                            item.cover_image !== null
+                              ? item.cover_image
+                              : item.all_images_url
+                          }
+                          // src={item.cover_image}
                           className={"img-fluid"}
                           alt={item.description + ", " + item.seo_tag}
                         />
@@ -376,7 +410,7 @@ export default function ProductDetailsBox(props) {
                         <div className="text-truncate w-100 var_name">
                           {item.verient_name}
                         </div>
-                      </Link>
+                      </div>
                     </li>
                   );
                 })}

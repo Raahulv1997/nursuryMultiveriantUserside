@@ -61,6 +61,8 @@ const ProductBox = ({
   const search = searchParams.get("search");
   const category = searchParams.get("category");
 
+  // console.log(" prodct id---" + setId);
+  // console.log(" prodct var  id---" + setVar_Id);
   let CatSearch =
     cateFilter === undefined ||
     cateFilter.length === 0 ||
@@ -165,12 +167,17 @@ const ProductBox = ({
           paginationData(response.data.pagination);
         }
         if (location.pathname === "/productdetails") {
-          setData(
-            response.data.results.filter(
-              // eslint-disable-next-line
-              (item) => item.id != id && item.product_verient_id != varId
-            )
-          );
+          let daaata = response.data.results.filter((item) => {
+            // eslint-disable-next-line
+            return item.product_verient_id != varId;
+          });
+
+          // let daaata = response.data.results.filter(
+          //   (item) => item.id !== setId && item.product_verient_id !== setVar_Id
+          // );
+          // let daaata = response.data.results;
+
+          setData(daaata);
         } else {
           setData(response.data.results);
         }
@@ -223,8 +230,6 @@ const ProductBox = ({
 
   /*Function to add to cart */
   const onAddToCart = async (id, varId, vendor_id) => {
-    console.log("venodr idd by funtion--" + vendor_id);
-    console.log("venodr idd--" + prevVendorID);
     if (prevVendorID === "") {
     } else {
       if (vendor_id === prevVendorID) {
@@ -267,12 +272,12 @@ const ProductBox = ({
     } else {
       setLoading(true);
       if (wishlist > 0 || wishlist_id > 0) {
-        console.log("in remove");
+        // console.log("in remove");
         setDisableWishlist(true);
 
         let response = await Add_Remove_wishlist(id, verient_id);
 
-        console.log("respoce- in remove-" + response.data.response);
+        // console.log("respoce- in remove-" + response.data.response);
         if (
           response.data.response ===
           "already add in wishlist remove product to wishlist"
@@ -289,12 +294,11 @@ const ProductBox = ({
         // setLoading(false);
         // setApicall(true);
       } else {
-        console.log("in add");
+        // console.log("in add");
         setDisableWishlist(true);
 
         let response = await Add_Remove_wishlist(id, verient_id);
 
-        console.log("respoce in add--" + response.data.response);
         if (response.data.response === "added in wishlist") {
           toast.success("Added to wishlist", {
             position: toast.POSITION.TOP_RIGHT,
@@ -392,6 +396,14 @@ const ProductBox = ({
                     className="product-image"
                     to={`/productdetails?product_id=${item.product_id}&variant_id=${item.product_verient_id}`}
                     // onClick={() => ProductDetailClick(item)}
+                    // onClick={
+                    //   location.pathname === "/productdetails"
+                    //     ? () => {
+                    //         setId(item.product_id);
+                    //         setVar_Id(item.product_verient_id);
+                    //       }
+                    //     : null
+                    // }
                   >
                     <ProductImage
                       src={

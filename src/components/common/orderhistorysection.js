@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import OrderTable from "./orderTable";
+
 import { Link, useNavigate } from "react-router-dom";
 import { OrderList, Orderdetails } from "../api/api";
 import moment from "moment";
 import TicketModal from "../Modal/ticket";
+import OrderDetailsTable from "./OrderDetailsTable";
 
 export default function Orderhistorysection({ setLoading }) {
   let nevigate = useNavigate();
@@ -37,9 +38,6 @@ export default function Orderhistorysection({ setLoading }) {
       setOrderProductList(OrderRes.data.order_product_detaile);
 
       if (OrderId) {
-        console.log(
-          "in history--" + JSON.stringify(OrderRes.data.order_detaile)
-        );
         setOrderDataList(OrderRes.data.order_detaile);
       } else {
         setOrderDataList([]);
@@ -90,9 +88,8 @@ export default function Orderhistorysection({ setLoading }) {
       newTotalGSt = orderDataList[0].only_this_product_gst;
       newTotalAmount = orderDataList[0].total_amount;
       newTotalDiscount = orderDataList[0].total_discount;
-      newSubTotal =
-        orderDataList[0].only_this_order_product_total -
-        orderDataList[0].shipping_charges;
+      newSubTotal = orderDataList[0].only_this_order_product_total;
+
       newTotalTaxableAmount = newSubTotal - newTotalGSt;
       newTotalQty = orderDataList[0].only_this_order_product_quantity;
     } else {
@@ -145,7 +142,7 @@ export default function Orderhistorysection({ setLoading }) {
       setLoading(false);
     } else {
       setLoading(false);
-      console.log("ordddddgffg--" + JSON.stringify(response.data.results));
+
       setOrderList(response.data.results);
     }
   };
@@ -273,11 +270,11 @@ export default function Orderhistorysection({ setLoading }) {
                               <p>{item.delivery_verify_code}</p>
                             </li>
 
-                            <li>
+                            {/* <li>
                               <h6>Delivery Charges</h6>
                               <p> ₹ {item.shipping_charges}</p>
-                            </li>
-                            <li>
+                            </li> */}
+                            {/* <li>
                               <h6>Grand Total</h6>
                               <p>
                                 {" "}
@@ -286,7 +283,7 @@ export default function Orderhistorysection({ setLoading }) {
                                   item.only_this_order_product_total
                                 ).toFixed(2)}
                               </p>
-                            </li>
+                            </li> */}
                             {/* <li>
                               <h6>Grand Total</h6>
                               <p>
@@ -357,8 +354,10 @@ data={orderProductList}
 setLoading={setLoading}
 setApicall={setApicall}
 orderData={orderDataList}
+                          
 /> */}
-                          <OrderTable
+
+                          <OrderDetailsTable
                             invoice={"other"}
                             getTotalGstPrice={Number(newTotalGSt).toFixed(2)}
                             getTotalDiscountPrice={Number(
@@ -372,6 +371,9 @@ orderData={orderDataList}
                               2
                             )}
                             data={orderProductList}
+                            deliveryCharges={Number(
+                              item.shipping_charges
+                            ).toFixed(2)}
                             setLoading={setLoading}
                             setApicall={setApicall}
                             orderData={orderDataList}

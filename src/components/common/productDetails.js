@@ -21,7 +21,7 @@ export default function ProductDetails() {
   /*Function to open the page from the top */
   useEffect(() => {
     window.scrollTo(0, 10);
-  }, [productDetailCall]);
+  }, [Product_id, variant_id, productDetailCall]);
 
   /*Function o send category to the shop page to get the related products as per the detail page */
   const ViewAllRelatedProducts = () => {
