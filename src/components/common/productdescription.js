@@ -6,7 +6,7 @@ import ProductRating from "../common/productRating";
 import ProductImage from "./product_image";
 
 export default function Productdescription(props) {
-  const [activeTab, setActiveTab] = useState("tab-desc");
+  const [activeTab, setActiveTab] = useState("tab-spec");
   const [reviewListData, setReviewListData] = useState([]);
 
   /*Function to change the tab */
@@ -38,16 +38,6 @@ export default function Productdescription(props) {
                 <li>
                   <Link
                     className={`tab-link ${
-                      activeTab === "tab-desc" ? "active" : ""
-                    }`}
-                    onClick={() => handleTabClick("tab-desc")}
-                  >
-                    descriptions
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    className={`tab-link ${
                       activeTab === "tab-spec" ? "active" : ""
                     }`}
                     onClick={() => handleTabClick("tab-spec")}
@@ -70,50 +60,7 @@ export default function Productdescription(props) {
               </ul>
             </div>
           </div>
-          <div
-            className={`tab-pane fade ${
-              activeTab === "tab-desc" ? "show active" : ""
-            }`}
-            id="tab-desc"
-          >
-            <div className="row">
-              <div className="col-lg-6">
-                <div className="product-details-frame">
-                  <div className="tab-descrip">
-                    <p>{props.data.verient_description}</p>
-                    {/* <ul>
-                                            <li>Lorem ipsum dolor sit amet consectetur adipisicing.
-                                            </li>
-                                            <li>labore possimus architecto, saepe nobis ex mollitia
-                                            </li>
-                                            <li>mollitia soluta magni placeat. Eaque sit praesentium
-                                            </li>
-                                            <li>distinctio ab a exercitationem officiis labore possimus
-                                            </li>
-                                        </ul> */}
-                  </div>
-                </div>
-              </div>
-              <div className="col-lg-6">
-                <div className="product-details-frame">
-                  <div className="tab-descrip">
-                    <ProductImage
-                      src={
-                        props.data.cover_image !== null
-                          ? props.data.cover_image
-                          : props.data.all_images_url
-                      }
-                      //       src={props.data.cover_image}
-                      className={"img-fluid"}
-                      alt={props.data.description + ", " + props.data.seo_tag}
-                    />
-                    {/* <Link title="Product Video" className="venobox fas fa-play vbox-item" data-autoplay="true" data-vbtype="video">
-                                        </Link> */}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+
           <div
             className={`tab-pane fade ${
               activeTab === "tab-spec" ? "show active" : ""

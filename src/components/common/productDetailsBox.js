@@ -195,7 +195,7 @@ export default function ProductDetailsBox(props) {
       }
     }
   };
-  console.log(data, "dataaaaaaaaaaaaa");
+  console.log("dataaaaaaaaaaaaa" + JSON.stringify(data));
   return (
     <>
       <div className="row product_detail_box">
@@ -332,16 +332,11 @@ export default function ProductDetailsBox(props) {
             <small className="mb-5 text-italic">
               (MRP Inclusive of all taxes)
             </small>
-            {/* <br /> */}
-            {/* <label
-              className={
-                props.page === "details"
-                  ? "details-list-title"
-                  : "view-list-title"
-              }
-            >
+            <br />
+            <label className={"view-list-title mt-2"}>
               Variants description :
-            </label> */}
+            </label>
+            <p>{data.verient_description}</p>
             {/* <p className={props.page === "details" ? "details-desc" : "view-desc"}>{data.verient_description}</p> */}
             {/* <div className={props.page === "details" ? "details-list-group" : "view-list-group"}>
             <label className={props.page === "details" ? "details-list-title" : "view-list-title"}>tags:</label>
@@ -354,7 +349,7 @@ export default function ProductDetailsBox(props) {
             <div
               className={
                 props.page === "details"
-                  ? "details-list-group"
+                  ? "details-list-group mb-2"
                   : "view-list-group"
               }
             >

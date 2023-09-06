@@ -5,6 +5,7 @@ import { DeleteCart } from "../api/api";
 import { toast } from "react-toastify";
 import productImg from "../../image/product_demo.png";
 import { ReviewModal } from "../Modal/reviewModal";
+import ProductImage from "./product_image";
 export default function CartTable(props) {
   // const [active, setActive] = useState(false)
   const [productDetailModal, setProductDetailModal] = useState(false);
@@ -82,20 +83,20 @@ export default function CartTable(props) {
               return (
                 <tr key={index}>
                   <td className="table-image p-0">
-                    {props.invoice === "other" ? (
-                      <img
+                    {props.invoice === "other" ||
+                    props.invoice === undefined ? (
+                      <ProductImage
                         src={
-                          item.cover_image === null ||
+                          item.cover_image !== null ||
                           item.cover_image === undefined ||
                           item.cover_image === "undefined" ||
-                          item.cover_image === false ||
-                          !item.cover_image
-                            ? productImg
-                            : CoverImg(item.cover_image)
+                          item.cover_image === ""
+                            ? item.cover_image
+                            : item.all_images_url
                         }
-                        alt={"product_image"}
+                        className={"img-fluid"}
 
-                        // alt={item.verient_description}
+                        // alt={data.description + ", " + data.seo_tag}
                       />
                     ) : (
                       <Link

@@ -20,6 +20,7 @@ const ProductImage = (props) => {
       }
       className="img-fluid"
       alt={props.alt}
+      style={{ height: props.from === "cart" ? "100px" : "" }}
     />
   );
 };

@@ -4,6 +4,7 @@ import { DeleteCart } from "../api/api";
 import { toast } from "react-toastify";
 import productImg from "../../image/product_demo.png";
 import { useNavigate } from "react-router-dom";
+import ProductImage from "./product_image";
 
 function CartBox({
   setLoading,
@@ -57,20 +58,16 @@ function CartBox({
     <>
       <div className="cart-item">
         <div className="cart-media">
-          <img
+          <ProductImage
             src={
-              data.cover_image === null ||
-              data.cover_image === undefined ||
-              data.cover_image === "undefined"
-                ? productImg
-                : data.cover_image !== null
-                ? CoverImg(data.cover_image)
-                : CoverImg(data.all_images_url)
+              data.cover_image !== null ? data.cover_image : data.all_images_url
             }
-            alt={data.seo_tag}
-            width={"100px"}
-            height={"100px"}
+            // src={item.cover_image}
+            className={"img-fluid"}
+            from="cart"
+            // alt={data.description + ", " + data.seo_tag}
           />
+
           <button
             className="cart-delete"
             onClick={() =>

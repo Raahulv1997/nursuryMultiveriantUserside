@@ -209,10 +209,9 @@ function Checkout() {
     if (SingleSelectedPayment === false) {
       setSinglePaymentErr(true);
     } else {
-      return false;
       let response = await PlaceOrder(result);
 
-      if (response.data.response === "order successfully added") {
+      if (response.response === "placed order successfull") {
         toast.success("Order Placed Successfully", {
           position: toast.POSITION.TOP_RIGHT,
           autoClose: 1000,
@@ -253,8 +252,8 @@ function Checkout() {
       setLoading(true);
 
       let response = await PlaceOrder(result);
-
-      if (response.data.response === "placed order successfull") {
+      console.log("ressponcee---" + JSON.stringify(response));
+      if (response.response === "placed order successfull") {
         toast.success("placed order successfull", {
           position: toast.POSITION.TOP_RIGHT,
           autoClose: 1000,

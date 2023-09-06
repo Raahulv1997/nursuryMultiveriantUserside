@@ -364,6 +364,22 @@ export const AddComplaint = async (props) => {
   return response;
 };
 
+export const AddComplaintFromOrder = async (props) => {
+  // console.log(props);
+  const response = axios.post(
+    `${API_URL}/add_complain`,
+    {
+      order_id: props.order_id,
+
+      subject: props.subject,
+
+      description: props.description,
+    },
+    { headers: headers }
+  );
+  return response;
+};
+
 /*Api to addd complaint */
 export const ComplaintList = async (email) => {
   // console.log(props);

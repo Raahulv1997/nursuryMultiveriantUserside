@@ -13,6 +13,7 @@ export default function ComplaintForm({
   let Token = localStorage.getItem("token");
   // COMPLAINT DETAIL VALIDATION
   // INITIAL STATE ASSIGNMENT
+
   const initialFormStateuser = {
     first_name: "",
     last_name: "",
@@ -108,7 +109,7 @@ export default function ComplaintForm({
           setErrors("");
           setState(initialFormStateuser);
           setApicall(true);
-          close();
+          // close();
         }
       }
     } else {
@@ -129,38 +130,7 @@ export default function ComplaintForm({
     <>
       <form className="contact-form" onSubmit={OnComplaintClick}>
         <h4>Drop Your Thoughts</h4>
-        <div className="form-group" style={{ display: "none" }}>
-          <div className="form-input-group">
-            {orderId ? null : (
-              <select
-                value={"" || state.order_id}
-                className={
-                  errors.order_id
-                    ? "form-control border border-danger"
-                    : "form-control"
-                }
-                name="order_id"
-                onChange={onInputChange}
-              >
-                <option value="">Select Order</option>
-                {(oderList || []).map((item, index) => {
-                  return (
-                    <option value={item.order_id} key={index}>
-                      {item.name}
-                    </option>
-                  );
-                })}
-              </select>
-            )}
-            {/*----ERROR MESSAGE FOR order_id----*/}
-            {errors.order_id && (
-              <span key={errors.order_id} className="text-danger font-size-3">
-                {errors.order_id}
-              </span>
-            )}
-            {/* <i className="icofont-user-alt-3 me-4"></i> */}
-          </div>
-        </div>
+
         <div className="form-group">
           <div className="form-input-group">
             <input
