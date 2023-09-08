@@ -43,7 +43,10 @@ const ProductBox = ({
   WishlistProduct,
   id,
   varId,
+  loading,
 }) => {
+  // eslint-disable-next-line
+  const [cartApicCall, setCartApiCall] = useState(false);
   const [prevVendorID, setPrevVendorID] = useState("");
   const [disableWishlist, setDisableWishlist] = useState(false);
   const [productDetailModal, setProductDetailModal] = useState(false);
@@ -168,8 +171,11 @@ const ProductBox = ({
         }
 
         if (location.pathname === "/productdetails") {
+          console.log("cateFilter-----" + cateFilter);
           let daaata = response.data.results.filter((item) => {
             // eslint-disable-next-line
+            let Catval = item.category.split(",")[0];
+            console.log("cat by api" + Catval);
             return item.id !== Number(setId);
           });
 
@@ -177,12 +183,13 @@ const ProductBox = ({
           //   (item) => item.id !== setId && item.product_verient_id !== setVar_Id
           // );
           // let daaata = response.data.results;
-
+          console.log("res data----" + JSON.stringify(daaata));
           setData(daaata);
         } else {
-          setData(
-            response.data.results.filter((item) => item.id !== Number(setId))
-          );
+          setData(response.data.results);
+          // setData(
+          //   response.data.results.filter((item) => item.id !== Number(setId))
+          // );
         }
       }
     }
@@ -519,9 +526,11 @@ const ProductBox = ({
                       id={item.product_id}
                       vid={item.product_verient_id}
                       setApicall={setApicall}
+                      setCartApiCall={setCartApiCall}
                       setcartcall={setcartcall}
                       quantity={item.product_stock_quantity}
                       setLoading={setLoading}
+                      loading={loading}
                     />
                   )}
                 </div>

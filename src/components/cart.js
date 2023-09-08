@@ -6,6 +6,7 @@ import CartEmpty from "../image/cartEmpty.jpg";
 
 export default function Cart({
   setLoading,
+  loading,
   RemoveBodyClass,
   show,
   close,
@@ -132,6 +133,7 @@ export default function Cart({
                           setcartcall={setcartcall}
                           setproductcall={setproductcall}
                           setLoading={setLoading}
+                          loading={loading}
                           close={close}
                         />
                       );

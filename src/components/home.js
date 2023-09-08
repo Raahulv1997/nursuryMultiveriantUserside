@@ -25,6 +25,7 @@ export default function Home() {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
   return (
     <>
       <div>
@@ -72,6 +73,7 @@ export default function Home() {
                     setproductcall={setproductcall}
                     treanding={"YES"}
                     setLoading={setLoading}
+                    loading={loading}
 
                     // start_date={currentDate}
                     // end_date={oneMonthBefore}
@@ -134,6 +136,7 @@ export default function Home() {
                 productcall={productcall}
                 setproductcall={setproductcall}
                 setLoading={setLoading}
+                loading={loading}
 
                 // treanding={true}
                 // start_date={currentDate}
@@ -235,6 +238,7 @@ export default function Home() {
                   setproductcall={setproductcall}
                   feature={"yes"}
                   setLoading={setLoading}
+                  loading={loading}
                 />
               </div>
               <div className="row">

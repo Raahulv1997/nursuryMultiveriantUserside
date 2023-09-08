@@ -11,6 +11,9 @@ import ProductImage from "./product_image";
 import { useLocation, useNavigate } from "react-router-dom";
 
 export default function ProductDetailsBox(props) {
+  // eslint-disable-next-line
+  const [cartApicCall, setCartApiCall] = useState(false);
+
   const [disableWishlist, setDisableWishlist] = useState(false);
   let [data, setData] = useState("");
   const [varList, setVarList] = useState([]);
@@ -60,7 +63,7 @@ export default function ProductDetailsBox(props) {
 
   /*Function to get another varient data */
   const AllData = (id, vdata) => {
-    console.log("v data---" + JSON.stringify(vdata));
+    // console.log("v data---" + JSON.stringify(vdata));
 
     props.setLoading(true);
     // console.log(
@@ -219,13 +222,18 @@ export default function ProductDetailsBox(props) {
                   : "view-label-group"
               }
             >
-              <label
-                className={"details-label"}
-                style={{ background: "#7C4DFF" }}
-              >
-                Featured
-              </label>
-              {data.discount === undefined || data.discount === null ? null : (
+              {data.is_fetured === null ||
+              data.is_fetured === undefined ||
+              data.is_fetured === "undefined" ? null : (
+                <label
+                  className={"details-label"}
+                  style={{ background: "#7C4DFF" }}
+                >
+                  Featured
+                </label>
+              )}
+
+              {data.discount === (undefined || null || 0) ? null : (
                 <label
                   className={
                     props.page === "details"
@@ -464,6 +472,7 @@ export default function ProductDetailsBox(props) {
                     id={data.product_id}
                     vid={data.product_verient_id}
                     setApicall={setApicall}
+                    setCartApiCall={setCartApiCall}
                     setcartcall={props.setcartcall}
                     quantity={data.product_stock_quantity}
                     setLoading={props.setLoading}

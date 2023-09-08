@@ -13,6 +13,7 @@ function CartBox({
   setCartApiCall,
   setcartcall,
   close,
+  loading,
 }) {
   let navigate = useNavigate();
   /*Funtion to delete cart */
@@ -98,6 +99,7 @@ function CartBox({
               setCartApiCall={setCartApiCall}
               setcartcall={setcartcall}
               setLoading={setLoading}
+              loading={loading}
               quantity={data.product_stock_quantity}
             />
             {/* Total price of the product */}

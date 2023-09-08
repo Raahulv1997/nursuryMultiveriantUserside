@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import ProductDetailModal from "../Modal/productDetail";
-import { DeleteCart } from "../api/api";
+
 import { toast } from "react-toastify";
 import productImg from "../../image/product_demo.png";
 import { ReviewModal } from "../Modal/reviewModal";
@@ -22,16 +22,6 @@ export default function OrderDetailsTable(props) {
     setProductVarId(f);
   };
   /*Funtion to delete cart */
-  const DeleteCartClick = async (id, varId) => {
-    let response = await DeleteCart(id, varId);
-    if (response.data.response === "delete successfull") {
-      toast.success("Product Deleted Successfully", {
-        position: toast.POSITION.TOP_RIGHT,
-        autoClose: 1000,
-      });
-      props.setApicall(true);
-    }
-  };
 
   const CoverImg = (img) => {
     const result = img.replace(/,+/g, ",");
@@ -43,7 +33,6 @@ export default function OrderDetailsTable(props) {
     setToReviewData(e);
   };
 
-  console.log("product details in ordre---" + JSON.stringify(props.data));
   return (
     <div>
       <div className="">
@@ -185,7 +174,7 @@ export default function OrderDetailsTable(props) {
                   <td className="table-quantity p-1">
                     <h6>₹ {(item.price * qyt).toFixed(2)}</h6>
                   </td>
-                  {props.invoice === "other" ? (
+                  {props.orderStatus === "Delivered" ? (
                     <Link
                       to=""
                       className="text-end text-decoration-none p-2"
@@ -193,22 +182,7 @@ export default function OrderDetailsTable(props) {
                     >
                       <button className="blog-btn">Add Review</button>
                     </Link>
-                  ) : props.invoice === "invoice" ? null : (
-                    <td className="table-action p-1">
-                      <Link
-                        className="trash"
-                        title="Remove Wishlist"
-                        onClick={() =>
-                          DeleteCartClick(
-                            item.product_id,
-                            item.product_verient_id
-                          )
-                        }
-                      >
-                        <i className="icofont-trash"></i>
-                      </Link>
-                    </td>
-                  )}
+                  ) : null}
                 </tr>
               );
             })}

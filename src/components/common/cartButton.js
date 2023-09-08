@@ -16,10 +16,12 @@ const CartUpdate = (props) => {
   //     }
   //   }
   /*Function to updt quantity */
+
   const updateQuantity = async (qty) => {
-    console.log("qty state---");
     props.setLoading(true);
+
     setDisableQtyButton(true);
+
     let newqty = props.qty;
     if (qty === "inc") {
       newqty++;
@@ -31,6 +33,7 @@ const CartUpdate = (props) => {
       setqytErr(
         `We're sorry! Only ${props.quantity} unit(s) allowed in this product`
       );
+
       props.setLoading(false);
     } else {
       let response = await UpdateCart(props.id, props.vid, newqty);
@@ -77,7 +80,7 @@ const CartUpdate = (props) => {
         <button
           className="action-minus"
           title="Quantity Minus"
-          style={{ disabled: disableqtyButton ? true : false }}
+          style={{ disabled: props.loading == true ? true : false }}
           onClick={() => updateQuantity("dec")}
         >
           <i className="icofont-minus"></i>
@@ -93,7 +96,7 @@ const CartUpdate = (props) => {
         <button
           className="action-plus"
           title="Quantity Plus"
-          style={{ disabled: disableqtyButton ? true : false }}
+          style={{ disabled: props.loading == true ? true : false }}
           onClick={() => updateQuantity("inc")}
         >
           <i className="icofont-plus"></i>

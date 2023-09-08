@@ -193,6 +193,7 @@ export default function Header({
             cartList={cartList}
             RemoveBodyClass={RemoveBodyClass}
             setLoading={setLoading}
+            loading={loading}
           />
           <Notification
             show={notificationOpen}

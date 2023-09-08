@@ -157,7 +157,6 @@ export default function Shop() {
       // getFilterData();
     }
 
-    console.log("value.lenght---" + value);
     if (value === "") {
     }
   };

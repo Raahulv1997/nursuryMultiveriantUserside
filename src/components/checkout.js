@@ -39,14 +39,14 @@ function Checkout() {
   const [loading, setLoading] = useState(true);
   // eslint-disable-next-line
   const [addPass, setAddPass] = useState(false);
-  const [locationCheck, setLocationCheck] = useState(false);
+
   let navigate = useNavigate();
   const divRef = useRef(null);
   /*Function to get user details */
   let GetData = async () => {
     let UserRes = await UserData();
     let CartRes = await CartList();
-
+    console.log("user data---" + JSON.stringify(UserRes.data));
     setData(UserRes.data[0]);
     setCartData(CartRes.data.response);
     setTotalCartData(CartRes.data);
@@ -63,15 +63,15 @@ function Checkout() {
     let v = CartRes.data.response.map((item) => item.vendor_id);
 
     let responseCheck = await CheckUserAddress(pin, v);
-    console.log("after callll----" + JSON.stringify(responseCheck));
+
     setAfterAreaCheck(responseCheck.data.service_available);
     setAfterAreaCheckNotAvailable(responseCheck.data.service_not_available);
-    if (responseCheck.data.status === true) {
-      setLocationCheck("avaliable");
-    }
-    if (responseCheck.data.status === false) {
-      setLocationCheck("notAvalaible");
-    }
+    // if (responseCheck.data.status === true) {
+    //   setLocationCheck("avaliable");
+    // }
+    // if (responseCheck.data.status === false) {
+    //   setLocationCheck("notAvalaible");
+    // }
 
     setLoading(false);
   };
@@ -223,8 +223,12 @@ function Checkout() {
         //   response.data.invoice_id
         // )}`;
         // window.location.href = url;
+
+        setTimeout(() => {
+          navigate("/profile?ClickedBy=checkout");
+        }, 2000);
       }
-      navigate("/profile?ClickedBy=checkout");
+
       setLoading(false);
     }
   };
@@ -291,8 +295,8 @@ function Checkout() {
     if (isNotAvaibale === false) return false;
 
     for (let i = 0; i < afterAreaCheckNotAvailable.length; i++) {
+      // eslint-disable-next-line
       if (afterAreaCheckNotAvailable[i] == id) {
-        console.log(" i---" + afterAreaCheckNotAvailable[i], id);
         return true;
       }
     }
@@ -360,7 +364,7 @@ function Checkout() {
                               to=""
                               onClick={() => {
                                 setAddress(data.address);
-                                CheckAddress(data.pincode);
+                                // CheckAddress(data.pincode);
                               }}
                               className="text-dark"
                             >
@@ -389,7 +393,7 @@ function Checkout() {
                               </ul>
                             </Link>
                           </div>
-                          {locationCheck === "avaliable" ? (
+                          {/* {locationCheck === "avaliable" ? (
                             <span className="text-success">
                               {" "}
                               Area is available!!!
@@ -399,7 +403,7 @@ function Checkout() {
                               {" "}
                               Area is not available!!!
                             </span>
-                          ) : null}
+                          ) : null} */}
                         </div>
 
                         {data.alternate_address ? (
@@ -415,7 +419,7 @@ function Checkout() {
                                 to=""
                                 onClick={() => {
                                   setAddress(data.alternate_address);
-                                  CheckAddress(data.pincode);
+                                  // CheckAddress(data.pincode);
                                 }}
                                 className="text-dark"
                               >
@@ -472,7 +476,7 @@ function Checkout() {
                                   setAddress(newAddess);
                                   setCity(city);
                                   setPincode(pincode);
-                                  CheckAddress(pincode);
+                                  // CheckAddress(pincode);
                                 }}
                                 className="text-dark"
                               >

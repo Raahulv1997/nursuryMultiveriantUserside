@@ -38,6 +38,9 @@ export default function Orderhistorysection({ setLoading }) {
       setOrderProductList(OrderRes.data.order_product_detaile);
 
       if (OrderId) {
+        console.log(
+          "order details---" + JSON.stringify(OrderRes.data.order_detaile)
+        );
         setOrderDataList(OrderRes.data.order_detaile);
       } else {
         setOrderDataList([]);
@@ -142,7 +145,7 @@ export default function Orderhistorysection({ setLoading }) {
       setLoading(false);
     } else {
       setLoading(false);
-
+      console.log("order data-aaaa--" + JSON.stringify(response.data.results));
       setOrderList(response.data.results);
     }
   };
@@ -320,12 +323,19 @@ export default function Orderhistorysection({ setLoading }) {
                                                     </ul>
                                                 </div> */}
                         <div className="col-lg-6">
+                          <ul className="orderlist-details pb-0 m-0">
+                            <li>
+                              <h6>Mobile No.</h6>
+                              <p>{item.phone_no}</p>
+                            </li>
+                          </ul>
                           <div className="orderlist-deliver">
                             <h6>Delivery location</h6>
                             <p>
                               {item.address}, {item.city}-{item.pin_code}
                             </p>
                           </div>
+
                           {item.status_order === "Delivered" ? (
                             <button
                               className="btn btn-sm"
@@ -358,7 +368,9 @@ orderData={orderDataList}
 /> */}
 
                           <OrderDetailsTable
+                            // invoice={item.status_order}
                             invoice={"other"}
+                            orderStatus={item.status_order}
                             getTotalGstPrice={Number(newTotalGSt).toFixed(2)}
                             getTotalDiscountPrice={Number(
                               newTotalDiscount
