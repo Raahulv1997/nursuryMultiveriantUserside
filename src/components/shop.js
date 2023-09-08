@@ -14,6 +14,8 @@ export default function Shop() {
   let [cateFilter, setCateFilter] = useState([]);
   // let [brandFilter, setBrandFilter] = useState([]);
   let [catData, setCatData] = useState([]);
+  let [catDataFilter, setCatDataFilter] = useState([]);
+
   // let [brandData, setBrandData] = useState([]);
   let [serachCate, setSerachCate] = useState([]);
   // let [serachBrand, setSerachBrand] = useState([]);
@@ -35,7 +37,7 @@ export default function Shop() {
   const searchParams = new URLSearchParams(location.search);
   const search = searchParams.get("search");
   const CategoryValue = searchParams.get("category");
-  console.log("seee--" + CategoryValue);
+
   /*Function to add and remove class */
   const AddBodyClass = () => {
     var element = document.getElementById("main_body");
@@ -54,6 +56,7 @@ export default function Shop() {
     let response = await CategoryList();
     // setBrandData(response.data.brand_data);
     setCatData(response.data.response);
+    setCatDataFilter(response.data.response);
   };
   /*Render functionto get Filter list */
   useEffect(() => {
@@ -142,13 +145,21 @@ export default function Shop() {
   const onSerchCategory = (e) => {
     const value = e.target.value;
     setSerachCate(value);
-    // console.log("data---" + JSON.stringify(catData));
-    const filteredData = catData.filter((item) =>
-      item.category_name.toLowerCase().includes(value.toLowerCase())
-    );
-    setCatData(filteredData);
-    setCurrentPage(0);
-    // getFilterData();
+    if (catData.length > 0 && value !== "") {
+      // console.log("data---" + JSON.stringify(catData));
+      const filteredData = catData.filter((item) =>
+        item.category_name.toLowerCase().includes(value.toLowerCase())
+      );
+      setCatDataFilter(filteredData);
+      setCurrentPage(0);
+    } else {
+      setCatDataFilter(catData);
+      // getFilterData();
+    }
+
+    console.log("value.lenght---" + value);
+    if (value === "") {
+    }
   };
   /*Functionality to Clear Category filter*/
   const uncheckAllCategory = () => {
@@ -476,7 +487,7 @@ export default function Shop() {
                         onChange={onSerchCategory}
                       />
                       <ul className="shop-widget-list shop-widget-scroll">
-                        {(catData || []).map((item, index) => {
+                        {(catDataFilter || []).map((item, index) => {
                           return (
                             <li key={index}>
                               <div className="shop-widget-content">

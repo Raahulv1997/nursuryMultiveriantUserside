@@ -209,20 +209,23 @@ function Checkout() {
     if (SingleSelectedPayment === false) {
       setSinglePaymentErr(true);
     } else {
+      setLoading(true);
       let response = await PlaceOrder(result);
-
-      if (response.response === "placed order successfull") {
+      console.log("ressponcee---" + JSON.stringify(response.data.response));
+      if (response.data.response === "placed order successfull") {
         toast.success("Order Placed Successfully", {
           position: toast.POSITION.TOP_RIGHT,
           autoClose: 1000,
         });
+        setLoading(false);
 
-        navigate("/profile?ClickedBy=checkout");
         // const url = `/invoice?order_id=${encodeURIComponent(
         //   response.data.invoice_id
         // )}`;
         // window.location.href = url;
       }
+      navigate("/profile?ClickedBy=checkout");
+      setLoading(false);
     }
   };
   useEffect(() => {
@@ -252,8 +255,8 @@ function Checkout() {
       setLoading(true);
 
       let response = await PlaceOrder(result);
-      console.log("ressponcee---" + JSON.stringify(response));
-      if (response.response === "placed order successfull") {
+
+      if (response.data.response === "placed order successfull") {
         toast.success("placed order successfull", {
           position: toast.POSITION.TOP_RIGHT,
           autoClose: 1000,
@@ -270,6 +273,7 @@ function Checkout() {
         // )}`;
         // window.location.href = url;
       }
+      setLoading(false);
     }
     // else {
     //   setLoading(false)
@@ -565,7 +569,8 @@ function Checkout() {
                                     return (
                                       <>
                                         <span className="text-danger">
-                                          Delivery not available
+                                          Delivery not available Either remove
+                                          this product/change the address
                                         </span>
                                       </>
                                     );
@@ -653,9 +658,7 @@ function Checkout() {
                                       ₹{" "}
                                       {Number(
                                         `${
-                                          item[
-                                            item.vendor_id + "_discount_amount"
-                                          ]
+                                          item[item.vendor_id + "_gst_amount"]
                                         }`
                                       ).toFixed(2)}
                                     </h6>
@@ -734,10 +737,10 @@ function Checkout() {
                                             }}
                                           >
                                             <option>
-                                              Select Payment Mathod
+                                              Select Payment Method
                                             </option>
                                             <option value="COD">
-                                              Case on Delivary
+                                              Cash on Delivary
                                             </option>
                                           </select>
                                           {SinglePaymentErr === true ? (

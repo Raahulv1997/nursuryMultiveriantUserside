@@ -166,10 +166,11 @@ const ProductBox = ({
         if (location.pathname === "/shop") {
           paginationData(response.data.pagination);
         }
+
         if (location.pathname === "/productdetails") {
           let daaata = response.data.results.filter((item) => {
             // eslint-disable-next-line
-            return item.product_verient_id != varId;
+            return item.id !== Number(setId);
           });
 
           // let daaata = response.data.results.filter(
@@ -179,7 +180,9 @@ const ProductBox = ({
 
           setData(daaata);
         } else {
-          setData(response.data.results);
+          setData(
+            response.data.results.filter((item) => item.id !== Number(setId))
+          );
         }
       }
     }
@@ -199,6 +202,8 @@ const ProductBox = ({
     }
     // eslint-disable-next-line
   }, [
+    setId,
+    setVar_Id,
     pricefilter,
     rating,
     category,
@@ -234,7 +239,7 @@ const ProductBox = ({
     } else {
       if (vendor_id === prevVendorID) {
       } else {
-        toast.success("vendor is change charges might increases", {
+        toast.success("Vendor changed Delivery charges might increase", {
           position: toast.POSITION.TOP_RIGHT,
           autoClose: 1000,
         });
@@ -460,16 +465,17 @@ const ProductBox = ({
                     ) : null}
                   </Link>
                   <div className="product-widget">
-                    <Link
+                    <div
                       title="Product View"
-                      className="fas fa-eye"
+                      className="fas fa-eye eye_icon"
+                      style={{ cursor: "pointer" }}
                       onClick={() =>
                         OpenProductDetailModal(
                           item.product_id,
                           item.product_verient_id
                         )
                       }
-                    ></Link>
+                    ></div>
                   </div>
                 </div>
                 <div className="product-content px-3 pb-3">

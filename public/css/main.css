@@ -1962,7 +1962,7 @@ a.product-image {
   -o-transition: all linear 0.3s;
 }
 
-.product-widget a {
+.product-widget .eye_icon {
   width: 40px;
   height: 40px;
   font-size: 15px;
@@ -1975,6 +1975,9 @@ a.product-image {
   text-shadow: var(-primary-tshadow);
   -webkit-box-shadow: 0px 7px 12px 0px rgba(0, 0, 0, 0.12);
   box-shadow: 0px 7px 12px 0px rgba(0, 0, 0, 0.12);
+}
+.item_show_modal img {
+  height: 284px;
 }
 
 .product-content {

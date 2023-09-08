@@ -15,6 +15,7 @@ export default function Cart({
   setCartList,
   cartList,
 }) {
+  var delCharges = 0;
   let navigate = useNavigate();
   let location = useLocation();
   const [apicall, setApicall] = useState(false);
@@ -115,6 +116,7 @@ export default function Cart({
         ) : (
           <ul className="cart-list">
             {(data || []).map((item, index) => {
+              delCharges += Number(item.delivery_charges);
               return (
                 // <Link key={index} onClick={() => ProductDetailClick(item)}>
                 <>
@@ -134,7 +136,7 @@ export default function Cart({
                         />
                       );
                     })}
-                    <h4 style={{ marginTop: "10px" }}>Summury</h4>
+                    <h4 style={{ marginTop: "10px" }}>Summary</h4>
 
                     <div
                       style={{
@@ -213,7 +215,7 @@ export default function Cart({
             >
               <span className="checkout-label">Proceed to Checkout</span>
               <span className="checkout-price">
-                ₹ {Number(subTotal).toFixed(2)}
+                ₹ {Number(subTotal + delCharges).toFixed(2)}
               </span>
             </Link>
           </div>

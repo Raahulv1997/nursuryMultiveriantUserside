@@ -36,25 +36,27 @@ export default function Productdescription(props) {
             <div className="col-lg-12">
               <ul className="nav nav-tabs">
                 <li>
-                  <Link
+                  <div
+                    style={{ cursor: "pointer" }}
                     className={`tab-link ${
                       activeTab === "tab-spec" ? "active" : ""
                     }`}
                     onClick={() => handleTabClick("tab-spec")}
                   >
                     Specifications
-                  </Link>
+                  </div>
                 </li>
                 {reviewListData.length === 0 ? null : (
                   <li>
-                    <Link
+                    <div
+                      style={{ cursor: "pointer" }}
                       className={`tab-link ${
                         activeTab === "tab-reve" ? "active" : ""
                       }`}
                       onClick={() => handleTabClick("tab-reve")}
                     >
                       reviews ({reviewListData.length})
-                    </Link>
+                    </div>
                   </li>
                 )}
               </ul>

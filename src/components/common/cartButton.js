@@ -45,7 +45,7 @@ const CartUpdate = (props) => {
         props.setLoading(false);
       }
       if (response.data.response === "update successfull") {
-        toast.success("Product Quantity Successfully", {
+        toast.success("Product Quantity Updated", {
           position: toast.POSITION.TOP_RIGHT,
           autoClose: 1000,
         });

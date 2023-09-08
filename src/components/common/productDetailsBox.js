@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+
 import { ProductList, AddToCart, Add_Remove_wishlist } from "../api/api";
 import ProductRating from "../common/productRating";
 import { toast } from "react-toastify";
 import CartUpdate from "./cartButton";
 import Productdescription from "./productdescription";
 import ProductImage from "./product_image";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export default function ProductDetailsBox(props) {
   const [disableWishlist, setDisableWishlist] = useState(false);
@@ -34,7 +35,7 @@ export default function ProductDetailsBox(props) {
       ""
       // [props.var]
     );
-    console.log("ressss--" + JSON.stringify(response.data.results));
+
     if (
       response.data.results === undefined ||
       response.data.results === "undefined" ||
@@ -59,7 +60,8 @@ export default function ProductDetailsBox(props) {
 
   /*Function to get another varient data */
   const AllData = (id, vdata) => {
-    // console.log("al data coallingh");
+    console.log("v data---" + JSON.stringify(vdata));
+
     props.setLoading(true);
     // console.log(
     //   "id",
@@ -82,11 +84,10 @@ export default function ProductDetailsBox(props) {
       props.setLoading(false);
       if (
         location.pathname ===
-          `/productdetails?product_id=${vdata.id}&variant_id=${vdata.product_verient_id}` &&
+          `/productdetails?product_id=${vdata.id}&variant_id=${vdata.product_verient_id}` ||
         props.modal === "no"
       ) {
-        console.log("in navigate from cart");
-
+        console.log("props_category---" + vdata[0].category.split(",")[0]);
         props.setproCate(vdata[0].category.split(",")[0]);
       }
     }
@@ -110,9 +111,9 @@ export default function ProductDetailsBox(props) {
     if (props.productDetailCall === true) {
       props.setProductDetailCall(false);
     }
-    if (props.var) {
-      setVarID(props.var);
-    }
+    // if (props.var) {
+    //   setVarID(props.var);
+    // }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.id, props.var, apicall, props.productDetailCall]);
   /*Function to add to cart */
@@ -195,11 +196,17 @@ export default function ProductDetailsBox(props) {
       }
     }
   };
-  console.log("dataaaaaaaaaaaaa" + JSON.stringify(data));
+
   return (
     <>
       <div className="row product_detail_box">
-        <div className="col-md-6 col-lg-6">
+        <div
+          className={
+            props.page === "details"
+              ? "col-md-6 col-lg-6"
+              : "col-md-12 col-lg-12 item_show_modal"
+          }
+        >
           <div
             className={
               props.page === "details" ? "details-gallery" : "view-gallery"
@@ -260,7 +267,13 @@ export default function ProductDetailsBox(props) {
             </Carousel>
           </div>
         </div>
-        <div className="col-md-6 col-lg-6 pb-5">
+        <div
+          className={
+            props.page === "details"
+              ? "col-md-6 col-lg-6"
+              : "col-md-12 col-lg-12 "
+          }
+        >
           <div
             className={
               props.page === "details" ? "details-content" : "view-details"
@@ -273,7 +286,7 @@ export default function ProductDetailsBox(props) {
                 props.page === "details" ? "details-name" : "view-name"
               }
             >
-              <Link to="">{data.name}</Link>
+              <div style={{ cursor: "pointer" }}>{data.name}</div>
               {/* ({data.rating}
               <i className="active icofont-star text-warning"></i>) */}
             </h3>
@@ -346,71 +359,76 @@ export default function ProductDetailsBox(props) {
               </li>
             </ul>
           </div> */}
-            <div
-              className={
-                props.page === "details"
-                  ? "details-list-group mb-2"
-                  : "view-list-group"
-              }
-            >
-              <label
+
+            {props.page === "details" ? (
+              <div
                 className={
                   props.page === "details"
-                    ? "details-list-title"
-                    : "view-list-title"
+                    ? "details-list-group mb-2"
+                    : "view-list-group"
                 }
               >
-                Variants:
-              </label>
-              <ul
-                className={
-                  props.page === "details"
-                    ? "details-tag-list d-flex align-content-start flex-wrap"
-                    : "view-tag-list d-flex align-content-start flex-wrap"
-                }
-              >
-                {(varList || []).map((item, index) => {
-                  return (
-                    <li key={index}>
-                      <div
-                        onClick={() => {
-                          setVarID(item.product_verient_id);
-                          setdatachange(true);
-                        }}
-                        className={
-                          item.product_verient_id === varId
-                            ? "active w-100"
-                            : "w-100"
-                        }
-                      >
-                        {/* <img
+                <label
+                  className={
+                    props.page === "details"
+                      ? "details-list-title"
+                      : "view-list-title"
+                  }
+                >
+                  Variants:
+                </label>
+                <ul
+                  className={
+                    props.page === "details"
+                      ? "details-tag-list d-flex align-content-start flex-wrap"
+                      : "view-tag-list d-flex align-content-start flex-wrap"
+                  }
+                >
+                  {(varList || []).map((item, index) => {
+                    return (
+                      <li key={index}>
+                        <div
+                          style={{ cursor: "pointer" }}
+                          onClick={() => {
+                            setVarID(item.product_verient_id);
+                            setdatachange(true);
+                          }}
+                          className={
+                            item.product_verient_id === varId
+                              ? "active w-100"
+                              : "w-100"
+                          }
+                        >
+                          {/* <img
                           className="w-100"
                           src={item.cover_image}
                           alt={item.description + ", " + item.seo_tag}
                         /> */}
-                        <ProductImage
-                          src={
-                            item.cover_image !== null
-                              ? item.cover_image
-                              : item.all_images_url
-                          }
-                          // src={item.cover_image}
-                          className={"img-fluid"}
-                          alt={item.description + ", " + item.seo_tag}
-                        />
-                        <small style={{ fontSize: "10px" }}>
-                          ₹{item.price}/-
-                          <del>₹{data.mrp}/-</del>
-                        </small>
-                        <div className="text-truncate w-100 var_name">
-                          {item.verient_name}
+                          <ProductImage
+                            src={
+                              item.cover_image !== null
+                                ? item.cover_image
+                                : item.all_images_url
+                            }
+                            // src={item.cover_image}
+                            className={"img-fluid"}
+                            alt={item.description + ", " + item.seo_tag}
+                          />
+                          <small style={{ fontSize: "10px" }}>
+                            ₹{item.price}/-
+                            <del>₹{data.mrp}/-</del>
+                          </small>
+                          <div className="text-truncate w-100 var_name">
+                            {item.verient_name}
+                          </div>
                         </div>
-                      </div>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            ) : null}
+
             <div
               className={
                 props.page === "details"

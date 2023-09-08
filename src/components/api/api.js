@@ -170,7 +170,7 @@ export const ProductList = async (
       created_on___: "",
       search: search === null || search === undefined ? "" : search,
       rating__: "",
-      avgRatings: rating,
+      avgRatings: rating.length === 2 ? [] : rating,
       category:
         CatSearch[0] === null || CatSearch[0] === undefined ? "" : CatSearch,
       // brand: brandFilter,

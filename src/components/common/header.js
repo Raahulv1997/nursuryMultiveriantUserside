@@ -53,7 +53,7 @@ export default function Header({
   const handleDropdownToggle = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
-  console.log("cat val---" + CategoryValue);
+
   /*Function to Get Category list */
   const GetCategoryList = async () => {
     let response = await CategoryList();
