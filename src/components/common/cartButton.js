@@ -17,6 +17,7 @@ const CartUpdate = (props) => {
   //   }
   /*Function to updt quantity */
   const updateQuantity = async (qty) => {
+    console.log("qty state---");
     props.setLoading(true);
     setDisableQtyButton(true);
     let newqty = props.qty;
@@ -43,6 +44,7 @@ const CartUpdate = (props) => {
         props.setApicall(true);
         props.setcartcall(true);
         props.setLoading(false);
+        props.setCartApiCall(true);
       }
       if (response.data.response === "update successfull") {
         toast.success("Product Quantity Updated", {
@@ -68,6 +70,7 @@ const CartUpdate = (props) => {
       }
     }
   };
+
   return (
     <>
       <div className="product-action d-flex">
