@@ -48,7 +48,6 @@ export default function ProductDetailsBox(props) {
       setData([]);
       props.setLoading(false);
     } else {
-      //   console.log("jjjjj");
       // setData(response.data.results[0]);
       setVarList(response.data.results);
       setData(
@@ -424,7 +423,9 @@ export default function ProductDetailsBox(props) {
                           />
                           <small style={{ fontSize: "10px" }}>
                             ₹{item.price}/-
-                            <del>₹{data.mrp}/-</del>
+                            {item.discount === 0 ? null : (
+                              <del>₹{item.mrp}/-</del>
+                            )}
                           </small>
                           <div className="text-truncate w-100 var_name">
                             {item.verient_name}

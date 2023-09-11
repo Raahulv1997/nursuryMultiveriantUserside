@@ -1,7 +1,7 @@
 import React from "react";
 import NotificationBox from "./common/notificationBox";
 export default function Notification({ data, close, show }) {
-  // console.log("ddd--" + JSON.stringify(data));
+  console.log("ddd--" + JSON.stringify(data));
   return (
     <div>
       <div className={show ? "cart-sidebar active" : " cart-sidebar"}>

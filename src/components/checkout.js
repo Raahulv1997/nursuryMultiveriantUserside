@@ -632,7 +632,7 @@ function Checkout() {
                                     SubTotal
                                   </th>
                                   <th scope="col" className="p-1">
-                                    Delivary Fee
+                                    Delivery Fee
                                   </th>
                                   <th scope="col" className="p-1">
                                     Total
