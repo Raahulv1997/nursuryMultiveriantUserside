@@ -1,19 +1,19 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import logo from "../image/logo.png";
 import useValidation from "../components/common/useValidation";
 import { UserLogin } from "./api/api";
 import { toast } from "react-toastify";
-import { useGoogleLogin } from '@react-oauth/google';
+import { useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
-import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props'
+import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props";
 export default function Login() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   let [facebook, setFacebook] = useState(false);
   /*Function to show hide password */
   const toggleShowPassword = () => setShowPassword((prev) => !prev);
-
+  const history = useLocation();
   const renderIcon = () => {
     if (state.password.length > 0) {
       return showPassword ? (
@@ -24,7 +24,7 @@ export default function Login() {
     }
     return null;
   };
-  let navigate = useNavigate();
+  const navigate = useNavigate();
   /*----USER LOGIN VALIDATION----*/
   const initialFormState = {
     email: "",
@@ -68,8 +68,11 @@ export default function Login() {
         });
         setLoading(false);
         setErrors("");
-        navigate("/");
-        window.location.reload()
+        navigate("/", { replace: true });
+        // navigate.replace("/");
+        // history.replace("/");
+        // navigate("/");
+        //window.location.reload();
       }
       if (response.response === "creadintial not match") {
         setLoading(false);
@@ -83,56 +86,58 @@ export default function Login() {
         setLoading(false);
         setErrors({ errors, creadintial: ["Email not exists"] });
       }
-      
     }
   };
-   /*Function to login with google */
-   const GoogleLogin = useGoogleLogin({
+  /*Function to login with google */
+  const GoogleLogin = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       try {
-        let data = await axios("https://www.googleapis.com/oauth2/v3/userinfo", {
-          headers: {  
-            "Authorization": `Bearer ${tokenResponse.access_token}`
+        let data = await axios(
+          "https://www.googleapis.com/oauth2/v3/userinfo",
+          {
+            headers: {
+              Authorization: `Bearer ${tokenResponse.access_token}`,
+            },
           }
-        });
-      //  if(data.data.email_verified === true){
-      //   let res = await SocialLogin(data.data.sub,data.data.email,data.data.name,data.data.picture,"Google");
-      //   console.log(res,);
-      //   localStorage.setItem("token", res.token);
-      //   localStorage.setItem("userType", "user");
-      //   localStorage.setItem("employee_id", res.employee_id);
-      //   localStorage.setItem("profile_photo", res.profile_photo);
-      //   toast.success("Logged In Successfully", {
-      //     position: toast.POSITION.TOP_RIGHT,
-      //     autoClose: 1000,
-      //   });
-      //   props.close();
-      //   navigate("/");
-      //   window.location.reload();
-      // }
-      console.log(data)
+        );
+        //  if(data.data.email_verified === true){
+        //   let res = await SocialLogin(data.data.sub,data.data.email,data.data.name,data.data.picture,"Google");
+        //   console.log(res,);
+        //   localStorage.setItem("token", res.token);
+        //   localStorage.setItem("userType", "user");
+        //   localStorage.setItem("employee_id", res.employee_id);
+        //   localStorage.setItem("profile_photo", res.profile_photo);
+        //   toast.success("Logged In Successfully", {
+        //     position: toast.POSITION.TOP_RIGHT,
+        //     autoClose: 1000,
+        //   });
+        //   props.close();
+        //   navigate("/");
+        //   window.location.reload();
+        // }
+        console.log(data);
       } catch (err) {
         console.log(err);
       }
-    }
+    },
   });
-/*Functiom to login with facebook */
-const responseFacebook = async (response) => {
-  // if(response.graphDomain === "facebook"){
-  //   let data = await SocialLogin(response.userID,response.email,response.name,response.picture.data.url,"Facebook");
-  //     localStorage.setItem("token", data.token);
-  //     localStorage.setItem("userType", "user");
-  //     localStorage.setItem("employee_id", data.employee_id);
-  //     localStorage.setItem("profile_photo", data.profile_photo);
-  //     toast.success("Logged In Successfully", {
-  //       position: toast.POSITION.TOP_RIGHT,
-  //       autoClose: 1000,
-  //     });
-  //     props.close();
-  //     navigate("/");
-  //     window.location.reload();
-  //   }
-}
+  /*Functiom to login with facebook */
+  const responseFacebook = async (response) => {
+    // if(response.graphDomain === "facebook"){
+    //   let data = await SocialLogin(response.userID,response.email,response.name,response.picture.data.url,"Facebook");
+    //     localStorage.setItem("token", data.token);
+    //     localStorage.setItem("userType", "user");
+    //     localStorage.setItem("employee_id", data.employee_id);
+    //     localStorage.setItem("profile_photo", data.profile_photo);
+    //     toast.success("Logged In Successfully", {
+    //       position: toast.POSITION.TOP_RIGHT,
+    //       autoClose: 1000,
+    //     });
+    //     props.close();
+    //     navigate("/");
+    //     window.location.reload();
+    //   }
+  };
   return (
     <div>
       <section className="user-form-part">
@@ -151,24 +156,30 @@ const responseFacebook = async (response) => {
                 </div>
                 <div className="user-form-group">
                   <ul className="user-form-social">
-                  <li>
-  <Link className="facebook" onClick={() => setFacebook(true)}>
-    <i className="fab fa-facebook-f"></i>login with Facebook
-  </Link>
-  {facebook ? (
-    <FacebookLogin
-      appId="276709614913655"
-      autoLoad
-      callback={responseFacebook}
-      fields="name,email,picture"
-      scope="public_profile,user_friends,email,user_actions.books"
-      className="font-size-4 font-weight-semibold position-relative text-white bg-marino h-px-48 flex-all-center w-100 px-6 rounded-5 mb-4"
-      render={renderProps => (
-        <button onClick={renderProps.onClick} className="d-none"></button>
-      )}
-    />
-  ) : null}
-</li>
+                    <li>
+                      <Link
+                        className="facebook"
+                        onClick={() => setFacebook(true)}
+                      >
+                        <i className="fab fa-facebook-f"></i>login with Facebook
+                      </Link>
+                      {facebook ? (
+                        <FacebookLogin
+                          appId="276709614913655"
+                          autoLoad
+                          callback={responseFacebook}
+                          fields="name,email,picture"
+                          scope="public_profile,user_friends,email,user_actions.books"
+                          className="font-size-4 font-weight-semibold position-relative text-white bg-marino h-px-48 flex-all-center w-100 px-6 rounded-5 mb-4"
+                          render={(renderProps) => (
+                            <button
+                              onClick={renderProps.onClick}
+                              className="d-none"
+                            ></button>
+                          )}
+                        />
+                      ) : null}
+                    </li>
 
                     <li>
                       <Link className="twitter">
@@ -218,22 +229,26 @@ const responseFacebook = async (response) => {
                       )}
                     </div>
                     <div className="form-group">
-                    <div className="position-relative">
-                      <input
-                        type={showPassword ? "text" : "password"}
-                        value={state.password}
-                        className={
-                          errors.password
-                            ? "form-control border border-danger"
-                            : "form-control"
-                        }
-                        name="password"
-                        onChange={onInputChange}
-                        placeholder="Enter your password"
-                      /><span className="password-icon" onClick={toggleShowPassword}>
-                      {renderIcon()}
-                    </span>
-                    </div>
+                      <div className="position-relative">
+                        <input
+                          type={showPassword ? "text" : "password"}
+                          value={state.password}
+                          className={
+                            errors.password
+                              ? "form-control border border-danger"
+                              : "form-control"
+                          }
+                          name="password"
+                          onChange={onInputChange}
+                          placeholder="Enter your password"
+                        />
+                        <span
+                          className="password-icon"
+                          onClick={toggleShowPassword}
+                        >
+                          {renderIcon()}
+                        </span>
+                      </div>
                       {/*----ERROR MESSAGE FOR EMAIL----*/}
                       {errors.password && (
                         <span>

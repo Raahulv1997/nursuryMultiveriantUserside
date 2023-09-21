@@ -13,7 +13,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 export default function ProductDetailsBox(props) {
   // eslint-disable-next-line
   const [cartApicCall, setCartApiCall] = useState(false);
-
+  const [inProcessVarient, setInProcessVarient] = useState(null);
   const [disableWishlist, setDisableWishlist] = useState(false);
   let [data, setData] = useState("");
   const [varList, setVarList] = useState([]);
@@ -21,6 +21,10 @@ export default function ProductDetailsBox(props) {
   const [datachange, setdatachange] = useState(false);
   const [apicall, setApicall] = useState(false);
   let Token = localStorage.getItem("token");
+  const headers = {
+    "Content-Type": "application/json",
+    user_token: `${Token}`,
+  };
   let navigate = useNavigate();
   let location = useLocation();
   /*Function to get the product list */
@@ -89,7 +93,6 @@ export default function ProductDetailsBox(props) {
           `/productdetails?product_id=${vdata.id}&variant_id=${vdata.product_verient_id}` ||
         props.modal === "no"
       ) {
-        console.log("props_category---" + vdata[0].category.split(",")[0]);
         props.setproCate(vdata[0].category.split(",")[0]);
       }
     }
@@ -121,7 +124,7 @@ export default function ProductDetailsBox(props) {
   /*Function to add to cart */
   const onAddToCart = async (id, varId) => {
     props.setLoading(true);
-    let response = await AddToCart(id, varId, 1);
+    let response = await AddToCart(id, varId, 1, headers);
     if (response.data.response === "add product successfull") {
       toast.success("Product Added Successfully", {
         position: toast.POSITION.TOP_RIGHT,
@@ -167,7 +170,7 @@ export default function ProductDetailsBox(props) {
       if (wishlist > 0) {
         setDisableWishlist(true);
 
-        let response = await Add_Remove_wishlist(id, verient_id);
+        let response = await Add_Remove_wishlist(id, verient_id, headers);
 
         if (
           response.data.response ===
@@ -184,7 +187,7 @@ export default function ProductDetailsBox(props) {
       } else {
         setDisableWishlist(true);
 
-        let response = await Add_Remove_wishlist(id, verient_id);
+        let response = await Add_Remove_wishlist(id, verient_id, headers);
 
         if (response.data.response === "added in wishlist") {
           toast.success("Added to wishlist", {
@@ -401,7 +404,8 @@ export default function ProductDetailsBox(props) {
                             setdatachange(true);
                           }}
                           className={
-                            item.product_verient_id === varId
+                            // eslint-disable-next-line
+                            item.product_verient_id == varId
                               ? "active w-100"
                               : "w-100"
                           }
@@ -472,6 +476,7 @@ export default function ProductDetailsBox(props) {
                     qty={data.cart_count}
                     id={data.product_id}
                     vid={data.product_verient_id}
+                    setInProcessVarient={setInProcessVarient}
                     setApicall={setApicall}
                     setCartApiCall={setCartApiCall}
                     setcartcall={props.setcartcall}

@@ -8,6 +8,11 @@ import moment from "moment/moment";
 
 import OrderDetailsTable from "./common/OrderDetailsTable";
 function Invoice() {
+  let Token = localStorage.getItem("token");
+  const headers = {
+    "Content-Type": "application/json",
+    user_token: `${Token}`,
+  };
   let [loading, setLoading] = useState(true);
   let location = useLocation();
   let [orderProductList, setOrderProductList] = useState("");
@@ -24,7 +29,7 @@ function Invoice() {
   let newDelivaryCharge = 0;
   /*Function to get Order data */
   let GetData = async () => {
-    let OrderRes = await Orderdetails(OrderId);
+    let OrderRes = await Orderdetails(OrderId, headers);
     if (
       OrderRes.data === null ||
       OrderRes.data === undefined ||
@@ -38,7 +43,7 @@ function Invoice() {
       setLoading(false);
     } else {
       // setOrderDetails(OrderRes.data.order_detaile[0]);
-      console.log("orddddd--" + JSON.stringify(OrderRes.data.order_detaile));
+
       setOrderProductList(OrderRes.data.order_product_detaile);
       setOrderDataList(OrderRes.data.order_detaile[0]);
       // setOrderList(OrderRes.data.order_product_detaile);

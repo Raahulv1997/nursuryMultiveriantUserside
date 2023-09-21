@@ -37,7 +37,7 @@ export default function Header({
   const [diableOther, setDiableOther] = useState(false);
 
   let name = localStorage.getItem("username");
-  let Token = localStorage.getItem("token");
+
   let profileImage = localStorage.getItem("image");
 
   /*Function to add and remove class */
@@ -53,14 +53,18 @@ export default function Header({
   const handleDropdownToggle = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
-
+  let Token = localStorage.getItem("token");
+  const headers = {
+    "Content-Type": "application/json",
+    user_token: `${Token}`,
+  };
   /*Function to Get Category list */
   const GetCategoryList = async () => {
     let response = await CategoryList();
     if (Token) {
-      let NotiRes = await GetUserNotificationList();
+      let NotiRes = await GetUserNotificationList(headers);
 
-      let CartRes = await CartList();
+      let CartRes = await CartList(headers);
       if (NotiRes.data.response === "empty") {
         setNotificationData([]);
       } else {

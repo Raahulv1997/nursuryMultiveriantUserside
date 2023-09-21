@@ -11,6 +11,10 @@ export default function ComplaintForm({
   setLoading,
 }) {
   let Token = localStorage.getItem("token");
+  const headers = {
+    "Content-Type": "application/json",
+    user_token: `${Token}`,
+  };
   // COMPLAINT DETAIL VALIDATION
   // INITIAL STATE ASSIGNMENT
 
@@ -99,7 +103,7 @@ export default function ComplaintForm({
     if (Token) {
       if (validate()) {
         setLoading(true);
-        let response = await AddComplaint(state);
+        let response = await AddComplaint(state, headers);
         if (response.data.Message === "Complaint Added") {
           toast.success("Complaint added Successfully", {
             position: toast.POSITION.TOP_RIGHT,

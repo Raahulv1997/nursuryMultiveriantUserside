@@ -5,6 +5,8 @@ import { toast } from "react-toastify";
 import productImg from "../../image/product_demo.png";
 import { useNavigate } from "react-router-dom";
 import ProductImage from "./product_image";
+import CartBoxUpdateQty from "./CartBoxUpdateQty";
+import Loadeer from "./Loadeer";
 
 function CartBox({
   setLoading,
@@ -15,11 +17,16 @@ function CartBox({
   close,
   loading,
 }) {
+  let Token = localStorage.getItem("token");
+  const headers = {
+    "Content-Type": "application/json",
+    user_token: `${Token}`,
+  };
   let navigate = useNavigate();
   /*Funtion to delete cart */
   const DeleteCartClick = async (id, varId) => {
     setLoading(true);
-    let response = await DeleteCart(id, varId);
+    let response = await DeleteCart(id, varId, headers);
     if (response.data.response === "delete successfull") {
       toast.success("Product Deleted Successfully", {
         position: toast.POSITION.TOP_RIGHT,
@@ -91,7 +98,7 @@ function CartBox({
             <p>₹Unit Price - ₹{data.price}</p>
           </div>
           <div className="cart-action-group">
-            <CartUpdate
+            <CartBoxUpdateQty
               qty={data.cart_product_quantity}
               id={data.cart_product_id}
               vid={data.cart_product_verient_id}

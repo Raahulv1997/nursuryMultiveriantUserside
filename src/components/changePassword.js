@@ -1,18 +1,19 @@
-import React, { useState } from 'react'
-import logo from "../image/logo.png"
-import { Link, useNavigate } from 'react-router-dom'
-import { UpdateUserPassword } from './api/api'
-import useValidation from './common/useValidation'
-import { toast } from 'react-toastify'
+import React, { useState } from "react";
+import logo from "../image/logo.png";
+import { Link, useNavigate } from "react-router-dom";
+import { UpdateUserPassword } from "./api/api";
+import useValidation from "./common/useValidation";
+import { toast } from "react-toastify";
 export default function ChangePassword() {
   let [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  let navigate = useNavigate()
+  let navigate = useNavigate();
 
   /*Function to show hide password */
   const toggleShowPassword = () => setShowPassword((prev) => !prev);
-  const toggleShowConfirmPassword = () => setShowConfirmPassword((prev) => !prev);
+  const toggleShowConfirmPassword = () =>
+    setShowConfirmPassword((prev) => !prev);
 
   const renderIcon = () => {
     if (state.new_password.length > 0) {
@@ -53,10 +54,10 @@ export default function ChangePassword() {
       (value) =>
         value === ""
           ? "Password is required"
-          // : /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,16}$/.test(
-          //     value
-          //   )
-          : null
+          : // : /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,16}$/.test(
+            //     value
+            //   )
+            null,
       // : "Password must contain digit, one uppercase letter, one special character, no space, and it must be 8-16 characters long",
     ],
     conf_password: [
@@ -70,30 +71,33 @@ export default function ChangePassword() {
   // CUSTOM VALIDATIONS IMPORT
   const { state, onInputChange, setState, setErrors, errors, validate } =
     useValidation(initialFormState, validators);
-
+  let Token = localStorage.getItem("token");
+  const headers = {
+    "Content-Type": "application/json",
+    user_token: `${Token}`,
+  };
   // USER CHANGE PASSWORD SUBMIT BUTTON
   const onUserChangePassClick = async (event) => {
     event.preventDefault();
     if (validate()) {
-      setLoading(true)
-      let Response = await UpdateUserPassword(state)
+      setLoading(true);
+      let Response = await UpdateUserPassword(state, headers);
       if (Response.data.response === "update your password successfully") {
         toast.success("Password updated successfully", {
           position: toast.POSITION.TOP_RIGHT,
           autoClose: 1000,
         });
-        setLoading(false)
-        setState(initialFormState)
-        setErrors("")
+        setLoading(false);
+        setState(initialFormState);
+        setErrors("");
         if (localStorage.getItem("temp") === "yes") {
-          navigate("/login")
+          navigate("/login");
         } else {
-          navigate("/profile")
+          navigate("/profile");
         }
       }
     }
-  }
-
+  };
 
   return (
     <div>
@@ -136,7 +140,7 @@ export default function ChangePassword() {
                     )}
                   </div>} */}
                   <div className="form-group">
-                    <div className='position-relative'>
+                    <div className="position-relative">
                       <input
                         type={showPassword ? "text" : "password"}
                         name="new_password"
@@ -149,7 +153,10 @@ export default function ChangePassword() {
                         value={state.new_password}
                         placeholder="Current password"
                       />
-                      <span className="password-icon" onClick={toggleShowPassword}>
+                      <span
+                        className="password-icon"
+                        onClick={toggleShowPassword}
+                      >
                         {renderIcon()}
                       </span>
                     </div>
@@ -164,7 +171,7 @@ export default function ChangePassword() {
                     )}
                   </div>
                   <div className="form-group">
-                    <div className='position-relative'>
+                    <div className="position-relative">
                       <input
                         type={showConfirmPassword ? "text" : "password"}
                         name="conf_password"
@@ -177,7 +184,10 @@ export default function ChangePassword() {
                         value={state.conf_password}
                         placeholder="reapet password"
                       />
-                      <span className="password-icon" onClick={toggleShowConfirmPassword}>
+                      <span
+                        className="password-icon"
+                        onClick={toggleShowConfirmPassword}
+                      >
                         {renderIconCon()}
                       </span>
                     </div>

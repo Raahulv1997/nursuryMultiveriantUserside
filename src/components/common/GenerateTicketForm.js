@@ -12,6 +12,10 @@ export default function GenerateTicketForm({
   from,
 }) {
   let Token = localStorage.getItem("token");
+  const headers = {
+    "Content-Type": "application/json",
+    user_token: `${Token}`,
+  };
   // COMPLAINT DETAIL VALIDATION
   // INITIAL STATE ASSIGNMENT
   console.log(from);
@@ -52,7 +56,7 @@ export default function GenerateTicketForm({
     if (Token) {
       if (validate()) {
         setLoading(true);
-        let response = await AddComplaintFromOrder(state);
+        let response = await AddComplaintFromOrder(state, headers);
         if (response.data.Message === "Complaint Added") {
           toast.success("Complaint added Successfully", {
             position: toast.POSITION.TOP_RIGHT,

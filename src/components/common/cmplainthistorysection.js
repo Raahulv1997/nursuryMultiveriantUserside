@@ -5,11 +5,15 @@ import moment from "moment";
 import { Link } from "react-router-dom";
 export default function Complainthistorysection({ setLoading }) {
   const [compList, setCompList] = useState([]);
-
+  let Token = localStorage.getItem("token");
+  const headers = {
+    "Content-Type": "application/json",
+    user_token: `${Token}`,
+  };
   /*Function to get Complaint List */
   const GetComplaintData = async () => {
     setLoading(true);
-    let response = await ComplaintList();
+    let response = await ComplaintList(headers);
     console.log(response.data.result);
     if (
       response.data.result === null ||
@@ -43,12 +47,12 @@ export default function Complainthistorysection({ setLoading }) {
                     <div className="review-media col">
                       <Link className="review-avatar">
                         {/* <img src={user4} alt="review" /> */}
-                        <ProductImage />
+                        <ProductImage src={item.image} />
                       </Link>
                       <h5 className="review-meta row w-100">
                         <span className="col-6">
                           <Link>
-                            {item.first_name} {item.last_name}
+                            {item.profile_first_name} {item.profile_last_name}
                           </Link>
                           <span>
                             {moment(item.created_on).format("YYYY-MM-DD")}
@@ -74,8 +78,10 @@ export default function Complainthistorysection({ setLoading }) {
                   </ul> */}
                   </div>
                   <h5> Order Id : {item.order_id}</h5>
-                  <h5>{item.subject}</h5>
-                  <p className="review-desc">{item.description}</p>
+                  <h5>Complaint : {item.subject}</h5>
+                  <p className="review-desc">
+                    <b>Description</b> {item.description}
+                  </p>
                 </li>
               );
             })}

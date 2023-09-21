@@ -13,6 +13,7 @@ import { toast } from "react-toastify";
 import CartUpdate from "./cartButton";
 import ProductImage from "./product_image";
 import moment from "moment";
+import Loadeer from "./Loadeer";
 const ProductBox = ({
   pricefilter,
   rating,
@@ -47,6 +48,10 @@ const ProductBox = ({
 }) => {
   // eslint-disable-next-line
   const [cartApicCall, setCartApiCall] = useState(false);
+  const [cartLoader, setCartLoader] = useState(false);
+
+  const [inProcessVarient, setInProcessVarient] = useState(null);
+
   const [prevVendorID, setPrevVendorID] = useState("");
   const [disableWishlist, setDisableWishlist] = useState(false);
   const [productDetailModal, setProductDetailModal] = useState(false);
@@ -59,6 +64,11 @@ const ProductBox = ({
   const currentDate = new Date();
   const location = useLocation();
   let Token = localStorage.getItem("token");
+  const headers = {
+    "Content-Type": "application/json",
+    user_token: `${Token}`,
+  };
+
   let navigate = useNavigate();
   const searchParams = new URLSearchParams(location.search);
   const search = searchParams.get("search");
@@ -97,12 +107,15 @@ const ProductBox = ({
   }, []);
   /*Function to get the product list */
   let GetProductList = async () => {
-    setLoading(true);
+    setCartLoader(true);
+
     let response;
     if (Teanding === "Yes" || treanding === "YES") {
+      setLoading(true);
       response = await TreandingPro(
         moment(new Date()).format("YYYY-MM-DD"),
-        oneMonthBefore
+        oneMonthBefore,
+        headers
       );
       if (
         response.data.results === undefined ||
@@ -116,20 +129,25 @@ const ProductBox = ({
         }
         if (location.pathname === "/shop") {
           paginationData({});
-          setLoading(false);
+          setCartLoader(false);
+          // setLoading(false);
         }
       } else {
         setData(response.data.results);
+        setCartLoader(false);
         setLoading(false);
       }
     } else if (WishlistProduct === "yes") {
-      setLoading(true);
-      let response = await getwishlist();
+      setCartLoader(true);
+      let response = await getwishlist(headers);
       let { data } = response;
       if (data) {
         setData(data.response);
-        setLoading(false);
+        setCartLoader(false);
+        // setLoading(false);
       }
+      setCartLoader(false);
+      setLoading(false);
     } else {
       response = await ProductList(
         pricefilter.to_product_price,
@@ -156,6 +174,7 @@ const ProductBox = ({
         setData([]);
         if (location.pathname === "/shop") {
           paginationData({});
+          setCartLoader(false);
           setLoading(false);
         }
         if (
@@ -165,26 +184,38 @@ const ProductBox = ({
           setNoFeaturedData("no_featured");
         }
       } else {
+        setCartLoader(false);
         setLoading(false);
         if (location.pathname === "/shop") {
           paginationData(response.data.pagination);
         }
-
         if (location.pathname === "/productdetails") {
-          console.log("cateFilter-----" + cateFilter);
-          let daaata = response.data.results.filter((item) => {
-            // eslint-disable-next-line
-            let Catval = item.category.split(",")[0];
-            console.log("cat by api" + Catval);
-            return item.id !== Number(setId);
-          });
-
           // let daaata = response.data.results.filter(
           //   (item) => item.id !== setId && item.product_verient_id !== setVar_Id
           // );
           // let daaata = response.data.results;
-          console.log("res data----" + JSON.stringify(daaata));
-          setData(daaata);
+          // eslint-disable-next-line
+          if (cateFilter == undefined) {
+            let daaata = response.data.results.filter((item) => {
+              // eslint-disable-next-line
+              let Catval = item.category.split(",")[0];
+
+              // eslint-disable-next-line
+              return item.id !== Number(setId);
+            });
+            setData(daaata);
+          } else {
+            let daaata = response.data.results.filter((item) => {
+              // eslint-disable-next-line
+              let Catval = item.category.split(",")[0];
+              console.log("Catval-" + Catval);
+              console.log("cateFilter-" + cateFilter);
+
+              // eslint-disable-next-line
+              return item.id !== Number(setId) && Catval == cateFilter;
+            });
+            setData(daaata);
+          }
         } else {
           setData(response.data.results);
           // setData(
@@ -255,10 +286,10 @@ const ProductBox = ({
 
     // Store the current vendor_id for future comparison
     setPrevVendorID(vendor_id);
-
-    setLoading(true);
+    setCartLoader(true);
+    // setLoading(true);
     setDisableCart(true);
-    let response = await AddToCart(id, varId, 1);
+    let response = await AddToCart(id, varId, 1, headers);
     if (response.data.response === "add product successfull") {
       toast.success("Product Added Successfully", {
         position: toast.POSITION.TOP_RIGHT,
@@ -267,6 +298,7 @@ const ProductBox = ({
       setApicall(true);
       setcartcall(true);
       setDisableCart(false);
+      setCartLoader(false);
       setLoading(false);
     }
   };
@@ -282,12 +314,12 @@ const ProductBox = ({
     ) {
       navigate("/login");
     } else {
-      setLoading(true);
+      setCartLoader(true);
       if (wishlist > 0 || wishlist_id > 0) {
         // console.log("in remove");
         setDisableWishlist(true);
 
-        let response = await Add_Remove_wishlist(id, verient_id);
+        let response = await Add_Remove_wishlist(id, verient_id, headers);
 
         // console.log("respoce- in remove-" + response.data.response);
         if (
@@ -299,7 +331,8 @@ const ProductBox = ({
             autoClose: 1000,
           });
           setDisableWishlist(false);
-          setLoading(false);
+          setCartLoader(false);
+
           setApicall(true);
         }
         // setDisableWishlist(false);
@@ -307,9 +340,10 @@ const ProductBox = ({
         // setApicall(true);
       } else {
         // console.log("in add");
+        setCartLoader(true);
         setDisableWishlist(true);
 
-        let response = await Add_Remove_wishlist(id, verient_id);
+        let response = await Add_Remove_wishlist(id, verient_id, headers);
 
         if (response.data.response === "added in wishlist") {
           toast.success("Added to wishlist", {
@@ -317,7 +351,8 @@ const ProductBox = ({
             autoClose: 1000,
           });
           setDisableWishlist(false);
-          setLoading(false);
+          setCartLoader(false);
+
           setApicall(true);
         }
       }
@@ -352,14 +387,17 @@ const ProductBox = ({
       ) : (
         (data || []).map((item, index) => {
           return (
-            <div className="col p-sm-3 p-1" key={index}>
+            <div className="col p-sm-3 p-1 " key={index}>
               <div
                 className={
                   item.product_stock_quantity <= 0
-                    ? "product-card p-0 border-0 product-disable"
-                    : "product-card p-0 border-0"
+                    ? "product-card p-0 border-0 product-disable inner_loader"
+                    : "product-card p-0 border-0 inner_loader"
                 }
               >
+                {cartLoader && item.product_verient_id === inProcessVarient ? (
+                  <Loadeer />
+                ) : null}
                 <div className="product-media">
                   {/* <div className="product-label">
                     <label className="label-text sale bg-danger">sale</label>
@@ -372,14 +410,15 @@ const ProductBox = ({
                           color: "red",
                           disabled: disableWishlist ? true : false,
                         }}
-                        onClick={() =>
+                        onClick={() => {
                           onWishlistAdd(
                             item.id,
                             item.product_verient_id,
                             item.wishlist,
                             item.wishlist_id
-                          )
-                        }
+                          );
+                          setInProcessVarient(item.product_verient_id);
+                        }}
                       ></i>
                     </button>
                   ) : (
@@ -390,9 +429,10 @@ const ProductBox = ({
                           color: "",
                           disabled: disableWishlist ? true : false,
                         }}
-                        onClick={() =>
-                          onWishlistAdd(item.id, item.product_verient_id)
-                        }
+                        onClick={() => {
+                          onWishlistAdd(item.id, item.product_verient_id);
+                          setInProcessVarient(item.product_verient_id);
+                        }}
                       ></i>
                     </button>
                   )}
@@ -508,13 +548,17 @@ const ProductBox = ({
                       disabled={disableCart ? true : false}
                       onClick={
                         Token
-                          ? () =>
+                          ? () => {
                               onAddToCart(
                                 item.product_id,
                                 item.product_verient_id,
                                 item.vendor_id
-                              )
-                          : () => navigate("/login")
+                              );
+                              setInProcessVarient(item.product_verient_id);
+                            }
+                          : () => {
+                              navigate("/login");
+                            }
                       }
                     >
                       <i className="fas fa-shopping-basket"></i>
@@ -525,12 +569,13 @@ const ProductBox = ({
                       qty={item.cart_count}
                       id={item.product_id}
                       vid={item.product_verient_id}
+                      setInProcessVarient={setInProcessVarient}
                       setApicall={setApicall}
                       setCartApiCall={setCartApiCall}
                       setcartcall={setcartcall}
                       quantity={item.product_stock_quantity}
-                      setLoading={setLoading}
-                      loading={loading}
+                      setLoading={setCartLoader}
+                      loading={cartLoader}
                     />
                   )}
                 </div>
@@ -546,7 +591,7 @@ const ProductBox = ({
           id={productId}
           var={productVarId}
           setcartcall={setcartcall}
-          setLoading={setLoading}
+          setLoading={setCartLoader}
         />
       ) : null}
     </>

@@ -5,12 +5,7 @@ import { CheckUserAddress } from "../api/api";
 import { toast } from "react-toastify";
 export default function AddAddressForm(props) {
   const [loading, setLoading] = useState(false);
-  const [AreaError, setAreaError] = useState([]);
-  let Token = localStorage.getItem("token");
-  const headers = {
-    "Content-Type": "application/json",
-    user_token: `${Token}`,
-  };
+
   const initialFormStateuser = {
     first_name: "",
     last_name: "",
@@ -95,68 +90,47 @@ export default function AddAddressForm(props) {
   // CUSTOM VALIDATIONS IMPORT
   const { state, setState, onInputChange, errors, validate, setErrors } =
     useValidation(initialFormStateuser, validators);
-
+  console.log("set daaaa--" + JSON.stringify(state));
   /*Function to send delivery address data */
   const handleButtonClick = () => {
-    // props.setLoading(true);
+    props.setLoading(true);
     if (validate()) {
-      CheckAddress();
-
       props.GetAddress(state);
-
+      setErrors("");
       // setState(initialFormStateuser);
-      // props.setLoading(false);
-      setTimeout(() => {
-        props.close();
-      }, 4000);
+      props.setLoading(false);
+      props.close();
     }
   };
   /*Function to check the address if it is avalable to delivery the product or not */
   const CheckAddress = async () => {
-    let response = await CheckUserAddress(
-      state.pincode,
-      props.vendorId,
-      headers
-    );
-    console.log("Area API---" + JSON.stringify(response));
-
-    if (response.data.service_not_available) {
-      let array1 = response.data.service_not_available;
-      let array2 = props.vendorId;
-      const numArray1 = array1.map(Number);
-      console.log(numArray1);
-      console.log(array2);
-
-      const matchingValues = numArray1.filter((value) =>
-        array2.includes(value)
-      );
-
-      console.log(matchingValues);
-      console.log("kkkk--" + matchingValues);
-
-      if (matchingValues.length > 0) {
-        setAreaError(matchingValues);
-      }
-    }
-
-    if (response.data.status === false) {
-      toast.error("Area Not available", {
-        position: toast.POSITION.TOP_RIGHT,
-        autoClose: 1000,
-      });
-
-      // setLoading(false);
-      // props.setLoading(false);
-    }
-    if (response.data.service_available.length > 0) {
-      toast.success("Area available", {
-        position: toast.POSITION.TOP_RIGHT,
-        autoClose: 1000,
-      });
-      setState({ ...state, area: false });
+    if (validate()) {
+      props.setLoading(true);
+      setLoading(true);
       setErrors("");
-      setLoading(false);
-      props.setLoading(false);
+      let response = await CheckUserAddress(state.pincode, props.vendorId);
+      if (response.data.status === false) {
+        toast.error("Area Not available", {
+          position: toast.POSITION.TOP_RIGHT,
+          autoClose: 1000,
+        });
+        setErrors({
+          ...errors,
+          area: ["Delivery Not available for this address"],
+        });
+        setLoading(false);
+        props.setLoading(false);
+      }
+      if (response.data.service_available.length > 0) {
+        toast.success("Area available", {
+          position: toast.POSITION.TOP_RIGHT,
+          autoClose: 1000,
+        });
+        setState({ ...state, area: false });
+        setErrors("");
+        setLoading(false);
+        props.setLoading(false);
+      }
     }
   };
   return (
@@ -307,15 +281,6 @@ export default function AddAddressForm(props) {
                     {errors.pincode}
                   </span>
                 )}
-                {AreaError.length > 0 ? (
-                  <span className="text-danger font-size-3">
-                    {" "}
-                    Not available-{" "}
-                    {AreaError.map((item) => {
-                      return <>Vendor ID: {item},</>;
-                    })}
-                  </span>
-                ) : null}
               </div>
             </div>
 
@@ -379,6 +344,27 @@ export default function AddAddressForm(props) {
               <br />
               {/*----ERROR MESSAGE FOR AREA----*/}
             </div>
+            <div className="col-md-6">
+              <input
+                className={errors.area ? "border-danger" : ""}
+                type="checkbox"
+                id="area"
+                onChange={(e) => setState({ ...state, area: e.target.checked })}
+              />
+              <label htmlFor="area" className="form-label">
+                Area availablity
+              </label>
+              <br />
+              {/*----ERROR MESSAGE FOR AREA----*/}
+              {errors.area && (
+                <span
+                  key={errors.area}
+                  className="text-danger font-size-3 mt-5"
+                >
+                  {errors.area}
+                </span>
+              )}
+            </div>
           </div>
 
           {loading ? (
@@ -394,9 +380,9 @@ export default function AddAddressForm(props) {
             <button
               className="form-btn"
               type="button"
-              onClick={handleButtonClick}
+              onClick={state.area === true ? CheckAddress : handleButtonClick}
             >
-              Check Area & send data
+              {state.area === true ? "Check Address" : "Send Data"}
             </button>
           )}
         </form>

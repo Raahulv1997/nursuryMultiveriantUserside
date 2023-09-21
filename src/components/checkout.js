@@ -12,6 +12,9 @@ import { ToastContainer, toast } from "react-toastify";
 // import visa from "../image/payment/png/02.png"
 // import debit from "../image/payment/png/03.png"
 function Checkout() {
+  const Vendor5 = useRef(null);
+  const divRef = useRef(null);
+
   var shouldApplyRef;
   const [data, setData] = useState("");
   const [cartData, setCartData] = useState("");
@@ -30,8 +33,11 @@ function Checkout() {
   const [pincode, setPincode] = useState("");
   const [city, setCity] = useState("");
   const [first_name, setFirst_name] = useState("");
+  const [last_name, setLast_name] = useState("");
+  const [email, setEmail] = useState("");
   const [phone_no, setPhone_no] = useState("");
   const [newAddess, setNewAddress] = useState("");
+  const [onProfileSave, setOnProfileSave] = useState(false);
 
   const [term, setTerm] = useState(false);
   const [paymentErr, setPaymentErr] = useState(false);
@@ -39,14 +45,17 @@ function Checkout() {
   const [loading, setLoading] = useState(true);
   // eslint-disable-next-line
   const [addPass, setAddPass] = useState(false);
-
+  let Token = localStorage.getItem("token");
+  const headers = {
+    "Content-Type": "application/json",
+    user_token: `${Token}`,
+  };
   let navigate = useNavigate();
-  const divRef = useRef(null);
   /*Function to get user details */
   let GetData = async () => {
-    let UserRes = await UserData();
-    let CartRes = await CartList();
-    console.log("user data---" + JSON.stringify(UserRes.data));
+    let UserRes = await UserData(headers);
+    let CartRes = await CartList(headers);
+
     setData(UserRes.data[0]);
     setCartData(CartRes.data.response);
     setTotalCartData(CartRes.data);
@@ -62,10 +71,17 @@ function Checkout() {
     let pin = UserRes.data[0].pincode;
     let v = CartRes.data.response.map((item) => item.vendor_id);
 
-    let responseCheck = await CheckUserAddress(pin, v);
+    let responseCheck = await CheckUserAddress(pin, v, headers);
 
     setAfterAreaCheck(responseCheck.data.service_available);
     setAfterAreaCheckNotAvailable(responseCheck.data.service_not_available);
+    console.log(
+      "NOT AVAL",
+      JSON.stringify(responseCheck.data.service_not_available)
+    );
+    // document.getElementById("Vendor5").focus();
+    // Vendor5.current.focus();
+
     // if (responseCheck.data.status === true) {
     //   setLocationCheck("avaliable");
     // }
@@ -88,12 +104,29 @@ function Checkout() {
 
   /*Function to get the additional Information */
   const AdditionalAddress = (data) => {
+    console.log("datasaa--" + JSON.stringify(data));
     setNewAddress(data.address);
     setAddress(data.address);
     setPincode(data.pincode);
     setCity(data.city);
     setFirst_name(data.first_name);
+    setLast_name(data.last_name);
+    setEmail(data.email);
     setPhone_no(data.phone_no);
+    setOnProfileSave(data.onProfileSave);
+  };
+
+  const DeleteAdditionAddress = () => {
+    setNewAddress("");
+    setAddress("");
+    setPincode("");
+    setCity("");
+    setFirst_name("");
+    setLast_name("");
+    setEmail("");
+    setPhone_no("");
+    setOnProfileSave(false);
+    setApicall(true);
   };
 
   /* Delivery Object*/
@@ -105,7 +138,20 @@ function Checkout() {
       first_name === "undefined"
         ? data.first_name
         : first_name,
-    email: "",
+    last_name:
+      last_name === "" ||
+      last_name === null ||
+      last_name === undefined ||
+      last_name === "undefined"
+        ? data.last_name
+        : last_name,
+    email:
+      email === "" ||
+      email === null ||
+      email === undefined ||
+      email === "undefined"
+        ? data.email
+        : email,
     phone_no:
       phone_no === "" ||
       phone_no === null ||
@@ -134,6 +180,7 @@ function Checkout() {
         : pincode,
     user_lat: null,
     user_log: null,
+    replace_address: onProfileSave === "" ? false : onProfileSave,
   };
   /*Order object */
   const order = (cartData || []).map((item) => {
@@ -153,7 +200,7 @@ function Checkout() {
     setLoading(true);
     setPaymentErr(false);
     setTermErr(false);
-    let response = await CheckUserAddress(pin, vendorId);
+    let response = await CheckUserAddress(pin, vendorId, headers);
     if (response.data.status === false) {
       toast.error("Area Not available", {
         position: toast.POSITION.TOP_RIGHT,
@@ -209,10 +256,15 @@ function Checkout() {
     if (SingleSelectedPayment === false) {
       setSinglePaymentErr(true);
     } else {
+      console.log("ressponcee---" + JSON.stringify(result));
       setLoading(true);
-      let response = await PlaceOrder(result);
-      console.log("ressponcee---" + JSON.stringify(response.data.response));
-      if (response.data.response === "placed order successfull") {
+
+      let response = await PlaceOrder(result, headers);
+      console.log("order res--" + JSON.stringify(response));
+      if (
+        response.data.response ===
+        "Thank you for your order! Your order has been received and is being processed"
+      ) {
         toast.success("Order Placed Successfully", {
           position: toast.POSITION.TOP_RIGHT,
           autoClose: 1000,
@@ -232,15 +284,13 @@ function Checkout() {
       setLoading(false);
     }
   };
-  useEffect(() => {
-    if (shouldApplyRef && divRef.current) {
-      divRef.current.focus();
-    }
-  }, [shouldApplyRef]);
+
   /*Function to pace the order */
   const OnCheckOutCLick = async () => {
     setNotavailable(false);
+    console.log("1111111111111111");
 
+    document.getElementById("Vendor5").focus();
     if (selectedPayment === false) {
       setLoading(false);
       setPaymentErr(true);
@@ -249,18 +299,22 @@ function Checkout() {
       setPaymentErr(false);
       setTermErr(true);
     } else if (afterAreaCheckNotAvailable.length > 0 || shouldApplyRef) {
-      if (divRef.current) {
-        divRef.current.scrollIntoView({ behavior: "smooth" });
-      }
-      // divRef.current.scrollIntoView({ behavior: "smooth" });
+      // if (divRef.current) {
+      //   divRef.current.scrollIntoView({ behavior: "smooth" });
+      // }
+      // // divRef.current.scrollIntoView({ behavior: "smooth" });
+      // document.getElementById("Vendor5");
       setNotavailable(true);
       return;
     } else {
       setLoading(true);
 
-      let response = await PlaceOrder(result);
+      let response = await PlaceOrder(result, headers);
 
-      if (response.data.response === "placed order successfull") {
+      if (
+        response.data.response ===
+        "Thank you for your order! Your order has been received and is being processed"
+      ) {
         toast.success("placed order successfull", {
           position: toast.POSITION.TOP_RIGHT,
           autoClose: 1000,
@@ -297,6 +351,8 @@ function Checkout() {
     for (let i = 0; i < afterAreaCheckNotAvailable.length; i++) {
       // eslint-disable-next-line
       if (afterAreaCheckNotAvailable[i] == id) {
+        document.getElementById("Vendor" + id).focus();
+        console.log("0000000000000000000");
         return true;
       }
     }
@@ -311,7 +367,10 @@ function Checkout() {
 
     return false;
   }
-
+  const CheckOutFun = () => {
+    // document.getElementById("Vendor5").scrollTo();
+    // Vendor5.current.focus();
+  };
   return (
     <div>
       {/* Header */}
@@ -386,24 +445,9 @@ function Checkout() {
                                     onClick={() => setOpenProfileInfo(true)}
                                   ></button>
                                 </li>
-                                {/* <li>
-                             <button className="trash icofont-ui-delete" title="Remove This" data-bs-dismiss="alert">
-                              </button>
-                                </li> */}
                               </ul>
                             </Link>
                           </div>
-                          {/* {locationCheck === "avaliable" ? (
-                            <span className="text-success">
-                              {" "}
-                              Area is available!!!
-                            </span>
-                          ) : locationCheck === "notAvalaible" ? (
-                            <span className="text-danger">
-                              {" "}
-                              Area is not available!!!
-                            </span>
-                          ) : null} */}
                         </div>
 
                         {data.alternate_address ? (
@@ -428,17 +472,19 @@ function Checkout() {
                                   <h5>
                                     {data.first_name} {data.last_name}
                                   </h5>
+                                  +91 {data.phone_no}
+                                  <br />
                                   {data.alternate_address} , {data.pincode}{" "}
                                   {data.city}
                                 </p>
                                 <ul className="user-action">
-                                  <li>
+                                  {/* <li>
                                     <button
                                       className="edit icofont-edit"
                                       title="Edit This"
                                       onClick={() => setOpenProfileInfo(true)}
                                     ></button>
-                                  </li>
+                                  </li> */}
                                   {/* <li>
                                                         <button className="trash icofont-ui-delete" title="Remove This" data-bs-dismiss="alert">
                                                         </button>
@@ -459,6 +505,7 @@ function Checkout() {
                         ) : null} */}
                           </div>
                         ) : null}
+
                         {newAddess === "" ||
                         newAddess === undefined ||
                         newAddess === null ? null : (
@@ -487,17 +534,21 @@ function Checkout() {
                                   <br />
                                   {newAddess} , {pincode} {city}
                                 </p>
-                                {/* <ul className="user-action">
-                                                    <li>
+                                <ul className="user-action">
+                                  {/* <li>
                                                         <button className="edit icofont-edit" title="Edit This" 
                                                          onClick={() => setOpenProfileInfo(true)}>
                                                         </button>
-                                                    </li>
-                                                    <li>
-                                                        <button className="trash icofont-ui-delete" title="Remove This" data-bs-dismiss="alert">
-                                                        </button>
-                                                    </li>
-                                                </ul> */}
+                                                    </li> */}
+                                  <li>
+                                    <button
+                                      className="trash icofont-ui-delete"
+                                      title="Remove This"
+                                      onClick={DeleteAdditionAddress}
+                                      data-bs-dismiss="alert"
+                                    ></button>
+                                  </li>
+                                </ul>
                               </Link>
                             </div>
                           </div>
@@ -516,19 +567,19 @@ function Checkout() {
                     var iddd = Number(item.vendor_id);
                     shouldApplyRef = arraysAreEqual(item.vendor_id);
 
-                    console.log(shouldApplyRef);
+                    console.log("iffffff" + shouldApplyRef);
                     return (
                       <div
-                        ref={shouldApplyRef ? divRef : null}
-                        tabIndex={shouldApplyRef ? "0" : null} // Make the div focusable
+                        id={"Vendor" + item.vendor_id}
                         key={iddd} // Add a unique key for each div
                         style={{
                           border:
-                            arraysAreEqual(item.vendor_id) == true
+                            arraysAreEqual(item.vendor_id) === true
                               ? "2px solid red"
                               : "none",
                         }}
                       >
+                        <input ref={Vendor5} type="hidden" />
                         <div className="checkout_page">
                           <div
                             className="checkout_vander_name"
@@ -610,105 +661,86 @@ function Checkout() {
                           />
 
                           <div
-                            className="table-responsive"
+                            className="checkout-charge checkout-charge-order"
                             style={{
-                              display: "flex",
-                              flexDirection: "row",
-                              justifyContent: "space-between",
-                              marginBottom: "4px",
-                              alignItems: "center",
+                              width: "450px",
                             }}
                           >
-                            <table className="table-list-amount">
-                              <thead className="amount-table-header ">
-                                <tr>
-                                  <th scope="col" className="p-1 ">
-                                    Discount
-                                  </th>
-                                  <th scope="col" className="p-1">
-                                    Total Gst
-                                  </th>
-                                  <th scope="col" className="p-1">
-                                    SubTotal
-                                  </th>
-                                  <th scope="col" className="p-1">
-                                    Delivery Fee
-                                  </th>
-                                  <th scope="col" className="p-1">
-                                    Total
-                                  </th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                <tr>
-                                  <td className="table-image p-0">
+                            <ul>
+                              <li className="py-1">
+                                <span className="text-danger">discount</span>
+                                <span className="text-danger">
+                                  {" "}
+                                  - ₹{" "}
+                                  {Number(
+                                    `${
+                                      item[item.vendor_id + "_discount_amount"]
+                                    }`
+                                  ).toFixed(2)}
+                                </span>
+                              </li>
+                              <li className="py-1">
+                                <span>Total GST</span>
+                                {
+                                  <span>
                                     {" "}
-                                    <h6 className="text-danger">
-                                      {" "}
-                                      - ₹{" "}
-                                      {Number(
-                                        `${
-                                          item[
-                                            item.vendor_id + "_discount_amount"
-                                          ]
-                                        }`
-                                      ).toFixed(2)}
-                                    </h6>
-                                  </td>
-
-                                  <td className="table-price p-1">
-                                    <h6>
-                                      {" "}
-                                      ₹{" "}
-                                      {Number(
-                                        `${
-                                          item[item.vendor_id + "_gst_amount"]
-                                        }`
-                                      ).toFixed(2)}
-                                    </h6>
-                                  </td>
-                                  <td className="table-quantity p-1">
-                                    <h6>
-                                      ₹{" "}
-                                      {Number(
+                                    ₹{" "}
+                                    {Number(
+                                      `${item[item.vendor_id + "_gst_amount"]}`
+                                    ).toFixed(2)}
+                                  </span>
+                                }
+                              </li>
+                              <li className="py-1">
+                                <span>
+                                  Sub Total
+                                  <small>(including GST)</small>
+                                </span>
+                                {
+                                  <span>
+                                    ₹{" "}
+                                    {Number(
+                                      `${
+                                        item[
+                                          item.vendor_id +
+                                            "_price_x_cart_qty_amount"
+                                        ]
+                                      }`
+                                    ).toFixed(2)}
+                                  </span>
+                                }
+                              </li>
+                              <li className="py-1">
+                                <span>delivery fee</span>
+                                <span>
+                                  ₹ {Number(item.delivery_charges).toFixed(2)}{" "}
+                                </span>
+                              </li>
+                              <li className="py-1">
+                                <span>Total</span>
+                                {
+                                  <span>
+                                    ₹{" "}
+                                    {(
+                                      Number(
                                         `${
                                           item[
                                             item.vendor_id +
                                               "_price_x_cart_qty_amount"
                                           ]
                                         }`
-                                      ).toFixed(2)}
-                                    </h6>
-                                  </td>
-                                  <td className="table-discount p-1">
-                                    <h6>
-                                      ₹{" "}
-                                      {Number(item.delivery_charges).toFixed(2)}
-                                    </h6>
-                                  </td>
-                                  <td className="table-brand p-1">
-                                    <h6 className="text-success">
-                                      ₹{" "}
-                                      {(
-                                        Number(
-                                          `${
-                                            item[
-                                              item.vendor_id +
-                                                "_price_x_cart_qty_amount"
-                                            ]
-                                          }`
-                                        ) + Number(item.delivery_charges)
-                                      ).toFixed(2)}{" "}
-                                    </h6>
-                                  </td>
-                                </tr>
-                              </tbody>
-                            </table>
+                                      ) + Number(item.delivery_charges)
+                                    ).toFixed(2)}{" "}
+                                  </span>
+                                }
+                              </li>
+                            </ul>
                             <div
                               style={{
                                 flexDirection: "row",
                                 display: "flex",
-                                alignItems: "start",
+                                justifyContent: "center",
+                                // alignItems: "center",
                                 gap: "6px",
                               }}
                             >
@@ -1117,6 +1149,7 @@ function Checkout() {
                     to=""
                     className="btn btn-inline"
                     onClick={OnCheckOutCLick}
+                    // onClick={CheckOutFun()}
                   >
                     proced to checkout
                   </Link>
@@ -1136,6 +1169,7 @@ function Checkout() {
           setLoading={setLoading}
         />
       ) : null}
+
       {openAddressForm ? (
         <AddAddressForm
           show={openAddressForm}

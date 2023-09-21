@@ -6,7 +6,11 @@ import useValidation from "../common/useValidation";
 export const ReviewModal = (props) => {
   // USER PERSONAL DETAIL VALIDATION
   // INITIAL STATE ASSIGNMENT
-
+  let Token = localStorage.getItem("token");
+  const headers = {
+    "Content-Type": "application/json",
+    user_token: `${Token}`,
+  };
   let user_name = localStorage.getItem("username");
 
   const initialFormStatereview = {
@@ -37,7 +41,7 @@ export const ReviewModal = (props) => {
     // console.log(state)
     event.preventDefault();
     if (validate()) {
-      let response = await AddReview(state);
+      let response = await AddReview(state, headers);
       if (response.data.message === "Review Rating Data Insert Succecsfully") {
         toast.success("Review Rating Data Insert Succecsfully", {
           position: toast.POSITION.TOP_RIGHT,

@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import CartBox from "./common/cartBox";
 import { CartList } from "./api/api";
 import CartEmpty from "../image/cartEmpty.jpg";
+import Loadeer from "./common/Loadeer";
 
 export default function Cart({
   setLoading,
@@ -20,17 +21,22 @@ export default function Cart({
   let navigate = useNavigate();
   let location = useLocation();
   const [apicall, setApicall] = useState(false);
+  const [updatecartLoader, SetUpdateCartLoader] = useState(false);
   const [cartcall, setcartcall] = useState(false);
   let [data, setData] = useState([]);
   let [subTotal, setsubTotal] = useState("");
   let [totalQty, settotalQty] = useState("");
 
   let Token = localStorage.getItem("token");
+  const headers = {
+    "Content-Type": "application/json",
+    user_token: `${Token}`,
+  };
   /*Function to get the Cart list */
   let GetCartList = async () => {
-    setLoading(true);
+    SetUpdateCartLoader(true);
     if (Token) {
-      let response = await CartList();
+      let response = await CartList(headers);
       if (
         response.data === undefined ||
         response.data === "undefined" ||
@@ -38,14 +44,14 @@ export default function Cart({
         response.data.length === 0
       ) {
         setData([]);
-        setLoading(false);
+        SetUpdateCartLoader(false);
       } else {
         setData(response.data.response);
         setsubTotal(response.data.sub_total);
         settotalQty(response.data.total_product_count);
         // setData(response.data);
 
-        setLoading(false);
+        SetUpdateCartLoader(false);
       }
     }
   };
@@ -77,7 +83,14 @@ export default function Cart({
 
   return (
     <div>
-      <div className={show ? "cart-sidebar active" : "cart-sidebar"}>
+      <div
+        className={
+          show
+            ? "cart-sidebar active inner_loader"
+            : "cart-sidebar inner_loader"
+        }
+      >
+        {updatecartLoader ? <Loadeer /> : null}
         <div className="cart-header">
           <div className="cart-total">
             <i className="fas fa-shopping-basket"></i>
@@ -120,22 +133,24 @@ export default function Cart({
               delCharges += Number(item.delivery_charges);
               return (
                 // <Link key={index} onClick={() => ProductDetailClick(item)}>
-                <>
+                <React.Fragment key={index}>
                   <b>{item.owner_name}</b>
                   <div>
-                    {(item.cart_products || []).map((item) => {
+                    {(item.cart_products || []).map((item, index) => {
                       return (
-                        <CartBox
-                          data={item}
-                          apicall={apicall}
-                          setApicall={setApicall}
-                          setCartApiCall={setCartApiCall}
-                          setcartcall={setcartcall}
-                          setproductcall={setproductcall}
-                          setLoading={setLoading}
-                          loading={loading}
-                          close={close}
-                        />
+                        <React.Fragment key={index}>
+                          <CartBox
+                            data={item}
+                            apicall={apicall}
+                            setApicall={setApicall}
+                            setCartApiCall={setCartApiCall}
+                            setcartcall={setcartcall}
+                            setproductcall={setproductcall}
+                            setLoading={SetUpdateCartLoader}
+                            loading={updatecartLoader}
+                            close={close}
+                          />
+                        </React.Fragment>
                       );
                     })}
                     <h4 style={{ marginTop: "10px" }}>Summary</h4>
@@ -182,7 +197,7 @@ export default function Cart({
                     </div>
                     <hr style={{ margin: "10px 0 5px 0" }} />
                   </div>
-                </>
+                </React.Fragment>
                 // </Link>
               );
             })}

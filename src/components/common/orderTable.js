@@ -7,6 +7,11 @@ import productImg from "../../image/product_demo.png";
 import { ReviewModal } from "../Modal/reviewModal";
 import ProductImage from "./product_image";
 export default function CartTable(props) {
+  let Token = localStorage.getItem("token");
+  const headers = {
+    "Content-Type": "application/json",
+    user_token: `${Token}`,
+  };
   // const [active, setActive] = useState(false)
   const [productDetailModal, setProductDetailModal] = useState(false);
   const [productId, setProductId] = useState();
@@ -23,7 +28,7 @@ export default function CartTable(props) {
   };
   /*Funtion to delete cart */
   const DeleteCartClick = async (id, varId) => {
-    let response = await DeleteCart(id, varId);
+    let response = await DeleteCart(id, varId, headers);
     if (response.data.response === "delete successfull") {
       toast.success("Product Deleted Successfully", {
         position: toast.POSITION.TOP_RIGHT,

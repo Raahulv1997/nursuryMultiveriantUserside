@@ -1,20 +1,30 @@
 import React, { useEffect, useState } from "react";
 
 import { Link, useNavigate } from "react-router-dom";
-import { OrderList, Orderdetails } from "../api/api";
+import { OrderList, Orderdetails, CancelOrder } from "../api/api";
 import moment from "moment";
 import TicketModal from "../Modal/ticket";
 import OrderDetailsTable from "./OrderDetailsTable";
+import { Button, Modal } from "react-bootstrap";
 
 export default function Orderhistorysection({ setLoading }) {
+  let Token = localStorage.getItem("token");
+  const headers = {
+    "Content-Type": "application/json",
+    user_token: `${Token}`,
+  };
+
   let nevigate = useNavigate();
   let [orderList, setOrderList] = useState([]);
   const [openTicketModal, setOpenTicketModal] = useState(false);
   const [apicall, setApicall] = useState(false);
   const [openOrderDetail, setOpenOrderDetail] = useState(null);
   const [orderId, setOrderId] = useState(null);
+  const [cancelOrderId, setCancelOrderId] = useState(null);
+
   let [orderProductList, setOrderProductList] = useState("");
   let [orderDataList, setOrderDataList] = useState([]);
+  const [openOrderCancelModal, setOpenOrderCancelModal] = useState(false);
   /*Function to get Order data */
 
   let newTotalGSt = 0;
@@ -24,7 +34,7 @@ export default function Orderhistorysection({ setLoading }) {
   let newTotalTaxableAmount = 0;
   let newTotalQty = 0;
   let GetData = async (OrderId) => {
-    let OrderRes = await Orderdetails(OrderId);
+    let OrderRes = await Orderdetails(OrderId, headers);
     if (
       OrderRes.data === null ||
       OrderRes.data === undefined ||
@@ -134,7 +144,7 @@ export default function Orderhistorysection({ setLoading }) {
   /*Function to get the order data */
   const GetOrderData = async () => {
     setLoading(true);
-    let response = await OrderList();
+    let response = await OrderList(headers);
     if (
       response.data.results === null ||
       response.data.results === undefined ||
@@ -165,6 +175,23 @@ export default function Orderhistorysection({ setLoading }) {
 
   let onInvoiceClick = (id) => {
     nevigate(`/invoice?id=${id}`);
+  };
+  const CancelOrderFuntion = (id) => {
+    setOpenOrderCancelModal(true);
+    setCancelOrderId(id);
+  };
+
+  const handleCloseOrderModel = () => {
+    setOpenOrderCancelModal(false);
+  };
+
+  const CancelThisOrder = async () => {
+    const response = await CancelOrder(cancelOrderId, headers);
+    console.log("rs--" + JSON.stringify(response));
+    if (response.data.response === "order cancel successfull") {
+      setOpenOrderCancelModal(false);
+      setApicall(true);
+    }
   };
 
   return (
@@ -202,7 +229,31 @@ export default function Orderhistorysection({ setLoading }) {
                       onClick={() => toggleOrderDetail(orderId, item.order_id)}
                     >
                       <h5>order #{item.order_id}</h5>
-                      <h5>order {item.status_order}</h5>
+                      <h5>
+                        {/* 'pending','approved','Pickuped','Delivered','Rejected_by_customer','Failed_Delivery_Attempts','ready_to_pickup','accepted_by_vendor','rejected_by_vendor','ready_to_packing' */}
+
+                        {item.status_order === "Rejected_by_customer"
+                          ? "Order Cancel by customer"
+                          : item.status_order === "pending"
+                          ? "Order Pending"
+                          : item.status_order === "approved"
+                          ? "Order Approved by nursury portal"
+                          : item.status_order === "Pickuped"
+                          ? "Order Pickuped"
+                          : item.status_order === "Delivered"
+                          ? "Order Delivered"
+                          : item.status_order === "Failed_Delivery_Attempts"
+                          ? "The order has been canceled as the order was not received by the customer."
+                          : item.status_order === "ready_to_pickup"
+                          ? "Order in process"
+                          : item.status_order === "accepted_by_vendor"
+                          ? "Order in process"
+                          : item.status_order === "rejected_by_vendor"
+                          ? "Order not available"
+                          : item.status_order === "ready_to_packing"
+                          ? "Order in process"
+                          : "pending"}
+                      </h5>
                     </Link>
                     <div className={"orderlist-body d-block"}>
                       <div className="row">
@@ -399,6 +450,21 @@ orderData={orderDataList}
                               Generate Ticket
                             </button>
                           </Link>
+
+                          {item.status_order === "Delivered" ||
+                          item.status_order ===
+                            "Rejected_by_customer" ? null : (
+                            <span
+                              style={{ marginLeft: "10px" }}
+                              to=""
+                              className="text-end text-decoration-none"
+                              onClick={() => CancelOrderFuntion(item.order_id)}
+                            >
+                              <button className="blog-btn text-danger ">
+                                Cancel this order
+                              </button>
+                            </span>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -409,6 +475,19 @@ orderData={orderDataList}
           })}
         </div>
       </section>
+
+      <Modal show={openOrderCancelModal} onHide={handleCloseOrderModel}>
+        <Modal.Body>Are you sure cancel this order!!!</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseOrderModel}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={CancelThisOrder}>
+            Cancel Order
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
       {openTicketModal ? (
         <TicketModal
           show={openTicketModal}

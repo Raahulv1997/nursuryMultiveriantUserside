@@ -71,7 +71,7 @@ export default function Profile() {
             className={`nav-link ${activeTab === "component3" ? "active" : ""}`}
             onClick={() => handleTabClick("component3")}
           >
-            Ticket History
+            Complaint History
           </button>
         </li>
       </ul>

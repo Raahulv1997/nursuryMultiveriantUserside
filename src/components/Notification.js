@@ -1,7 +1,6 @@
 import React from "react";
 import NotificationBox from "./common/notificationBox";
 export default function Notification({ data, close, show }) {
-  console.log("ddd--" + JSON.stringify(data));
   return (
     <div>
       <div className={show ? "cart-sidebar active" : " cart-sidebar"}>
@@ -18,7 +17,7 @@ export default function Notification({ data, close, show }) {
         </div>
         <ul className="">
           {(data || []).map((item, index) => {
-            return <NotificationBox data={item} key={index} />;
+            return <NotificationBox data={item} key={index} close={close} />;
           })}
         </ul>
         {/* <div

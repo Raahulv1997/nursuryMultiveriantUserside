@@ -1,10 +1,12 @@
 import axios from "axios";
 import moment from "moment";
+
 // const API_URL = "https://nursery-verient-live.onrender.com";
 const API_URL = "http://indiakinursery.com:9999";
 // const API_URL_3_0 = "http://192.168.29.108:8888";
 // const API_URL = "http://192.168.29.108:9999";
 // const API_URL = "http://www.indiakinursery.com:3000"
+
 let Token = localStorage.getItem("token");
 const headers = {
   "Content-Type": "application/json",
@@ -13,7 +15,7 @@ const headers = {
 /*APi to get user Notification  */
 export const GetUserNotificationList = async (props) => {
   // console.log(props)
-  const response = axios.get(`${API_URL}/notification`, { headers: headers });
+  const response = axios.get(`${API_URL}/notification`, { headers: props });
   return response;
 };
 /*Api for user login */
@@ -48,12 +50,12 @@ export const UserSingin = async (props) => {
 };
 
 /*Api for user Singin */
-export const UpdateUserPassword = async (props) => {
+export const UpdateUserPassword = async (props, HeadersVal) => {
   // console.log(props)
   const response = axios.post(
     `${API_URL}/user_forgate_password_update`,
     { password: props.conf_password },
-    { headers: headers }
+    { headers: HeadersVal }
   );
   return response;
 };
@@ -92,8 +94,8 @@ export const VerifyOtp = async (props) => {
 };
 
 /*Api to get user data */
-export const UserData = async () => {
-  const response = axios.get(`${API_URL}/user_details`, { headers: headers });
+export const UserData = async (props) => {
+  const response = axios.get(`${API_URL}/user_details`, { headers: props });
   return response;
 };
 
@@ -196,7 +198,7 @@ export const ProductList = async (
   return response;
 };
 /*Api to Get Treandig product  */
-export const TreandingPro = async (end, start) => {
+export const TreandingPro = async (end, start, HeaderVal) => {
   // console.log(start, end)
   const response = axios.post(
     `${API_URL}/trending_products`,
@@ -204,13 +206,13 @@ export const TreandingPro = async (end, start) => {
       from_date: start,
       to_date: end,
     },
-    { headers: headers }
+    { headers: HeaderVal }
   );
   return response;
 };
 
 /*Api to Add product to cart */
-export const AddToCart = async (id, varId, qty) => {
+export const AddToCart = async (id, varId, qty, HeaderVal) => {
   // console.log(id, varId, qty)
   const response = axios.post(
     `${API_URL}/add_to_cart`,
@@ -219,14 +221,14 @@ export const AddToCart = async (id, varId, qty) => {
       product_verient_id: varId,
       cart_product_quantity: qty,
     },
-    { headers: headers }
+    { headers: HeaderVal }
   );
   return response;
 };
 
 /*Api to Update product to cart */
-export const UpdateCart = async (id, varId, qty) => {
-  // console.log(id, varId, qty)
+export const UpdateCart = async (id, varId, qty, headersVal) => {
+  console.log("header val", JSON.stringify(headersVal));
   const response = axios.put(
     `${API_URL}/cart_update`,
     {
@@ -234,7 +236,7 @@ export const UpdateCart = async (id, varId, qty) => {
       product_verient_id: varId,
       cart_product_quantity: qty,
     },
-    { headers: headers }
+    { headers: headersVal }
   );
   return response;
 };
@@ -247,11 +249,11 @@ export const UpdateCart = async (id, varId, qty) => {
 
 export const CartList = async (props) => {
   // console.log(props)
-  const response = axios.get(`${API_URL}/cart_list_1`, { headers: headers });
+  const response = axios.get(`${API_URL}/cart_list_1`, { headers: props });
   return response;
 };
 /*Api to Delete Cart item */
-export const DeleteCart = async (id, varId) => {
+export const DeleteCart = async (id, varId, headerVal) => {
   // console.log(id ,varId)
   const response = axios.put(
     `${API_URL}/cart_delete`,
@@ -259,13 +261,13 @@ export const DeleteCart = async (id, varId) => {
       product_id: id,
       product_verient_id: varId,
     },
-    { headers: headers }
+    { headers: headerVal }
   );
   return response;
 };
 
 /*Api for Order list*/
-export const OrderList = async () => {
+export const OrderList = async (HeadersVal) => {
   const response = axios.post(
     `${API_URL}/order_search?page=${0}&per_page=${100}&group=yes`,
     {
@@ -275,45 +277,57 @@ export const OrderList = async () => {
       category: "",
       brand: "",
     },
-    { headers: headers }
+    { headers: HeadersVal }
   );
   return response;
 };
 /*Api for Order details*/
-export const Orderdetails = async (props) => {
+export const Orderdetails = async (props, HeadersVal) => {
   const response = axios.get(`${API_URL}/order_details?id=${props}`, {
-    headers: headers,
+    headers: HeadersVal,
   });
   return response;
 };
 
 /*Api to Check address before placing order*/
-export const CheckUserAddress = async (pin, vendor) => {
+export const CheckUserAddress = async (pin, vendor, headersVal) => {
   const pincode = parseInt(pin, 10);
   const vendorId = vendor.map((item) => item.toString());
-  console.log("in api vendro---" + JSON.stringify(vendorId));
+
   const response = axios.post(
     `${API_URL}/check_vendor_service_avaibility`,
     {
       pin: pincode,
       vendor_id: vendorId,
     },
-    { headers: headers }
+    { headers: headersVal }
   );
   return response;
 };
 
 /*Api to palace order*/
-export const PlaceOrder = async (props) => {
+export const PlaceOrder = async (props, headersVal) => {
   // console.log(props);
   const response = axios.post(`${API_URL}/add_order_1`, JSON.stringify(props), {
-    headers: headers,
+    headers: headersVal,
   });
   return response;
 };
 
+/*Api to cancel order*/
+export const CancelOrder = async (id, headersVal) => {
+  // console.log(props);
+  const response = axios.put(
+    `${API_URL}/cancel_order`,
+    { order_id: id },
+    {
+      headers: headersVal,
+    }
+  );
+  return response;
+};
 /*Api for Review list*/
-export const ReviewList = async (id) => {
+export const ReviewList = async (id, HeadersVal) => {
   // console.log(props);
   const response = axios.post(
     `${API_URL}/review_list`,
@@ -322,13 +336,13 @@ export const ReviewList = async (id) => {
       product_name: "",
       status: "",
     },
-    { headers: headers }
+    { headers: HeadersVal }
   );
   return response;
 };
 
 /*Api to add review */
-export const AddReview = async (props) => {
+export const AddReview = async (props, HeadersVal) => {
   // console.log(props);
   const response = axios.post(
     `${API_URL}/review_rating`,
@@ -340,13 +354,13 @@ export const AddReview = async (props) => {
       review_rating: props.review_rating,
       comment: props.comment,
     },
-    { headers: headers }
+    { headers: HeadersVal }
   );
   return response;
 };
 
 /*Api to addd complaint */
-export const AddComplaint = async (props) => {
+export const AddComplaint = async (props, headersVal) => {
   // console.log(props);
   const response = axios.post(
     `${API_URL}/add_complain`,
@@ -359,12 +373,12 @@ export const AddComplaint = async (props) => {
       email: props.email,
       description: props.description,
     },
-    { headers: headers }
+    { headers: headersVal }
   );
   return response;
 };
 
-export const AddComplaintFromOrder = async (props) => {
+export const AddComplaintFromOrder = async (props, headersVal) => {
   // console.log(props);
   const response = axios.post(
     `${API_URL}/add_complain`,
@@ -375,42 +389,42 @@ export const AddComplaintFromOrder = async (props) => {
 
       description: props.description,
     },
-    { headers: headers }
+    { headers: headersVal }
   );
   return response;
 };
 
 /*Api to addd complaint */
-export const ComplaintList = async (email) => {
+export const ComplaintList = async (headersVal) => {
   // console.log(props);
   const response = axios.post(
     `${API_URL}/complain_search`,
     // { email: email },
     { status_: "" },
-    { headers: headers }
+    { headers: headersVal }
   );
   return response;
 };
 
 // api to add and remove from wishlist----------------------------
-export const Add_Remove_wishlist = async (id, varient_id) => {
+export const Add_Remove_wishlist = async (id, varient_id, headersVal) => {
   // console.log(props);
   const response = axios.post(
     `${API_URL}/add_remove_to_wishlist`,
 
     { product_id: id, product_verient_id: varient_id },
-    { headers: headers }
+    { headers: headersVal }
   );
   return response;
 };
 
 //for get the wishlist of product-----------------
-export const getwishlist = async () => {
+export const getwishlist = async (props) => {
   // console.log(props);
   const response = axios.get(
     `${API_URL}/wishlist`,
 
-    { headers: headers }
+    { headers: props }
   );
   return response;
 };

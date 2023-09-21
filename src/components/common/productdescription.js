@@ -6,6 +6,11 @@ import ProductRating from "../common/productRating";
 import ProductImage from "./product_image";
 
 export default function Productdescription(props) {
+  let Token = localStorage.getItem("token");
+  const headers = {
+    "Content-Type": "application/json",
+    user_token: `${Token}`,
+  };
   const [activeTab, setActiveTab] = useState("tab-spec");
   const [reviewListData, setReviewListData] = useState([]);
 
@@ -15,7 +20,7 @@ export default function Productdescription(props) {
   };
   /*Function to get Review List */
   const GetReviewList = async () => {
-    let response = await ReviewList(props.id);
+    let response = await ReviewList(props.id, headers);
     if (reviewListData.length === 0) {
       setReviewListData(response.data);
     }
@@ -109,11 +114,11 @@ export default function Productdescription(props) {
                     {(reviewListData || []).map((item, index) => {
                       return (
                         <li className="review-item" key={index}>
-                          <div className="row">
+                          <div className="d-flex">
                             <div className="review-media col">
                               <Link className="review-avatar">
                                 {/* <img src={user4} alt="review" /> */}
-                                <ProductImage />
+                                <ProductImage src={item.image} />
                               </Link>
                               <h5 className="review-meta">
                                 <Link>{item.user_name}</Link>
@@ -124,12 +129,26 @@ export default function Productdescription(props) {
                                 </span>
                               </h5>
                             </div>
+
                             <ul className="review-rating d-flex col">
                               <ProductRating rating={item.review_rating} />
                             </ul>
+                            <span className="text-end">
+                              <h4
+                                className={
+                                  item.status === "pending"
+                                    ? "text-danger fw-bold"
+                                    : "text-success fw-bold"
+                                }
+                              >
+                                {item.status}{" "}
+                              </h4>
+                            </span>
                           </div>
                           {/* <h5> {item.product_name}</h5> */}
-                          <p className="review-desc">{item.comment}</p>
+                          <p className="review-desc">
+                            <b>Comment:</b> {item.comment}
+                          </p>
                         </li>
                       );
                     })}

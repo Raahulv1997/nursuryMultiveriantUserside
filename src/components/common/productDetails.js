@@ -8,6 +8,7 @@ import ProductBox from "./productBox";
 import ProductDetailsBox from "./productDetailsBox";
 import { ToastContainer } from "react-toastify";
 import Notfound from "./notfound";
+import { Button } from "react-bootstrap";
 export default function ProductDetails() {
   const [searchparams] = useSearchParams();
   const [cartcall, setcartcall] = useState(false);
@@ -120,14 +121,13 @@ export default function ProductDetails() {
               <div className="row">
                 <div className="col-lg-12">
                   <div className="section-btn-25">
-                    <Link
-                      to="/shop"
+                    <Button
                       onClick={ViewAllRelatedProducts}
                       className="btn btn-outline"
                     >
                       <i className="fas fa-eye"></i>
                       <span>view all related </span>
-                    </Link>
+                    </Button>
                   </div>
                 </div>
               </div>

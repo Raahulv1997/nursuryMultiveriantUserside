@@ -29,8 +29,8 @@ export default function Shop() {
   let [pageNo, setPageNo] = useState("12");
   const [currentPage, setCurrentPage] = useState(0);
   const [pricefilter, setpricefilter] = useState({
-    to_product_price: 0,
-    from_product_price: 0,
+    to_product_price: "",
+    from_product_price: "",
   });
   const location = useLocation();
 
@@ -75,28 +75,48 @@ export default function Shop() {
     setPrice("");
     setpricefilter({
       ...pricefilter,
-      to_product_price: 0,
-      from_product_price: 0,
+      to_product_price: "",
+      from_product_price: "",
     });
     setproductcall(true);
     setPriceError("");
   };
 
   //onPrice submit click funtion for validate the min and max price and checking than set the price value
+  // const OnPriceFilterCheck = () => {
+  //   if (
+  //     pricefilter.from_product_price === 0 ||
+  //     pricefilter.to_product_price === 0
+  //   ) {
+  //     setPriceError("price is blank");
+  //   } else if (pricefilter.from_product_price < 0) {
+  //     setPriceError("min is negative");
+  //   } else if (pricefilter.to_product_price < 0) {
+  //     setPriceError("max is negative");
+  //   } else if (
+  //     Number(pricefilter.from_product_price) >=
+  //     Number(pricefilter.to_product_price)
+  //   ) {
+  //     setPriceError("Min les than max");
+  //   } else {
+  //     setPrice(pricefilter);
+  //   }
+  // };
+
   const OnPriceFilterCheck = () => {
-    if (
-      pricefilter.from_product_price === 0 ||
-      pricefilter.to_product_price === 0
-    ) {
+    const minPrice = Number(pricefilter.from_product_price);
+    const maxPrice = Number(pricefilter.to_product_price);
+
+    if (minPrice === 0 && maxPrice === 0) {
       setPriceError("price is blank");
-    } else if (pricefilter.from_product_price < 0) {
+      // setPriceError("Both Price negative");
+    } else if (minPrice < 0 && maxPrice < 0) {
+      setPriceError("Both Price negative");
+    } else if (minPrice < 0) {
       setPriceError("min is negative");
-    } else if (pricefilter.to_product_price < 0) {
+    } else if (maxPrice < 0) {
       setPriceError("max is negative");
-    } else if (
-      Number(pricefilter.from_product_price) >=
-      Number(pricefilter.to_product_price)
-    ) {
+    } else if (maxPrice > 0 && minPrice > maxPrice) {
       setPriceError("Min les than max");
     } else {
       setPrice(pricefilter);
@@ -266,7 +286,6 @@ export default function Shop() {
                       <div className="shop-widget-group d-flex mb-2 gap-1">
                         <input
                           type="number"
-                          min={0}
                           placeholder="Min"
                           value={pricefilter.from_product_price || ""}
                           onChange={(e) => onPriceFilterAdd(e)}
@@ -275,19 +294,28 @@ export default function Shop() {
 
                         <input
                           type="number"
-                          min={0}
                           placeholder="Max"
                           value={pricefilter.to_product_price || ""}
                           onChange={(e) => onPriceFilterAdd(e)}
                           name="to_product_price"
                         />
                       </div>
-
                       {priceError === "price is blank" ? (
                         <small className="text-danger">
                           Please fill price first
                         </small>
                       ) : null}
+                      {priceError === "Both Price negative" ? (
+                        <small className="text-danger">
+                          Price should be greater than 0
+                        </small>
+                      ) : null}
+                      {/* {priceError === "Both Price is 0" ? (
+                        <small className="text-danger">
+                          Min and Max price should be greater than 0
+                        </small>
+                      ) : null} */}
+
                       {priceError === "min is negative" ? (
                         <small className="text-danger">
                           Min price should be greter than 0
@@ -303,7 +331,6 @@ export default function Shop() {
                           Min price should be less than max price
                         </small>
                       ) : null}
-
                       <button
                         className="shop-widget-btn"
                         type="button"

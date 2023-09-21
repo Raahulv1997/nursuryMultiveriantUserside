@@ -1506,11 +1506,11 @@ tbody tr td:last-child {
   max-width: max-content;
 } */
 
-.modal-content {
+/* .modal-content {
   border: none;
   background: none;
   border-radius: 0px;
-}
+} */
 
 .modal-close {
   position: absolute;
@@ -7654,4 +7654,17 @@ a.product-image {
 .parent_category {
   font-size: 16px !important;
   padding: 6px;
+}
+.inner_loader .loader_page {
+  position: absolute;
+  height: 100%;
+}
+.inner_loader.cart-sidebar .cart-header {
+  background-color: #ffff;
+  z-index: 999;
+}
+
+.inner_loader .loader_page .loader_img img {
+  width: 126px;
+  height: 126px;
 }

@@ -27,11 +27,15 @@ export default function MobileMenu({
   let name = localStorage.getItem("username");
   let Token = localStorage.getItem("token");
 
+  const headers = {
+    "Content-Type": "application/json",
+    user_token: `${Token}`,
+  };
   /*Function to Get Category list */
   const GetCategoryList = async () => {
     let response = await CategoryList();
     if (Token) {
-      let CartRes = await CartList();
+      let CartRes = await CartList(headers);
       setCartData(CartRes.data);
     }
     // console.log(response.data.response);
@@ -137,7 +141,9 @@ export default function MobileMenu({
             >
               <i className="fas fa-shopping-basket"></i>
               <span>cartlist</span>
-              <sup>{cartData.length}</sup>
+              {cartData.total_product_count === undefined ? null : (
+                <sup>{cartData.total_product_count}</sup>
+              )}
             </button>
           ) : null}
           {/* Search functionality */}
@@ -229,37 +235,41 @@ export default function MobileMenu({
           <div className="mobile_sidebar">
             <ul className="category-list">
               <Accordion>
-                {parentCategories.map((category, index) => (
-                  <Accordion.Item eventKey={category.id} className="p-1">
-                    <Accordion.Header className="category-item" key={index}>
-                      <Link
-                        className="category-link"
-                        // onClick={() => OnCategorySearch(category.category_name)}
-                      >
-                        <span className="parent_category">
-                          {category.category_name}
-                        </span>
-                      </Link>
-                    </Accordion.Header>
-                    <Accordion.Body>
-                      {catData
-                        .filter((child) => child.parent_id === category.id)
-                        .map((child, index) => (
-                          <li key={index}>
-                            <Link
-                              className="text-dark"
-                              to={""}
-                              onClick={() =>
-                                OnCategorySearch(child.category_name)
-                              }
-                            >
-                              {child.category_name}
-                            </Link>
-                          </li>
-                        ))}
-                    </Accordion.Body>
-                  </Accordion.Item>
-                ))}
+                {parentCategories.map((category, index) => {
+                  return (
+                    <React.Fragment key={index}>
+                      <Accordion.Item eventKey={category.id} className="p-1">
+                        <Accordion.Header className="category-item" key={index}>
+                          <Link
+                            className="category-link"
+                            // onClick={() => OnCategorySearch(category.category_name)}
+                          >
+                            <span className="parent_category">
+                              {category.category_name}
+                            </span>
+                          </Link>
+                        </Accordion.Header>
+                        <Accordion.Body>
+                          {catData
+                            .filter((child) => child.parent_id === category.id)
+                            .map((child, index) => (
+                              <li key={index}>
+                                <Link
+                                  className="text-dark"
+                                  to={""}
+                                  onClick={() =>
+                                    OnCategorySearch(child.category_name)
+                                  }
+                                >
+                                  {child.category_name}
+                                </Link>
+                              </li>
+                            ))}
+                        </Accordion.Body>
+                      </Accordion.Item>
+                    </React.Fragment>
+                  );
+                })}
               </Accordion>
             </ul>
           </div>

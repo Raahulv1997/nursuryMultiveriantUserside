@@ -2,14 +2,14 @@ import React, { useState } from "react";
 import { UpdateCart } from "../api/api";
 import { toast } from "react-toastify";
 
-const CartUpdate = (props) => {
+const CartBoxUpdateQty = (props) => {
   let Token = localStorage.getItem("token");
   const headers = {
     "Content-Type": "application/json",
     user_token: `${Token}`,
   };
   const [qytErr, setqytErr] = useState("");
-
+  const [disableqtyButton, setDisableQtyButton] = useState(false);
   // const onAddToCart = async (id, varId) => {
   //     console.log(id, varId, qtyNo);
   //     let response = await AddToCart(id, varId, qtyNo)
@@ -24,7 +24,8 @@ const CartUpdate = (props) => {
 
   const updateQuantity = async (qty) => {
     props.setLoading(true);
-    props.setInProcessVarient(props.vid);
+
+    setDisableQtyButton(true);
 
     let newqty = props.qty;
     if (qty === "inc") {
@@ -47,7 +48,7 @@ const CartUpdate = (props) => {
           autoClose: 1000,
         });
         setqytErr("");
-
+        setDisableQtyButton(false);
         props.setApicall(true);
         props.setcartcall(true);
         props.setLoading(false);
@@ -59,11 +60,10 @@ const CartUpdate = (props) => {
           autoClose: 1000,
         });
         setqytErr("");
-
+        setDisableQtyButton(false);
         props.setApicall(true);
         props.setcartcall(true);
         props.setLoading(false);
-        props.setInProcessVarient(null);
       }
       if (response.data.response === "delete opration failed") {
         toast.error("Try again later", {
@@ -71,11 +71,10 @@ const CartUpdate = (props) => {
           autoClose: 1000,
         });
         setqytErr("");
-
+        setDisableQtyButton(false);
         props.setApicall(true);
         props.setcartcall(true);
         props.setLoading(false);
-        props.setInProcessVarient(null);
       }
     }
   };
@@ -86,10 +85,7 @@ const CartUpdate = (props) => {
         <button
           className="action-minus"
           title="Quantity Minus"
-          style={{
-            // eslint-disable-next-line
-            disabled: props.loading == true ? true : false,
-          }}
+          style={{ disabled: props.loading == true ? true : false }}
           onClick={() => updateQuantity("dec")}
         >
           <i className="icofont-minus"></i>
@@ -118,4 +114,4 @@ const CartUpdate = (props) => {
   );
 };
 
-export default CartUpdate;
+export default CartBoxUpdateQty;

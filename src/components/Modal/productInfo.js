@@ -6,11 +6,15 @@ import { UpdateUer, UserData } from "../api/api";
 import { toast } from "react-toastify";
 export default function ProfileInfoModal(props) {
   const [imageSrc, setImageSrctate] = useState();
-
+  let Token = localStorage.getItem("token");
+  const headers = {
+    "Content-Type": "application/json",
+    user_token: `${Token}`,
+  };
   /*Function to get user details */
   let GetUserData = async () => {
     props.setLoading(true);
-    let response = await UserData();
+    let response = await UserData(headers);
     if (
       response.data.length === 0 ||
       response.data === null ||
@@ -316,8 +320,8 @@ export default function ProfileInfoModal(props) {
                 )}
               </div>
             </div>
-            {/* <div className="col-md-6">
-              <div className="form-group" style={{ display: "none" }}>
+            <div className="col-md-6">
+              <div className="form-group">
                 <label className="form-label">Alternate Address</label>
                 <input
                   className={
@@ -332,7 +336,7 @@ export default function ProfileInfoModal(props) {
                   maxLength={30}
                   onChange={onInputChange}
                 />
-           
+
                 {errors.alternate_address && (
                   <span
                     key={errors.alternate_address}
@@ -342,7 +346,7 @@ export default function ProfileInfoModal(props) {
                   </span>
                 )}
               </div>
-            </div> */}
+            </div>
             <div className="col-md-6">
               <div className="form-group">
                 <label className="form-label">
