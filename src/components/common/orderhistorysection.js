@@ -174,7 +174,8 @@ export default function Orderhistorysection({ setLoading }) {
   };
 
   let onInvoiceClick = (id) => {
-    nevigate(`/invoice?id=${id}`);
+    localStorage.setItem("invoiceID", id);
+    nevigate(`/invoice`);
   };
   const CancelOrderFuntion = (id) => {
     setOpenOrderCancelModal(true);

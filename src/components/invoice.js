@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Footer from "./common/footer";
 import Header from "./common/header";
 import Otherbannner from "./common/otherbannner";
@@ -14,11 +14,11 @@ function Invoice() {
     user_token: `${Token}`,
   };
   let [loading, setLoading] = useState(true);
-  let location = useLocation();
+
   let [orderProductList, setOrderProductList] = useState("");
   let [orderDataList, setOrderDataList] = useState([]);
-  const searchParams = new URLSearchParams(location.search);
-  const OrderId = searchParams.get("id");
+
+  const OrderId = localStorage.getItem("invoiceID");
 
   let newTotalGSt = 0;
   let newTotalAmount = 0;
@@ -188,6 +188,7 @@ function Invoice() {
                 invoice={"invoice"}
                 data={orderProductList}
                 deliveryCharges={Number(newDelivaryCharge).toFixed(2)}
+                orderData={orderDataList}
               />
             </div>
             <div className="col-lg-6 m-auto pt-3">
