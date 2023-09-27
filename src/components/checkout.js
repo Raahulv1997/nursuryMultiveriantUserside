@@ -8,6 +8,7 @@ import { UserData, PlaceOrder, CartList, CheckUserAddress } from "./api/api";
 import ProfileInfoModal from "./Modal/productInfo";
 import AddAddressForm from "./Modal/addAddressForm";
 import { ToastContainer, toast } from "react-toastify";
+import Notfound from "./common/notfound";
 // import paypal from "../image/payment/png/01.png"
 // import visa from "../image/payment/png/02.png"
 // import debit from "../image/payment/png/03.png"
@@ -75,10 +76,7 @@ function Checkout() {
 
     setAfterAreaCheck(responseCheck.data.service_available);
     setAfterAreaCheckNotAvailable(responseCheck.data.service_not_available);
-    console.log(
-      "NOT AVAL",
-      JSON.stringify(responseCheck.data.service_not_available)
-    );
+
     // document.getElementById("Vendor5").focus();
     // Vendor5.current.focus();
 
@@ -101,10 +99,9 @@ function Checkout() {
     window.scrollTo(0, 0);
     // eslint-disable-next-line
   }, [apicall]);
-
+  console.log("datasaa--" + JSON.stringify(cartData.length));
   /*Function to get the additional Information */
   const AdditionalAddress = (data) => {
-    console.log("datasaa--" + JSON.stringify(data));
     setNewAddress(data.address);
     setAddress(data.address);
     setPincode(data.pincode);
@@ -385,114 +382,118 @@ function Checkout() {
       {/* Banner */}
       <Otherbannner heading={"Checkout"} bread={"checkout"} />
       {/* Main section */}
-      <section className="inner-section checkout-part">
-        <div className="container">
-          <div className="row">
-            {/* <div className="col-lg-12">
+      {cartData.length === 0 ? (
+        <Notfound />
+      ) : (
+        <div>
+          <section className="inner-section checkout-part">
+            <div className="container">
+              <div className="row">
+                {/* <div className="col-lg-12">
                             <div className="alert-info">
                                 <p>Returning customer? <Link to="/login">Click here to login</Link>
                                 </p>
                             </div>
                         </div> */}
-            <div className="col-lg-12">
-              <div className="account-card">
                 <div className="col-lg-12">
                   <div className="account-card">
-                    <div className="account-title">
-                      <h4>delivery address</h4>
-                      <button onClick={() => setOpenAddressForm(true)}>
-                        add address
-                      </button>
-                    </div>
-                    <div className="account-content">
-                      <div className="row">
-                        <div
-                          className="col-md-6 col-lg-4 alert fade show"
-                          id="myDiv"
-                        >
-                          <div
-                            className={
-                              address === data.address
-                                ? "profile-card address active"
-                                : address === ""
-                                ? "profile-card address active"
-                                : "profile-card address"
-                            }
-                          >
-                            <Link
-                              to=""
-                              onClick={() => {
-                                setAddress(data.address);
-                                // CheckAddress(data.pincode);
-                              }}
-                              className="text-dark"
-                            >
-                              <h6>Home</h6>
-
-                              <p>
-                                <h5>
-                                  {data.first_name} {data.last_name}
-                                </h5>
-                                +91 {data.phone_no}
-                                <br />
-                                {data.address} , {data.pincode} {data.city}
-                              </p>
-                              <ul className="user-action">
-                                <li>
-                                  <button
-                                    className="edit icofont-edit"
-                                    title="Edit This"
-                                    onClick={() => setOpenProfileInfo(true)}
-                                  ></button>
-                                </li>
-                              </ul>
-                            </Link>
-                          </div>
+                    <div className="col-lg-12">
+                      <div className="account-card">
+                        <div className="account-title">
+                          <h4>delivery address</h4>
+                          <button onClick={() => setOpenAddressForm(true)}>
+                            add address
+                          </button>
                         </div>
-
-                        {data.alternate_address ? (
-                          <div className="col-md-6 col-lg-4 alert fade show">
+                        <div className="account-content">
+                          <div className="row">
                             <div
-                              className={
-                                address === data.alternate_address
-                                  ? "profile-card address active"
-                                  : "profile-card address"
-                              }
+                              className="col-md-6 col-lg-4 alert fade show"
+                              id="myDiv"
                             >
-                              <Link
-                                to=""
-                                onClick={() => {
-                                  setAddress(data.alternate_address);
-                                  // CheckAddress(data.pincode);
-                                }}
-                                className="text-dark"
+                              <div
+                                className={
+                                  address === data.address
+                                    ? "profile-card address active"
+                                    : address === ""
+                                    ? "profile-card address active"
+                                    : "profile-card address"
+                                }
                               >
-                                <h6>Other</h6>
-                                <p>
-                                  <h5>
-                                    {data.first_name} {data.last_name}
-                                  </h5>
-                                  +91 {data.phone_no}
-                                  <br />
-                                  {data.alternate_address} , {data.pincode}{" "}
-                                  {data.city}
-                                </p>
-                                <ul className="user-action">
-                                  {/* <li>
+                                <Link
+                                  to=""
+                                  onClick={() => {
+                                    setAddress(data.address);
+                                    // CheckAddress(data.pincode);
+                                  }}
+                                  className="text-dark"
+                                >
+                                  <h6>Home</h6>
+
+                                  <p>
+                                    <h5>
+                                      {data.first_name} {data.last_name}
+                                    </h5>
+                                    +91 {data.phone_no}
+                                    <br />
+                                    {data.address} , {data.pincode} {data.city}
+                                  </p>
+                                  <ul className="user-action">
+                                    <li>
+                                      <button
+                                        className="edit icofont-edit"
+                                        title="Edit This"
+                                        onClick={() => setOpenProfileInfo(true)}
+                                      ></button>
+                                    </li>
+                                  </ul>
+                                </Link>
+                              </div>
+                            </div>
+
+                            {data.alternate_address ? (
+                              <div className="col-md-6 col-lg-4 alert fade show">
+                                <div
+                                  className={
+                                    address === data.alternate_address
+                                      ? "profile-card address active"
+                                      : "profile-card address"
+                                  }
+                                >
+                                  <Link
+                                    to=""
+                                    onClick={() => {
+                                      setAddress(data.alternate_address);
+                                      // CheckAddress(data.pincode);
+                                    }}
+                                    className="text-dark"
+                                  >
+                                    <h6>Other</h6>
+                                    <p>
+                                      <h5>
+                                        {data.first_name} {data.last_name}
+                                      </h5>
+                                      +91 {data.phone_no}
+                                      <br />
+                                      {data.alternate_address} , {data.pincode}{" "}
+                                      {data.city}
+                                    </p>
+                                    <ul className="user-action">
+                                      {/* <li>
                                     <button
                                       className="edit icofont-edit"
                                       title="Edit This"
                                       onClick={() => setOpenProfileInfo(true)}
                                     ></button>
                                   </li> */}
-                                  {/* <li>
+                                      {/* <li>
                                                         <button className="trash icofont-ui-delete" title="Remove This" data-bs-dismiss="alert">
                                                         </button>
                                                     </li> */}
-                                </ul>
-                              </Link>
-                            </div>
-                            {/* {locationCheck === "avaliable" ? (
+                                    </ul>
+                                  </Link>
+                                </div>
+                                {/* {locationCheck === "avaliable" ? (
                           <span className="text-success">
                             {" "}
                             Area is available!!!
@@ -503,449 +504,468 @@ function Checkout() {
                             Area is not available!!!
                           </span>
                         ) : null} */}
-                          </div>
-                        ) : null}
+                              </div>
+                            ) : null}
 
-                        {newAddess === "" ||
-                        newAddess === undefined ||
-                        newAddess === null ? null : (
-                          <div className="col-md-6 col-lg-4 alert fade show">
-                            <div
-                              className={
-                                address === newAddess
-                                  ? "profile-card address active"
-                                  : "profile-card address"
-                              }
-                            >
-                              <Link
-                                to=""
-                                onClick={() => {
-                                  setAddress(newAddess);
-                                  setCity(city);
-                                  setPincode(pincode);
-                                  // CheckAddress(pincode);
-                                }}
-                                className="text-dark"
-                              >
-                                <h6>New Address</h6>
-                                <p>
-                                  <h5>{first_name}</h5>
-                                  +91 {phone_no}
-                                  <br />
-                                  {newAddess} , {pincode} {city}
-                                </p>
-                                <ul className="user-action">
-                                  {/* <li>
+                            {newAddess === "" ||
+                            newAddess === undefined ||
+                            newAddess === null ? null : (
+                              <div className="col-md-6 col-lg-4 alert fade show">
+                                <div
+                                  className={
+                                    address === newAddess
+                                      ? "profile-card address active"
+                                      : "profile-card address"
+                                  }
+                                >
+                                  <Link
+                                    to=""
+                                    onClick={() => {
+                                      setAddress(newAddess);
+                                      setCity(city);
+                                      setPincode(pincode);
+                                      // CheckAddress(pincode);
+                                    }}
+                                    className="text-dark"
+                                  >
+                                    <h6>New Address</h6>
+                                    <p>
+                                      <h5>{first_name}</h5>
+                                      +91 {phone_no}
+                                      <br />
+                                      {newAddess} , {pincode} {city}
+                                    </p>
+                                    <ul className="user-action">
+                                      {/* <li>
                                                         <button className="edit icofont-edit" title="Edit This" 
                                                          onClick={() => setOpenProfileInfo(true)}>
                                                         </button>
                                                     </li> */}
-                                  <li>
-                                    <button
-                                      className="trash icofont-ui-delete"
-                                      title="Remove This"
-                                      onClick={DeleteAdditionAddress}
-                                      data-bs-dismiss="alert"
-                                    ></button>
+                                      <li>
+                                        <button
+                                          className="trash icofont-ui-delete"
+                                          title="Remove This"
+                                          onClick={DeleteAdditionAddress}
+                                          data-bs-dismiss="alert"
+                                        ></button>
+                                      </li>
+                                    </ul>
+                                  </Link>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="account-card">
+                    <div className="account-title">
+                      <h4>Your Product</h4>
+                    </div>
+                    <div className="account-content">
+                      {(cartData || []).map((item) => {
+                        var iddd = Number(item.vendor_id);
+                        shouldApplyRef = arraysAreEqual(item.vendor_id);
+
+                        console.log("iffffff" + shouldApplyRef);
+                        return (
+                          <div
+                            id={"Vendor" + item.vendor_id}
+                            key={iddd} // Add a unique key for each div
+                            style={{
+                              border:
+                                arraysAreEqual(item.vendor_id) === true
+                                  ? "2px solid red"
+                                  : "none",
+                            }}
+                          >
+                            <input ref={Vendor5} type="hidden" />
+                            <div className="checkout_page">
+                              <div
+                                className="checkout_vander_name"
+                                style={{
+                                  display: "flex",
+                                  flexDirection: "row",
+
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <b>{item.owner_name}</b>
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    flexDirection: "row",
+                                    justifyContent: "end",
+                                  }}
+                                >
+                                  {
+                                    // eslint-disable-next-line
+                                    afterAreaCheck.map((item1, index) => {
+                                      // eslint-disable-next-line
+                                      if (item1 == iddd) {
+                                        return (
+                                          <>
+                                            <span className="text-success">
+                                              Delivery is available
+                                            </span>
+                                          </>
+                                        );
+                                      } else if (item1 !== iddd) {
+                                        <span className="text-danger">
+                                          Not available
+                                        </span>;
+                                      }
+                                    })
+                                  }
+                                  {afterAreaCheckNotAvailable.map(
+                                    (item2, index) => {
+                                      // eslint-disable-next-line
+                                      if (item2 == iddd) {
+                                        return (
+                                          <>
+                                            <span className="text-danger">
+                                              Delivery not available Either
+                                              remove this product/change the
+                                              address
+                                            </span>
+                                          </>
+                                        );
+                                      }
+                                    }
+                                  )}
+                                </div>
+                              </div>
+
+                              <OrderTable
+                                getTotalGstPrice={`${
+                                  item[item.vendor_id + "_gst_amount"]
+                                }`}
+                                getTotalDiscountPrice={`${
+                                  item[item.vendor_id + "_discount_amount"]
+                                }`}
+                                getSubTotalPrice={`${
+                                  item[
+                                    item.vendor_id + "_price_x_cart_qty_amount"
+                                  ]
+                                }`}
+                                getTotalPrice={""}
+                                mrp={""}
+                                qty={`${
+                                  item[item.vendor_id + "_product_qty_total"]
+                                }`}
+                                taxablePrice={`${
+                                  item[item.vendor_id + "_taxable_amount"]
+                                }`}
+                                deliveryCharges={item.delivery_charges}
+                                setApicall={setApicall}
+                                data={item.cart_products}
+                                setLoading={setLoading}
+                                orderData={""}
+                              />
+
+                              <div
+                                className="checkout-charge checkout-charge-order"
+                                style={{
+                                  width: "450px",
+                                }}
+                              >
+                                <ul>
+                                  <li className="py-1">
+                                    <span className="text-danger">
+                                      discount
+                                    </span>
+                                    <span className="text-danger">
+                                      {" "}
+                                      - ₹{" "}
+                                      {Number(
+                                        `${
+                                          item[
+                                            item.vendor_id + "_discount_amount"
+                                          ]
+                                        }`
+                                      ).toFixed(2)}
+                                    </span>
+                                  </li>
+                                  <li className="py-1">
+                                    <span>Total GST</span>
+                                    {
+                                      <span>
+                                        {" "}
+                                        ₹{" "}
+                                        {Number(
+                                          `${
+                                            item[item.vendor_id + "_gst_amount"]
+                                          }`
+                                        ).toFixed(2)}
+                                      </span>
+                                    }
+                                  </li>
+                                  <li className="py-1">
+                                    <span>
+                                      Sub Total
+                                      <small>(including GST)</small>
+                                    </span>
+                                    {
+                                      <span>
+                                        ₹{" "}
+                                        {Number(
+                                          `${
+                                            item[
+                                              item.vendor_id +
+                                                "_price_x_cart_qty_amount"
+                                            ]
+                                          }`
+                                        ).toFixed(2)}
+                                      </span>
+                                    }
+                                  </li>
+                                  <li className="py-1">
+                                    <span>delivery fee</span>
+                                    <span>
+                                      ₹{" "}
+                                      {Number(item.delivery_charges).toFixed(2)}{" "}
+                                    </span>
+                                  </li>
+                                  <li className="py-1">
+                                    <span>Total</span>
+                                    {
+                                      <span>
+                                        ₹{" "}
+                                        {(
+                                          Number(
+                                            `${
+                                              item[
+                                                item.vendor_id +
+                                                  "_price_x_cart_qty_amount"
+                                              ]
+                                            }`
+                                          ) + Number(item.delivery_charges)
+                                        ).toFixed(2)}{" "}
+                                      </span>
+                                    }
                                   </li>
                                 </ul>
-                              </Link>
+                                <div
+                                  style={{
+                                    flexDirection: "row",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    // alignItems: "center",
+                                    gap: "6px",
+                                  }}
+                                >
+                                  {
+                                    // eslint-disable-next-line
+                                    afterAreaCheck.map((item1, index) => {
+                                      // eslint-disable-next-line
+                                      if (item1 == iddd) {
+                                        return (
+                                          <>
+                                            <div
+                                              className="payment-card-signle-order"
+                                              style={{
+                                                display:
+                                                  showSinglePayment ===
+                                                  item.vendor_id
+                                                    ? "block"
+                                                    : "none",
+                                              }}
+                                            >
+                                              <select
+                                                class="form-select"
+                                                aria-label="Default select example"
+                                                value={SingleSelectedPayment}
+                                                onChange={(e) => {
+                                                  setSingleSelectedPayment(
+                                                    e.target.value
+                                                  );
+                                                  setSinglePaymentErr(false);
+                                                }}
+                                              >
+                                                <option>
+                                                  Select Payment Method
+                                                </option>
+                                                <option value="COD">
+                                                  Cash on Delivary
+                                                </option>
+                                              </select>
+                                              {SinglePaymentErr === true ? (
+                                                <small className="text-danger">
+                                                  Payment method is required
+                                                </small>
+                                              ) : null}
+                                            </div>
+
+                                            <div
+                                              className="payment-card-signle-order"
+                                              style={{
+                                                display:
+                                                  showSinglePayment ===
+                                                  item.vendor_id
+                                                    ? "none"
+                                                    : "block",
+                                              }}
+                                            >
+                                              <button
+                                                onClick={() => {
+                                                  if (singleVendorID === "") {
+                                                    OnSingleCLick(
+                                                      item.vendor_id
+                                                    );
+                                                  } else {
+                                                    setSingleVendor("");
+                                                    setShowSinglePayment(null);
+
+                                                    setSinglePaymentErr(false);
+                                                    setSingleSelectedPayment(
+                                                      ""
+                                                    );
+                                                  }
+                                                  // if (
+                                                  //   singleVendorID !==
+                                                  //   item.vendor_id
+                                                  // ) {
+                                                  //   console.log(
+                                                  //     "if first time from new venfor"
+                                                  //   );
+                                                  //   setSingleVendor("");
+                                                  //   setShowSinglePayment(null);
+
+                                                  //   setSinglePaymentErr(false);
+                                                  //   setSingleSelectedPayment(false);
+
+                                                  //   console.log(
+                                                  //     "after clcik showSinglePayment-----" +
+                                                  //       showSinglePayment
+                                                  //   );
+                                                  // } else {
+                                                  //   OnSingleCLick(item.vendor_id);
+                                                  // }
+                                                }}
+                                              >
+                                                Order Now
+                                              </button>
+                                            </div>
+
+                                            <div
+                                              className="payment-card-signle-order"
+                                              style={{
+                                                display:
+                                                  showSinglePayment ===
+                                                  item.vendor_id
+                                                    ? "block"
+                                                    : "none",
+                                              }}
+                                            >
+                                              <button
+                                                className="btn"
+                                                onClick={() => {
+                                                  onSingleCheckout(
+                                                    item.vendor_id
+                                                  );
+                                                }}
+                                                // onClick={() => {
+                                                //   if (
+                                                //     singleVendorID !==
+                                                //     item.vendor_id
+                                                //   ) {
+                                                //     console.log(
+                                                //       "if first time from new venfor"
+                                                //     );
+                                                //     setSingleVendor("");
+                                                //     setShowSinglePayment(null);
+
+                                                //     setSinglePaymentErr(false);
+                                                //     setSingleSelectedPayment(false);
+
+                                                //     console.log(
+                                                //       "after clcik showSinglePayment-----" +
+                                                //         showSinglePayment
+                                                //     );
+                                                //   }
+                                                //   console.log(
+                                                //     "showSinglePayment-----" +
+                                                //       showSinglePayment
+                                                //   );
+                                                //   OnSingleCLick(item.vendor_id);
+                                                // }}
+                                              >
+                                                checkout
+                                              </button>
+                                            </div>
+                                          </>
+                                        );
+                                      }
+                                    })
+                                  }
+                                </div>
+                              </div>
                             </div>
                           </div>
-                        )}
+                        );
+                      })}
+
+                      <div className="account-title">
+                        <h4>Grand Totals</h4>
+                      </div>
+                      <div className="checkout-charge">
+                        <ul>
+                          <li>
+                            <span className="text-danger">discount</span>
+                            <span className="text-danger">
+                              - ₹{" "}
+                              {Number(cartTotalData.total_discount).toFixed(2)}
+                            </span>
+                          </li>
+                          <li>
+                            <span>Total GST</span>
+                            {
+                              <span>
+                                {" "}
+                                ₹ {Number(cartTotalData.total_gst).toFixed(
+                                  2
+                                )}{" "}
+                              </span>
+                            }
+                          </li>
+                          <li>
+                            <span>
+                              Sub Total
+                              <small>(including GST)</small>
+                            </span>
+                            {
+                              <span>
+                                ₹ {Number(cartTotalData.sub_total).toFixed(2)}{" "}
+                              </span>
+                            }
+                          </li>
+                          <li>
+                            <span>delivery fee</span>
+                            <span>
+                              ₹{" "}
+                              {Number(
+                                cartTotalData.total_delivery_charge
+                              ).toFixed(2)}{" "}
+                            </span>
+                          </li>
+                          <li>
+                            <span>Total</span>
+                            {
+                              <span>
+                                ₹{" "}
+                                {Number(
+                                  cartTotalData.sub_total_with_shipping_charges
+                                ).toFixed(2)}{" "}
+                              </span>
+                            }
+                          </li>
+                        </ul>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-              <div className="account-card">
-                <div className="account-title">
-                  <h4>Your Product</h4>
-                </div>
-                <div className="account-content">
-                  {(cartData || []).map((item) => {
-                    var iddd = Number(item.vendor_id);
-                    shouldApplyRef = arraysAreEqual(item.vendor_id);
-
-                    console.log("iffffff" + shouldApplyRef);
-                    return (
-                      <div
-                        id={"Vendor" + item.vendor_id}
-                        key={iddd} // Add a unique key for each div
-                        style={{
-                          border:
-                            arraysAreEqual(item.vendor_id) === true
-                              ? "2px solid red"
-                              : "none",
-                        }}
-                      >
-                        <input ref={Vendor5} type="hidden" />
-                        <div className="checkout_page">
-                          <div
-                            className="checkout_vander_name"
-                            style={{
-                              display: "flex",
-                              flexDirection: "row",
-
-                              justifyContent: "space-between",
-                            }}
-                          >
-                            <b>{item.owner_name}</b>
-                            <div
-                              style={{
-                                display: "flex",
-                                flexDirection: "row",
-                                justifyContent: "end",
-                              }}
-                            >
-                              {
-                                // eslint-disable-next-line
-                                afterAreaCheck.map((item1, index) => {
-                                  // eslint-disable-next-line
-                                  if (item1 == iddd) {
-                                    return (
-                                      <>
-                                        <span className="text-success">
-                                          Delivery is available
-                                        </span>
-                                      </>
-                                    );
-                                  } else if (item1 !== iddd) {
-                                    <span className="text-danger">
-                                      Not available
-                                    </span>;
-                                  }
-                                })
-                              }
-                              {afterAreaCheckNotAvailable.map(
-                                (item2, index) => {
-                                  // eslint-disable-next-line
-                                  if (item2 == iddd) {
-                                    return (
-                                      <>
-                                        <span className="text-danger">
-                                          Delivery not available Either remove
-                                          this product/change the address
-                                        </span>
-                                      </>
-                                    );
-                                  }
-                                }
-                              )}
-                            </div>
-                          </div>
-
-                          <OrderTable
-                            getTotalGstPrice={`${
-                              item[item.vendor_id + "_gst_amount"]
-                            }`}
-                            getTotalDiscountPrice={`${
-                              item[item.vendor_id + "_discount_amount"]
-                            }`}
-                            getSubTotalPrice={`${
-                              item[item.vendor_id + "_price_x_cart_qty_amount"]
-                            }`}
-                            getTotalPrice={""}
-                            mrp={""}
-                            qty={`${
-                              item[item.vendor_id + "_product_qty_total"]
-                            }`}
-                            taxablePrice={`${
-                              item[item.vendor_id + "_taxable_amount"]
-                            }`}
-                            deliveryCharges={item.delivery_charges}
-                            setApicall={setApicall}
-                            data={item.cart_products}
-                            setLoading={setLoading}
-                            orderData={""}
-                          />
-
-                          <div
-                            className="checkout-charge checkout-charge-order"
-                            style={{
-                              width: "450px",
-                            }}
-                          >
-                            <ul>
-                              <li className="py-1">
-                                <span className="text-danger">discount</span>
-                                <span className="text-danger">
-                                  {" "}
-                                  - ₹{" "}
-                                  {Number(
-                                    `${
-                                      item[item.vendor_id + "_discount_amount"]
-                                    }`
-                                  ).toFixed(2)}
-                                </span>
-                              </li>
-                              <li className="py-1">
-                                <span>Total GST</span>
-                                {
-                                  <span>
-                                    {" "}
-                                    ₹{" "}
-                                    {Number(
-                                      `${item[item.vendor_id + "_gst_amount"]}`
-                                    ).toFixed(2)}
-                                  </span>
-                                }
-                              </li>
-                              <li className="py-1">
-                                <span>
-                                  Sub Total
-                                  <small>(including GST)</small>
-                                </span>
-                                {
-                                  <span>
-                                    ₹{" "}
-                                    {Number(
-                                      `${
-                                        item[
-                                          item.vendor_id +
-                                            "_price_x_cart_qty_amount"
-                                        ]
-                                      }`
-                                    ).toFixed(2)}
-                                  </span>
-                                }
-                              </li>
-                              <li className="py-1">
-                                <span>delivery fee</span>
-                                <span>
-                                  ₹ {Number(item.delivery_charges).toFixed(2)}{" "}
-                                </span>
-                              </li>
-                              <li className="py-1">
-                                <span>Total</span>
-                                {
-                                  <span>
-                                    ₹{" "}
-                                    {(
-                                      Number(
-                                        `${
-                                          item[
-                                            item.vendor_id +
-                                              "_price_x_cart_qty_amount"
-                                          ]
-                                        }`
-                                      ) + Number(item.delivery_charges)
-                                    ).toFixed(2)}{" "}
-                                  </span>
-                                }
-                              </li>
-                            </ul>
-                            <div
-                              style={{
-                                flexDirection: "row",
-                                display: "flex",
-                                justifyContent: "center",
-                                // alignItems: "center",
-                                gap: "6px",
-                              }}
-                            >
-                              {
-                                // eslint-disable-next-line
-                                afterAreaCheck.map((item1, index) => {
-                                  // eslint-disable-next-line
-                                  if (item1 == iddd) {
-                                    return (
-                                      <>
-                                        <div
-                                          className="payment-card-signle-order"
-                                          style={{
-                                            display:
-                                              showSinglePayment ===
-                                              item.vendor_id
-                                                ? "block"
-                                                : "none",
-                                          }}
-                                        >
-                                          <select
-                                            class="form-select"
-                                            aria-label="Default select example"
-                                            value={SingleSelectedPayment}
-                                            onChange={(e) => {
-                                              setSingleSelectedPayment(
-                                                e.target.value
-                                              );
-                                              setSinglePaymentErr(false);
-                                            }}
-                                          >
-                                            <option>
-                                              Select Payment Method
-                                            </option>
-                                            <option value="COD">
-                                              Cash on Delivary
-                                            </option>
-                                          </select>
-                                          {SinglePaymentErr === true ? (
-                                            <small className="text-danger">
-                                              Payment method is required
-                                            </small>
-                                          ) : null}
-                                        </div>
-
-                                        <div
-                                          className="payment-card-signle-order"
-                                          style={{
-                                            display:
-                                              showSinglePayment ===
-                                              item.vendor_id
-                                                ? "none"
-                                                : "block",
-                                          }}
-                                        >
-                                          <button
-                                            onClick={() => {
-                                              if (singleVendorID === "") {
-                                                OnSingleCLick(item.vendor_id);
-                                              } else {
-                                                setSingleVendor("");
-                                                setShowSinglePayment(null);
-
-                                                setSinglePaymentErr(false);
-                                                setSingleSelectedPayment("");
-                                              }
-                                              // if (
-                                              //   singleVendorID !==
-                                              //   item.vendor_id
-                                              // ) {
-                                              //   console.log(
-                                              //     "if first time from new venfor"
-                                              //   );
-                                              //   setSingleVendor("");
-                                              //   setShowSinglePayment(null);
-
-                                              //   setSinglePaymentErr(false);
-                                              //   setSingleSelectedPayment(false);
-
-                                              //   console.log(
-                                              //     "after clcik showSinglePayment-----" +
-                                              //       showSinglePayment
-                                              //   );
-                                              // } else {
-                                              //   OnSingleCLick(item.vendor_id);
-                                              // }
-                                            }}
-                                          >
-                                            Order Now
-                                          </button>
-                                        </div>
-
-                                        <div
-                                          className="payment-card-signle-order"
-                                          style={{
-                                            display:
-                                              showSinglePayment ===
-                                              item.vendor_id
-                                                ? "block"
-                                                : "none",
-                                          }}
-                                        >
-                                          <button
-                                            className="btn"
-                                            onClick={() => {
-                                              onSingleCheckout(item.vendor_id);
-                                            }}
-                                            // onClick={() => {
-                                            //   if (
-                                            //     singleVendorID !==
-                                            //     item.vendor_id
-                                            //   ) {
-                                            //     console.log(
-                                            //       "if first time from new venfor"
-                                            //     );
-                                            //     setSingleVendor("");
-                                            //     setShowSinglePayment(null);
-
-                                            //     setSinglePaymentErr(false);
-                                            //     setSingleSelectedPayment(false);
-
-                                            //     console.log(
-                                            //       "after clcik showSinglePayment-----" +
-                                            //         showSinglePayment
-                                            //     );
-                                            //   }
-                                            //   console.log(
-                                            //     "showSinglePayment-----" +
-                                            //       showSinglePayment
-                                            //   );
-                                            //   OnSingleCLick(item.vendor_id);
-                                            // }}
-                                          >
-                                            checkout
-                                          </button>
-                                        </div>
-                                      </>
-                                    );
-                                  }
-                                })
-                              }
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-
-                  <div className="account-title">
-                    <h4>Grand Totals</h4>
-                  </div>
-                  <div className="checkout-charge">
-                    <ul>
-                      <li>
-                        <span className="text-danger">discount</span>
-                        <span className="text-danger">
-                          - ₹ {Number(cartTotalData.total_discount).toFixed(2)}
-                        </span>
-                      </li>
-                      <li>
-                        <span>Total GST</span>
-                        {
-                          <span>
-                            {" "}
-                            ₹ {Number(cartTotalData.total_gst).toFixed(2)}{" "}
-                          </span>
-                        }
-                      </li>
-                      <li>
-                        <span>
-                          Sub Total
-                          <small>(including GST)</small>
-                        </span>
-                        {
-                          <span>
-                            ₹ {Number(cartTotalData.sub_total).toFixed(2)}{" "}
-                          </span>
-                        }
-                      </li>
-                      <li>
-                        <span>delivery fee</span>
-                        <span>
-                          ₹{" "}
-                          {Number(cartTotalData.total_delivery_charge).toFixed(
-                            2
-                          )}{" "}
-                        </span>
-                      </li>
-                      <li>
-                        <span>Total</span>
-                        {
-                          <span>
-                            ₹{" "}
-                            {Number(
-                              cartTotalData.sub_total_with_shipping_charges
-                            ).toFixed(2)}{" "}
-                          </span>
-                        }
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
-            {/* <div className="col-lg-12">
+                {/* <div className="col-lg-12">
                             <div className="account-card">
                                 <div className="account-title">
                                     <h4>Delivery Schedule</h4>
@@ -974,7 +994,7 @@ function Checkout() {
                                 </div>
                             </div>
                         </div> */}
-            {/* <div className="col-lg-12">
+                {/* <div className="col-lg-12">
               <div className="account-card">
                 <div className="account-title">
                   <h4>contact number</h4>
@@ -1038,37 +1058,37 @@ function Checkout() {
               </div>
             </div> */}
 
-            <div className="col-lg-12">
-              <div className="account-card mb-0">
-                <div className="account-title">
-                  <h4>payment option</h4>
-                  {/* <button>add card</button> */}
-                </div>
-                <div className="account-content">
-                  <div className="row">
-                    <label
-                      htmlFor="COD"
-                      className="col-md-6 col-lg-4 alert fade show"
-                    >
-                      <div className="payment-card payment active">
-                        {/* <img src={paypal} alt="payment" /> */}
-                        <input
-                          type="radio"
-                          id="COD"
-                          value={"Cash on Delivery"}
-                          onChange={(e) => {
-                            setSelectedPayment(e.target.value);
-                          }}
-                        />
-                        <label className="form-label mb-0">
-                          Cash on Delivery
-                        </label>
+                <div className="col-lg-12">
+                  <div className="account-card mb-0">
+                    <div className="account-title">
+                      <h4>payment option</h4>
+                      {/* <button>add card</button> */}
+                    </div>
+                    <div className="account-content">
+                      <div className="row">
+                        <label
+                          htmlFor="COD"
+                          className="col-md-6 col-lg-4 alert fade show"
+                        >
+                          <div className="payment-card payment active">
+                            {/* <img src={paypal} alt="payment" /> */}
+                            <input
+                              type="radio"
+                              id="COD"
+                              value={"Cash on Delivery"}
+                              onChange={(e) => {
+                                setSelectedPayment(e.target.value);
+                              }}
+                            />
+                            <label className="form-label mb-0">
+                              Cash on Delivery
+                            </label>
 
-                        {/* <button className="trash icofont-ui-delete" title="Remove This" data-bs-dismiss="alert">
+                            {/* <button className="trash icofont-ui-delete" title="Remove This" data-bs-dismiss="alert">
                                                 </button> */}
-                      </div>
-                    </label>
-                    {/* <div className="col-md-6 col-lg-4 alert fade show">
+                          </div>
+                        </label>
+                        {/* <div className="col-md-6 col-lg-4 alert fade show">
                                             <div className="payment-card payment">
                                                 <img src={visa} alt="payment" />
                                                 <h4>card number</h4>
@@ -1098,33 +1118,33 @@ function Checkout() {
                                                 </button>
                                             </div>
                                         </div>*/}
-                    {paymentErr === true ? (
+                        {paymentErr === true ? (
+                          <small className="text-danger">
+                            Please select the payment method
+                          </small>
+                        ) : null}
+                      </div>
+                    </div>
+                    <div className="checkout-check">
+                      <input
+                        type="checkbox"
+                        id="checkout-check"
+                        onChange={(e) => {
+                          setTerm(e.target.checked);
+                          setTermErr(false);
+                        }}
+                      />
+                      <label htmlFor="checkout-check">
+                        By making this purchase you agree to our{" "}
+                        <Link>Terms and Conditions</Link>.
+                      </label>
+                    </div>
+                    {termErr === true ? (
                       <small className="text-danger">
-                        Please select the payment method
+                        Please agree Term and condition
                       </small>
                     ) : null}
-                  </div>
-                </div>
-                <div className="checkout-check">
-                  <input
-                    type="checkbox"
-                    id="checkout-check"
-                    onChange={(e) => {
-                      setTerm(e.target.checked);
-                      setTermErr(false);
-                    }}
-                  />
-                  <label htmlFor="checkout-check">
-                    By making this purchase you agree to our{" "}
-                    <Link>Terms and Conditions</Link>.
-                  </label>
-                </div>
-                {termErr === true ? (
-                  <small className="text-danger">
-                    Please agree Term and condition
-                  </small>
-                ) : null}
-                {/* {addPass === false ? (
+                    {/* {addPass === false ? (
                   <div className="checkout-proced">
                     <Link
                       to=""
@@ -1144,21 +1164,24 @@ function Checkout() {
                     </Link>
                   </div>
                 ) : ( */}
-                <div className="checkout-proced">
-                  <Link
-                    to=""
-                    className="btn btn-inline"
-                    onClick={OnCheckOutCLick}
-                    // onClick={CheckOutFun()}
-                  >
-                    proced to checkout
-                  </Link>
+                    <div className="checkout-proced">
+                      <Link
+                        to=""
+                        className="btn btn-inline"
+                        onClick={OnCheckOutCLick}
+                        // onClick={CheckOutFun()}
+                      >
+                        proced to checkout
+                      </Link>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          </section>
         </div>
-      </section>
+      )}
+
       {/* Footer */}
       <Footer />
       {openProfileInfo ? (

@@ -165,6 +165,7 @@ const ProductBox = ({
         search,
         Featured
       );
+      setLoading(false);
       if (
         response.data.results === undefined ||
         response.data.results === "undefined" ||
@@ -322,10 +323,7 @@ const ProductBox = ({
         let response = await Add_Remove_wishlist(id, verient_id, headers);
 
         // console.log("respoce- in remove-" + response.data.response);
-        if (
-          response.data.response ===
-          "already add in wishlist remove product to wishlist"
-        ) {
+        if (response.data.response === "remove product to wishlist") {
           toast.success("Removed to wishlist", {
             position: toast.POSITION.TOP_RIGHT,
             autoClose: 1000,

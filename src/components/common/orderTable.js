@@ -19,6 +19,7 @@ export default function CartTable(props) {
   const [toReviewData, setToReviewData] = useState(null);
   const [openReviewModal, setOpenReviewModal] = useState(false);
 
+  console.log("ff--" + JSON.stringify(props.data));
   let location = useLocation();
   /*Function to Open cart Product Detail Page */
   const OpenProductDetailModal = (e, f) => {

@@ -1,8 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import error from "../../image/error.png";
-import Footer from "./footer";
-import Header from "./header";
+
 export default function Notfound() {
   return (
     <div>
@@ -19,7 +18,6 @@ export default function Notfound() {
         </div>
       </section>
       {/* Footer */}
-      <Footer />
     </div>
   );
 }
