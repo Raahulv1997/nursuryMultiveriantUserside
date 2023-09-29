@@ -1,10 +1,17 @@
 import OrderTable from "./common/orderTable";
 import { Link, useNavigate } from "react-router-dom";
 import React, { useState, useEffect, useRef } from "react";
+import logo from "../image/logo.png";
 import Otherbannner from "./common/otherbannner";
 import Header from "./common/header";
 import Footer from "./common/footer";
-import { UserData, PlaceOrder, CartList, CheckUserAddress } from "./api/api";
+import {
+  UserData,
+  PlaceOrder,
+  CartList,
+  CheckUserAddress,
+  CreateRazorpay,
+} from "./api/api";
 import ProfileInfoModal from "./Modal/productInfo";
 import AddAddressForm from "./Modal/addAddressForm";
 import { ToastContainer, toast } from "react-toastify";
@@ -59,18 +66,19 @@ function Checkout() {
 
     setData(UserRes.data[0]);
     setCartData(CartRes.data.response);
+
     setTotalCartData(CartRes.data);
     // setCartData(CartRes.response.cart_products);
     // console.log(
     //   "dddddddd-" + JSON.stringify(CartRes.data.response[0].cart_products)
     // );
-    setVendorId(CartRes.data.response.map((item) => item.vendor_id));
+    setVendorId((CartRes.data.response || []).map((item) => item.vendor_id));
     // if (CartRes.data.length === 0) {
     //   navigate("/");
     // }
 
     let pin = UserRes.data[0].pincode;
-    let v = CartRes.data.response.map((item) => item.vendor_id);
+    let v = (CartRes.data.response || []).map((item) => item.vendor_id);
 
     let responseCheck = await CheckUserAddress(pin, v, headers);
 
@@ -240,7 +248,11 @@ function Checkout() {
     }
   };
 
-  const onSingleCheckout = async (vendor_id) => {
+  const onSingleCheckout = async (
+    vendor_id,
+    SingleSelectedPayment,
+    payAmount
+  ) => {
     const result = {
       delivery_address: deliveryAddress,
       order: [
@@ -253,41 +265,133 @@ function Checkout() {
     if (SingleSelectedPayment === false) {
       setSinglePaymentErr(true);
     } else {
-      console.log("ressponcee---" + JSON.stringify(result));
-      setLoading(true);
+      if (SingleSelectedPayment === "UPI") {
+        onPayentClick(payAmount, result);
+      } else if (SingleSelectedPayment === "COD") {
+        console.log("ressponcee---" + JSON.stringify(result));
+        // setLoading(true);
 
-      let response = await PlaceOrder(result, headers);
-      console.log("order res--" + JSON.stringify(response));
-      if (
-        response.data.response ===
-        "Thank you for your order! Your order has been received and is being processed"
-      ) {
-        toast.success("Order Placed Successfully", {
-          position: toast.POSITION.TOP_RIGHT,
-          autoClose: 1000,
-        });
-        setLoading(false);
+        let response = await PlaceOrder(result, headers);
+        console.log("order res--" + JSON.stringify(response));
+        if (
+          response.data.response ===
+          "Thank you for your order! Your order has been received and is being processed"
+        ) {
+          toast.success("Order Placed Successfully", {
+            position: toast.POSITION.TOP_RIGHT,
+            autoClose: 1000,
+          });
+          setLoading(false);
 
-        // const url = `/invoice?order_id=${encodeURIComponent(
-        //   response.data.invoice_id
-        // )}`;
-        // window.location.href = url;
+          // const url = `/invoice?order_id=${encodeURIComponent(
+          //   response.data.invoice_id
+          // )}`;
+          // window.location.href = url;
 
-        setTimeout(() => {
-          navigate("/profile?ClickedBy=checkout");
-        }, 2000);
+          setTimeout(() => {
+            navigate("/profile?ClickedBy=checkout");
+          }, 2000);
+        }
       }
 
       setLoading(false);
     }
   };
 
-  /*Function to pace the order */
-  const OnCheckOutCLick = async () => {
-    setNotavailable(false);
-    console.log("1111111111111111");
+  const OnPlaceOrderApi = async (result) => {
+    console.log("rsssss--" + JSON.stringify(result));
 
-    document.getElementById("Vendor5").focus();
+    let response = await PlaceOrder(result, headers);
+    console.log("order res--" + JSON.stringify(response));
+    if (
+      response.data.response ===
+      "Thank you for your order! Your order has been received and is being processed"
+    ) {
+      toast.success("Order Placed Successfully", {
+        position: toast.POSITION.TOP_RIGHT,
+        autoClose: 1000,
+      });
+      setLoading(false);
+      setPaymentErr(false);
+      setTermErr(false);
+      setAddPass(false);
+      setcartcall(true);
+
+      setTimeout(() => {
+        navigate("/profile?ClickedBy=checkout");
+      }, 2000);
+    }
+  };
+
+  const onPayentClick = async (amount, result) => {
+    let res = result;
+    let amt = Math.round(Number(amount));
+    console.log(res);
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.onerror = () => {
+      alert("RazorPay SDK failed to load");
+    };
+    script.onload = async () => {
+      try {
+        setLoading(true);
+        // const total = userData.cart.reduce((a, b) => a + +b.price, 0).toFixed(0);
+        const result = await CreateRazorpay(amt, headers);
+
+        const { amount, key_id, order_id } = result.data;
+        console.log(amount, order_id);
+
+        const options = {
+          key: key_id,
+          amount: amount,
+          image: logo,
+          theme: {
+            color: "#119744",
+          },
+          name: "INDIA KI NURSURY",
+          description: "FIRST RAZOR PAY",
+          order_id: order_id,
+          handler: async function (response) {
+            // await AddRazorpay(amount, response);
+            // console.log(result)
+            // Perform any additional actions on successful payment here
+            toast.success("Payment Successful.", {
+              position: toast.POSITION.TOP_RIGHT,
+              autoClose: 2000,
+            });
+
+            OnPlaceOrderApi(res);
+          },
+          prefill: {
+            name: "We2code PVT LTD",
+            email: "ashish.we2code@gmail.com",
+            contact: "9754869920",
+          },
+        };
+
+        setLoading(false);
+        const paymentObject = new window.Razorpay(options);
+        paymentObject.on("payment.failed", function (response) {
+          console.log(JSON.stringify(response));
+          toast.success("Payment Failed.", {
+            position: toast.POSITION.TOP_RIGHT,
+            autoClose: 2000,
+          });
+        });
+        paymentObject.open();
+      } catch (error) {
+        alert(error);
+        setLoading(false);
+      }
+    };
+    document.body.appendChild(script);
+  };
+  /*Function to pace the order */
+  const OnCheckOutCLick = async (amount, payMethod) => {
+    console.log(amount, payMethod);
+
+    setNotavailable(false);
+
     if (selectedPayment === false) {
       setLoading(false);
       setPaymentErr(true);
@@ -304,41 +408,37 @@ function Checkout() {
       setNotavailable(true);
       return;
     } else {
-      setLoading(true);
+      if (payMethod === "UPI") {
+        onPayentClick(amount, result);
+      } else if (payMethod === "COD") {
+        console.log("ddddd--" + JSON.stringify(result));
 
-      let response = await PlaceOrder(result, headers);
+        setLoading(true);
+        let response = await PlaceOrder(result, headers);
 
-      if (
-        response.data.response ===
-        "Thank you for your order! Your order has been received and is being processed"
-      ) {
-        toast.success("placed order successfull", {
-          position: toast.POSITION.TOP_RIGHT,
-          autoClose: 1000,
-        });
+        if (
+          response.data.response ===
+          "Thank you for your order! Your order has been received and is being processed"
+        ) {
+          toast.success("placed order successfull", {
+            position: toast.POSITION.TOP_RIGHT,
+            autoClose: 1000,
+          });
 
+          setLoading(false);
+          setPaymentErr(false);
+          setTermErr(false);
+          setAddPass(false);
+          setcartcall(true);
+          navigate("/profile?ClickedBy=checkout");
+          // const url = `/invoice?order_id=${encodeURIComponent(
+          //   response.data.invoice_id
+          // )}`;
+          // window.location.href = url;
+        }
         setLoading(false);
-        setPaymentErr(false);
-        setTermErr(false);
-        setAddPass(false);
-        setcartcall(true);
-        navigate("/profile?ClickedBy=checkout");
-        // const url = `/invoice?order_id=${encodeURIComponent(
-        //   response.data.invoice_id
-        // )}`;
-        // window.location.href = url;
       }
-      setLoading(false);
     }
-    // else {
-    //   setLoading(false)
-    //   setAddPass(false)
-    //   toast.error("Get the correct address", {
-    //     position: toast.POSITION.TOP_RIGHT,
-    //     autoClose: 1000,
-    //   });
-    // }
-    // }
   };
 
   let [isNotAvaibale, setNotavailable] = useState(false);
@@ -349,7 +449,7 @@ function Checkout() {
       // eslint-disable-next-line
       if (afterAreaCheckNotAvailable[i] == id) {
         document.getElementById("Vendor" + id).focus();
-        console.log("0000000000000000000");
+
         return true;
       }
     }
@@ -364,10 +464,7 @@ function Checkout() {
 
     return false;
   }
-  const CheckOutFun = () => {
-    // document.getElementById("Vendor5").scrollTo();
-    // Vendor5.current.focus();
-  };
+
   return (
     <div>
       {/* Header */}
@@ -383,7 +480,10 @@ function Checkout() {
       <Otherbannner heading={"Checkout"} bread={"checkout"} />
       {/* Main section */}
       {cartData.length === 0 ? (
-        <Notfound />
+        <div className="text-center">
+          {" "}
+          <b>Data Not found</b>
+        </div>
       ) : (
         <div>
           <section className="inner-section checkout-part">
@@ -601,24 +701,28 @@ function Checkout() {
                                 >
                                   {
                                     // eslint-disable-next-line
-                                    afterAreaCheck.map((item1, index) => {
+                                    (afterAreaCheck || []).map(
                                       // eslint-disable-next-line
-                                      if (item1 == iddd) {
-                                        return (
-                                          <>
-                                            <span className="text-success">
-                                              Delivery is available
-                                            </span>
-                                          </>
-                                        );
-                                      } else if (item1 !== iddd) {
-                                        <span className="text-danger">
-                                          Not available
-                                        </span>;
+                                      (item1, index) => {
+                                        // eslint-disable-next-line
+                                        if (item1 == iddd) {
+                                          return (
+                                            <>
+                                              <span className="text-success">
+                                                Delivery is available
+                                              </span>
+                                            </>
+                                          );
+                                        } else if (item1 !== iddd) {
+                                          <span className="text-danger">
+                                            Not available
+                                          </span>;
+                                        }
                                       }
-                                    })
+                                    )
                                   }
-                                  {afterAreaCheckNotAvailable.map(
+                                  {(afterAreaCheckNotAvailable || []).map(
+                                    // eslint-disable-next-line
                                     (item2, index) => {
                                       // eslint-disable-next-line
                                       if (item2 == iddd) {
@@ -757,147 +861,171 @@ function Checkout() {
                                 >
                                   {
                                     // eslint-disable-next-line
-                                    afterAreaCheck.map((item1, index) => {
+                                    (afterAreaCheck || []).map(
                                       // eslint-disable-next-line
-                                      if (item1 == iddd) {
-                                        return (
-                                          <>
-                                            <div
-                                              className="payment-card-signle-order"
-                                              style={{
-                                                display:
-                                                  showSinglePayment ===
-                                                  item.vendor_id
-                                                    ? "block"
-                                                    : "none",
-                                              }}
-                                            >
-                                              <select
-                                                class="form-select"
-                                                aria-label="Default select example"
-                                                value={SingleSelectedPayment}
-                                                onChange={(e) => {
-                                                  setSingleSelectedPayment(
-                                                    e.target.value
-                                                  );
-                                                  setSinglePaymentErr(false);
+                                      (item1, index) => {
+                                        // eslint-disable-next-line
+                                        if (item1 == iddd) {
+                                          return (
+                                            <>
+                                              <div
+                                                className="payment-card-signle-order"
+                                                style={{
+                                                  display:
+                                                    showSinglePayment ===
+                                                    item.vendor_id
+                                                      ? "block"
+                                                      : "none",
                                                 }}
                                               >
-                                                <option>
-                                                  Select Payment Method
-                                                </option>
-                                                <option value="COD">
-                                                  Cash on Delivary
-                                                </option>
-                                              </select>
-                                              {SinglePaymentErr === true ? (
-                                                <small className="text-danger">
-                                                  Payment method is required
-                                                </small>
-                                              ) : null}
-                                            </div>
-
-                                            <div
-                                              className="payment-card-signle-order"
-                                              style={{
-                                                display:
-                                                  showSinglePayment ===
-                                                  item.vendor_id
-                                                    ? "none"
-                                                    : "block",
-                                              }}
-                                            >
-                                              <button
-                                                onClick={() => {
-                                                  if (singleVendorID === "") {
-                                                    OnSingleCLick(
-                                                      item.vendor_id
-                                                    );
-                                                  } else {
-                                                    setSingleVendor("");
-                                                    setShowSinglePayment(null);
-
-                                                    setSinglePaymentErr(false);
+                                                <select
+                                                  class="form-select"
+                                                  aria-label="Default select example"
+                                                  value={SingleSelectedPayment}
+                                                  onChange={(e) => {
                                                     setSingleSelectedPayment(
-                                                      ""
+                                                      e.target.value
                                                     );
-                                                  }
-                                                  // if (
-                                                  //   singleVendorID !==
-                                                  //   item.vendor_id
-                                                  // ) {
-                                                  //   console.log(
-                                                  //     "if first time from new venfor"
-                                                  //   );
-                                                  //   setSingleVendor("");
-                                                  //   setShowSinglePayment(null);
+                                                    setSinglePaymentErr(false);
+                                                  }}
+                                                >
+                                                  <option>
+                                                    Select Payment Method
+                                                  </option>
+                                                  <option value="COD">
+                                                    Cash on Delivary
+                                                  </option>
+                                                  <option value="UPI">
+                                                    Pay now
+                                                  </option>
+                                                </select>
+                                                {SinglePaymentErr === true ? (
+                                                  <small className="text-danger">
+                                                    Payment method is required
+                                                  </small>
+                                                ) : null}
+                                              </div>
 
-                                                  //   setSinglePaymentErr(false);
-                                                  //   setSingleSelectedPayment(false);
+                                              <div
+                                                className="payment-card-signle-order"
+                                                style={{
+                                                  display:
+                                                    showSinglePayment ===
+                                                    item.vendor_id
+                                                      ? "none"
+                                                      : "block",
+                                                }}
+                                              >
+                                                <button
+                                                  onClick={() => {
+                                                    if (singleVendorID === "") {
+                                                      OnSingleCLick(
+                                                        item.vendor_id
+                                                      );
+                                                    } else {
+                                                      setSingleVendor("");
+                                                      setShowSinglePayment(
+                                                        null
+                                                      );
 
+                                                      setSinglePaymentErr(
+                                                        false
+                                                      );
+                                                      setSingleSelectedPayment(
+                                                        ""
+                                                      );
+                                                    }
+                                                    // if (
+                                                    //   singleVendorID !==
+                                                    //   item.vendor_id
+                                                    // ) {
+                                                    //   console.log(
+                                                    //     "if first time from new venfor"
+                                                    //   );
+                                                    //   setSingleVendor("");
+                                                    //   setShowSinglePayment(null);
+
+                                                    //   setSinglePaymentErr(false);
+                                                    //   setSingleSelectedPayment(false);
+
+                                                    //   console.log(
+                                                    //     "after clcik showSinglePayment-----" +
+                                                    //       showSinglePayment
+                                                    //   );
+                                                    // } else {
+                                                    //   OnSingleCLick(item.vendor_id);
+                                                    // }
+                                                  }}
+                                                >
+                                                  Order Now
+                                                </button>
+                                              </div>
+
+                                              <div
+                                                className="payment-card-signle-order"
+                                                style={{
+                                                  display:
+                                                    showSinglePayment ===
+                                                    item.vendor_id
+                                                      ? "block"
+                                                      : "none",
+                                                }}
+                                              >
+                                                <button
+                                                  className="btn"
+                                                  onClick={() => {
+                                                    onSingleCheckout(
+                                                      item.vendor_id,
+                                                      SingleSelectedPayment,
+                                                      (
+                                                        Number(
+                                                          `${
+                                                            item[
+                                                              item.vendor_id +
+                                                                "_price_x_cart_qty_amount"
+                                                            ]
+                                                          }`
+                                                        ) +
+                                                        Number(
+                                                          item.delivery_charges
+                                                        )
+                                                      ).toFixed(2)
+                                                    );
+                                                  }}
+                                                  // onClick={() => {
+                                                  //   if (
+                                                  //     singleVendorID !==
+                                                  //     item.vendor_id
+                                                  //   ) {
+                                                  //     console.log(
+                                                  //       "if first time from new venfor"
+                                                  //     );
+                                                  //     setSingleVendor("");
+                                                  //     setShowSinglePayment(null);
+
+                                                  //     setSinglePaymentErr(false);
+                                                  //     setSingleSelectedPayment(false);
+
+                                                  //     console.log(
+                                                  //       "after clcik showSinglePayment-----" +
+                                                  //         showSinglePayment
+                                                  //     );
+                                                  //   }
                                                   //   console.log(
-                                                  //     "after clcik showSinglePayment-----" +
+                                                  //     "showSinglePayment-----" +
                                                   //       showSinglePayment
                                                   //   );
-                                                  // } else {
                                                   //   OnSingleCLick(item.vendor_id);
-                                                  // }
-                                                }}
-                                              >
-                                                Order Now
-                                              </button>
-                                            </div>
-
-                                            <div
-                                              className="payment-card-signle-order"
-                                              style={{
-                                                display:
-                                                  showSinglePayment ===
-                                                  item.vendor_id
-                                                    ? "block"
-                                                    : "none",
-                                              }}
-                                            >
-                                              <button
-                                                className="btn"
-                                                onClick={() => {
-                                                  onSingleCheckout(
-                                                    item.vendor_id
-                                                  );
-                                                }}
-                                                // onClick={() => {
-                                                //   if (
-                                                //     singleVendorID !==
-                                                //     item.vendor_id
-                                                //   ) {
-                                                //     console.log(
-                                                //       "if first time from new venfor"
-                                                //     );
-                                                //     setSingleVendor("");
-                                                //     setShowSinglePayment(null);
-
-                                                //     setSinglePaymentErr(false);
-                                                //     setSingleSelectedPayment(false);
-
-                                                //     console.log(
-                                                //       "after clcik showSinglePayment-----" +
-                                                //         showSinglePayment
-                                                //     );
-                                                //   }
-                                                //   console.log(
-                                                //     "showSinglePayment-----" +
-                                                //       showSinglePayment
-                                                //   );
-                                                //   OnSingleCLick(item.vendor_id);
-                                                // }}
-                                              >
-                                                checkout
-                                              </button>
-                                            </div>
-                                          </>
-                                        );
+                                                  // }}
+                                                >
+                                                  checkout
+                                                </button>
+                                              </div>
+                                            </>
+                                          );
+                                        }
                                       }
-                                    })
+                                    )
                                   }
                                 </div>
                               </div>
@@ -1068,21 +1196,57 @@ function Checkout() {
                       <div className="row">
                         <label
                           htmlFor="COD"
-                          className="col-md-6 col-lg-4 alert fade show"
+                          className="col-md-6 col-lg-4 alert fade show "
                         >
-                          <div className="payment-card payment active">
+                          <div
+                            className={
+                              selectedPayment === "COD"
+                                ? "payment-card payment active"
+                                : "payment-card payment "
+                            }
+                          >
                             {/* <img src={paypal} alt="payment" /> */}
                             <input
                               type="radio"
                               id="COD"
-                              value={"Cash on Delivery"}
+                              name="paymentOption"
+                              value={"COD"}
                               onChange={(e) => {
                                 setSelectedPayment(e.target.value);
+                                setPaymentErr(false);
                               }}
                             />
-                            <label className="form-label mb-0">
+                            <label className="form-label mb-0" htmlFor="COD">
                               Cash on Delivery
                             </label>
+
+                            {/* <button className="trash icofont-ui-delete" title="Remove This" data-bs-dismiss="alert">
+                                                </button> */}
+                          </div>
+                        </label>
+                        <label
+                          htmlFor="UPI"
+                          className="col-md-6 col-lg-4 alert fade show"
+                        >
+                          <div
+                            className={
+                              selectedPayment === "UPI"
+                                ? "payment-card payment active"
+                                : "payment-card payment "
+                            }
+                          >
+                            {/* <img src={paypal} alt="payment" /> */}
+                            <input
+                              type="radio"
+                              id="UPI"
+                              name="paymentOption"
+                              value={"UPI"}
+                              onChange={(e) => {
+                                setSelectedPayment(e.target.value);
+                                setPaymentErr(false);
+                              }}
+                            />
+                            <label className="form-label mb-0">Pay Now</label>
 
                             {/* <button className="trash icofont-ui-delete" title="Remove This" data-bs-dismiss="alert">
                                                 </button> */}
@@ -1168,7 +1332,14 @@ function Checkout() {
                       <Link
                         to=""
                         className="btn btn-inline"
-                        onClick={OnCheckOutCLick}
+                        onClick={() => {
+                          OnCheckOutCLick(
+                            Number(
+                              cartTotalData.sub_total_with_shipping_charges
+                            ).toFixed(2),
+                            selectedPayment
+                          );
+                        }}
                         // onClick={CheckOutFun()}
                       >
                         proced to checkout

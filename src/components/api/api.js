@@ -305,12 +305,29 @@ export const CheckUserAddress = async (pin, vendor, headersVal) => {
   return response;
 };
 
-/*Api to palace order*/
 export const PlaceOrder = async (props, headersVal) => {
   // console.log(props);
   const response = axios.post(`${API_URL}/add_order_1`, JSON.stringify(props), {
     headers: headersVal,
   });
+  return response;
+};
+/*Api to palace order*/
+export const CreateRazorpay = async (amount, headersVal) => {
+  let name = "user payment";
+  let description = "payment description";
+  // console.log(props);
+  const response = axios.post(
+    `${API_URL}/createOrder`,
+    {
+      name: name,
+      amount: amount,
+      description: description,
+    },
+    {
+      headers: headersVal,
+    }
+  );
   return response;
 };
 
