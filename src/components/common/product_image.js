@@ -18,7 +18,7 @@ const ProductImage = (props) => {
           ? productImg
           : CoverImg(props.src)
       }
-      className="img-fluid"
+      className="img-fluid "
       alt={props.alt}
       style={{ height: props.from === "cart" ? "100px" : "" }}
     />

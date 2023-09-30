@@ -208,8 +208,8 @@ export default function ProductDetailsBox(props) {
         <div
           className={
             props.page === "details"
-              ? "col-md-6 col-lg-6"
-              : "col-md-12 col-lg-12 item_show_modal"
+              ? "col-md-12 col-lg-6"
+              : "col-md-12 col-lg-6 item_show_modal"
           }
         >
           <div
@@ -249,7 +249,13 @@ export default function ProductDetailsBox(props) {
             </div>
             <Carousel>
               {imageArray.length === 0 ? (
-                <div>
+                <div
+                  className={
+                    props.page === "details"
+                      ? "product_details_img"
+                      : "model_product_img"
+                  }
+                >
                   {/* <img
                     src={data.cover_image}
                     alt={data.seo_tag + data.description}
@@ -263,7 +269,14 @@ export default function ProductDetailsBox(props) {
               ) : (
                 (filteredData || []).map((item, index) => {
                   return (
-                    <div key={index}>
+                    <div
+                      key={index}
+                      className={
+                        props.page === "details"
+                          ? "product_details_img"
+                          : "model_product_img"
+                      }
+                    >
                       {/* <img src={item} alt={data.seo_tag + data.description} /> */}
                       <ProductImage
                         src={item}
@@ -280,8 +293,8 @@ export default function ProductDetailsBox(props) {
         <div
           className={
             props.page === "details"
-              ? "col-md-6 col-lg-6"
-              : "col-md-12 col-lg-12 "
+              ? "col-md-12 col-lg-6"
+              : "col-md-12 col-lg-6 "
           }
         >
           <div
@@ -425,14 +438,16 @@ export default function ProductDetailsBox(props) {
                             className={"img-fluid"}
                             alt={item.description + ", " + item.seo_tag}
                           />
-                          <small style={{ fontSize: "10px" }}>
-                            ₹{item.price}/-
-                            {item.discount === 0 ? null : (
-                              <del>₹{item.mrp}/-</del>
-                            )}
-                          </small>
-                          <div className="text-truncate w-100 var_name">
-                            {item.verient_name}
+                          <div className="p-1 text-center">
+                            <small style={{ fontSize: "10px" }}>
+                              ₹{item.price}/-
+                              {item.discount === 0 ? null : (
+                                <del>₹{item.mrp}/-</del>
+                              )}
+                            </small>
+                            <div className="text-truncate w-100 var_name">
+                              {item.verient_name}
+                            </div>
                           </div>
                         </div>
                       </li>

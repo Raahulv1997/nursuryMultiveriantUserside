@@ -77,7 +77,10 @@ export default function Complainthistorysection({ setLoading }) {
                     <ProductRating rating={item.review_rating} />
                   </ul> */}
                   </div>
-                  <h5> Order Id : {item.order_id}</h5>
+                  {item.order_id === "undefined" ? null : (
+                    <h5> Order Id : {item.order_id}</h5>
+                  )}
+
                   <h5>Complaint : {item.subject}</h5>
                   <p className="review-desc">
                     <b>Description</b> {item.description}

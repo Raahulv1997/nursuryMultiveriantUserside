@@ -5,7 +5,7 @@ import ProductDetailsBox from "../common/productDetailsBox";
 export default function ProductDetailModal(props) {
   console.log("Props----" + JSON.stringify(props));
   return (
-    <Modal show={props.show}>
+    <Modal show={props.show} size="lg">
       <button
         className="modal-close icofont-close"
         data-bs-dismiss="modal"

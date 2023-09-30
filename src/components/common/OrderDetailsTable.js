@@ -76,7 +76,7 @@ export default function OrderDetailsTable(props) {
                   : item.order_cart_count;
               return (
                 <tr key={index}>
-                  <td className="table-image p-0">
+                  <td className="table-image  p-0">
                     {props.invoice === "other" ||
                     props.invoice === undefined ? (
                       <ProductImage
@@ -174,15 +174,17 @@ export default function OrderDetailsTable(props) {
                   <td className="table-quantity p-1">
                     <h6>₹ {(item.price * qyt).toFixed(2)}</h6>
                   </td>
-                  {props.orderStatus === "Delivered" ? (
-                    <Link
-                      to=""
-                      className="text-end text-decoration-none p-2"
-                      onClick={() => AddReviewModal(item)}
-                    >
-                      <button className="blog-btn">Add Review</button>
-                    </Link>
-                  ) : null}
+                  <td className="table-quantity p-1">
+                    {props.orderStatus === "Delivered" ? (
+                      <Link
+                        to=""
+                        className="text-end text-decoration-none p-2"
+                        onClick={() => AddReviewModal(item)}
+                      >
+                        <button className="blog-btn">Add Review</button>
+                      </Link>
+                    ) : null}
+                  </td>
                 </tr>
               );
             })}

@@ -79,7 +79,14 @@
 }
 
 .product_detail_box .details-list-group li {
-  max-width: 80px;
+  max-width: 108px;
+  border: solid 1px #ddd;
+  text-align: center;
+}
+.product_detail_box .details-list-group li img {
+  height: 120px;
+  /* margin: auto; */
+  margin-top: 6px;
 }
 
 .top_right_bg {

@@ -290,7 +290,10 @@ export default function MobileMenu({
                 placeholder="Search anything..."
                 autoFocus
                 value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  setSearchErr("");
+                }}
               />
               <button onClick={onSearch}>
                 <i className="fas fa-search"></i>

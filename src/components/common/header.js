@@ -22,6 +22,10 @@ export default function Header({
   searchValue,
   CategoryValue,
 }) {
+  console.log(searchValue);
+  if (searchValue === undefined) {
+    searchValue = "";
+  }
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [cartApicCall, setCartApiCall] = useState(false);
   const [cartList, setCartList] = useState(false);
@@ -213,7 +217,10 @@ export default function Header({
                 type="text"
                 placeholder="Search anything..."
                 value={search}
-                onChange={(event) => setSearch(event.target.value)}
+                onChange={(event) => {
+                  setSearch(event.target.value);
+                  setSearchErr("");
+                }}
               />
               <button type="submit">
                 <i className="fas fa-search"></i>
@@ -281,7 +288,7 @@ export default function Header({
                   alt="user"
                 />
               </i>
-              <span>{name}</span>
+              <span>{name === null ? "user" : name}</span>
               <div className="profile_dropsdown">
                 <DropdownButton
                   id={`dropdown-button-drop-${"down-left"}`}
@@ -366,6 +373,7 @@ export default function Header({
                                   <Link
                                     to={""}
                                     className={
+                                      // eslint-disable-next-line
                                       CategoryValue == category.id
                                         ? "gourav"
                                         : ""
@@ -386,6 +394,7 @@ export default function Header({
                                       <li key={child.id}>
                                         <Link
                                           className={
+                                            // eslint-disable-next-line
                                             CategoryValue == child.id
                                               ? "gourav"
                                               : ""
