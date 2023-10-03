@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../image/logo.png";
 import useValidation from "../components/common/useValidation";
 import { UserLogin } from "./api/api";
@@ -13,7 +13,7 @@ export default function Login() {
   let [facebook, setFacebook] = useState(false);
   /*Function to show hide password */
   const toggleShowPassword = () => setShowPassword((prev) => !prev);
-  const history = useLocation();
+  // const history = useLocation();
   const renderIcon = () => {
     if (state.password.length > 0) {
       return showPassword ? (

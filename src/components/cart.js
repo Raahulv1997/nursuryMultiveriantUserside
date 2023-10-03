@@ -80,7 +80,7 @@ export default function Cart({
   //   });
   //   return totalPrice;
   // };
-
+  console.log("hhh" + typeof totalQty);
   return (
     <div>
       <div
@@ -92,10 +92,12 @@ export default function Cart({
       >
         {updatecartLoader ? <Loadeer /> : null}
         <div className="cart-header">
-          <div className="cart-total">
-            <i className="fas fa-shopping-basket"></i>
-            <span>total item ({totalQty})</span>
-          </div>
+          {totalQty === undefined ? null : (
+            <div className="cart-total">
+              <i className="fas fa-shopping-basket"></i>
+              <span>total item ({totalQty})</span>
+            </div>
+          )}
           <button className="cart-close" onClick={close}>
             <i className="icofont-close"></i>
           </button>

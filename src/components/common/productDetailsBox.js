@@ -436,7 +436,7 @@ export default function ProductDetailsBox(props) {
                             }
                             // src={item.cover_image}
                             className={"img-fluid"}
-                            alt={item.description + ", " + item.seo_tag}
+                            alt={"image description"}
                           />
                           <div className="p-1 text-center">
                             <small style={{ fontSize: "10px" }}>

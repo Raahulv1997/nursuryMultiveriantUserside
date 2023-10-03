@@ -127,20 +127,20 @@ const Footer = () => {
                   <li>
                     <i className="icofont-ui-email"></i>
                     <p>
-                      <span>support@example.com</span>
-                      <span>carrer@example.com</span>
+                      <span>support@india ki nursury.com</span>
+                      <span>carrer@india ki nursury.com</span>
                     </p>
                   </li>
                   <li>
                     <i className="icofont-ui-touch-phone"></i>
                     <p>
-                      <span>+120 279 532 13</span>
-                      <span>+120 279 532 14</span>
+                      <span>+91 279 532 13</span>
+                      <span>+91 279 532 14</span>
                     </p>
                   </li>
                   <li>
                     <i className="icofont-location-pin"></i>
-                    <p>1Hd- 50, 010 Avenue, NY 90001 United States</p>
+                    <p>45 PU4 Scheme No. 54 Vijay Nagar Indore</p>
                   </li>
                 </ul>
               </div>
@@ -154,13 +154,15 @@ const Footer = () => {
                       <Link to={"/profile"}>My Account</Link>
                     </li>
                     <li>
-                      <Link to={"/profile"}>Order History</Link>
+                      <Link to={"/profile?ClickedBy=checkout"}>
+                        Order History
+                      </Link>
                     </li>
                     {/* <li>
                       <Link to={""}>Order Tracking</Link>
                     </li> */}
                     <li>
-                      <Link to={"/home#trending"}>Best Seller</Link>
+                      <Link to={"#trending"}>Best Seller</Link>
                     </li>
                     <li>
                       <Link to={"/shop"}>New Arrivals</Link>
@@ -190,9 +192,9 @@ const Footer = () => {
               <div className="footer-widget">
                 <h3 className="footer-title">Download App</h3>
                 <p className="footer-desc">
-                  Lorem ipsum dolor sit amet tenetur dignissimos ipsum eligendi
-                  autem obcaecati minus ducimus totam reprehenderit
-                  exercitationem!
+                  Shop wide range of natural plants, miniature garden toys,
+                  pebbles & bulbs online in India. We delivers 6000+ nursery
+                  plants across all major cities in India!
                 </p>
                 {/* <div className="footer-app">
                   <Link to={""}>
@@ -231,7 +233,6 @@ const Footer = () => {
           </div>
         </div>
       </footer>
-    
     </>
   );
 };

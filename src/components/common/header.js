@@ -22,7 +22,6 @@ export default function Header({
   searchValue,
   CategoryValue,
 }) {
-  console.log(searchValue);
   if (searchValue === undefined) {
     searchValue = "";
   }

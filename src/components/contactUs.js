@@ -63,7 +63,7 @@ export default function ContactUs() {
               <div className="contact-card">
                 <i className="icofont-location-pin"></i>
                 <h4>head office</h4>
-                <p>1Hd- 50, 010 Avenue, NY 90001 United States</p>
+                <p>45, Universal Tower Scheme 54, PU4, Indore, MP (452001)</p>
               </div>
             </div>
             <div className="col-md-6 col-lg-4">
@@ -72,9 +72,9 @@ export default function ContactUs() {
                 <h4>phone number</h4>
                 <p>
                   <Link to="">
-                    009-215-5596 <span>(toll free)</span>
+                    +91-96850-13001<span>(toll free)</span>
                   </Link>
-                  <Link to="">009-215-5595</Link>
+                  <Link to="">+91-96850-13001</Link>
                 </p>
               </div>
             </div>
@@ -83,8 +83,8 @@ export default function ContactUs() {
                 <i className="icofont-email"></i>
                 <h4>Support mail</h4>
                 <p>
-                  <Link to="">contact@example.com</Link>
-                  <Link to="">info@example.com</Link>
+                  <Link to="">contact@we2code.com</Link>
+                  <Link to="">Support@we2code.com</Link>
                 </p>
               </div>
             </div>

@@ -192,7 +192,7 @@ export default function ComplaintForm({
               name="contect_no"
               //   onChange={onInputChange}
               onChange={(v) => {
-                if (v.target.value.length <= 11) {
+                if (v.target.value.length <= 10) {
                   onInputChange(v);
                 }
               }}
