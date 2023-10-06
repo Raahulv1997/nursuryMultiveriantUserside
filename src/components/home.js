@@ -64,10 +64,60 @@ export default function Home() {
         {/* Banner */}
         <BannerSlider />
         {/* Recenlty sold item */}
+
+        {noFeaturedData === "no_featured" ? null : (
+          <section className="section recent-part pt-5">
+            <div className="container">
+              <div className="row">
+                <div className="col-lg-12">
+                  <div className="section-heading">
+                    <h2 className="account-title">Featured Products</h2>
+                  </div>
+                </div>
+              </div>
+              <div className="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
+                <ProductBox
+                  setNoFeaturedData={setNoFeaturedData}
+                  pricefilter={""}
+                  rating={""}
+                  cateFilter={""}
+                  brandFilter={""}
+                  Pages={"10"}
+                  currentPage={"0"}
+                  sortByAlpha={""}
+                  sortByRating={""}
+                  sortByPrice={""}
+                  cartcall={cartcall}
+                  setcartcall={setcartcall}
+                  productcall={productcall}
+                  setproductcall={setproductcall}
+                  feature={"yes"}
+                  setLoading={setLoading}
+                  loading={loading}
+                />
+              </div>
+              <div className="row">
+                <div className="col-lg-12">
+                  <div className="section-btn-25">
+                    <Link
+                      to={"/shop"}
+                      state={{ feature: "yes" }}
+                      className="btn btn-outline"
+                    >
+                      <i className="fas fa-eye"></i>
+                      <span>show more</span>
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+
         {noTreandingData === "no_treanding" ? null : (
           <>
             <section
-              className="section recent-part pt-5 top_right_bg"
+              className="section recent-part  top_right_bg"
               id="trending"
             >
               <div className="container">
@@ -233,54 +283,7 @@ export default function Home() {
         </div>
       </section> */}
         {/* Collection sold */}
-        {noFeaturedData === "no_featured" ? null : (
-          <section className="section recent-part">
-            <div className="container">
-              <div className="row">
-                <div className="col-lg-12">
-                  <div className="section-heading">
-                    <h2 className="account-title">Featured Products</h2>
-                  </div>
-                </div>
-              </div>
-              <div className="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
-                <ProductBox
-                  setNoFeaturedData={setNoFeaturedData}
-                  pricefilter={""}
-                  rating={""}
-                  cateFilter={""}
-                  brandFilter={""}
-                  Pages={"10"}
-                  currentPage={"0"}
-                  sortByAlpha={""}
-                  sortByRating={""}
-                  sortByPrice={""}
-                  cartcall={cartcall}
-                  setcartcall={setcartcall}
-                  productcall={productcall}
-                  setproductcall={setproductcall}
-                  feature={"yes"}
-                  setLoading={setLoading}
-                  loading={loading}
-                />
-              </div>
-              <div className="row">
-                <div className="col-lg-12">
-                  <div className="section-btn-25">
-                    <Link
-                      to={"/shop"}
-                      state={{ feature: "yes" }}
-                      className="btn btn-outline"
-                    >
-                      <i className="fas fa-eye"></i>
-                      <span>show more</span>
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-        )}
+
         {/* Footer */}
         <Footer />
       </div>

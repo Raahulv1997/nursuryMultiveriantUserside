@@ -16,6 +16,7 @@ import PrivacyPolicy from "./components/privacyPolicy";
 import ContactUs from "./components/contactUs";
 import ChangePassword from "./components/changePassword";
 import Wishlist from "./components/Wishlist";
+import ReCheckout from "./components/ReCheckout";
 
 function App() {
   return (
@@ -23,6 +24,8 @@ function App() {
       <Routes>
         <Route exact path="/" element={<Home />} />
         <Route exact path="/profile" element={<Profile />} />
+        <Route exact path="/recheckout" element={<ReCheckout />} />
+
         <Route exact path="/login" element={<Login />} />
         <Route exact path="/reset" element={<Reset />} />
         <Route exact path="/singin" element={<Signin />} />

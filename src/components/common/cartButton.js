@@ -62,6 +62,7 @@ const CartUpdate = (props) => {
 
         props.setApicall(true);
         props.setcartcall(true);
+
         props.setLoading(false);
         props.setInProcessVarient(null);
       }

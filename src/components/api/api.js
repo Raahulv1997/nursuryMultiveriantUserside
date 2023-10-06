@@ -98,8 +98,8 @@ export const UserData = async (props) => {
 };
 
 /*Api to update user */
-export const UpdateUer = async (props) => {
-  // console.log(props)
+export const UpdateUer = async (props, headersVal) => {
+  console.log(headersVal);
   let image_file = props.image;
   const formData = new FormData();
   formData.append("first_name", props.first_name);
@@ -112,10 +112,7 @@ export const UpdateUer = async (props) => {
   formData.append("pincode", props.pincode);
   formData.append("image", image_file);
   const response = axios.put(`${API_URL}/update_user`, formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-      user_token: `${Token}`,
-    },
+    headers: headersVal,
   });
   return response;
 };
@@ -130,8 +127,18 @@ export const CategoryList = async (props) => {
   );
   return response;
 };
+
+export const FailedPaymentList = async (orders_group_id) => {
+  // console.log(props)
+  const response = axios.post(
+    `${API_URL}/reDataFetch`,
+    { orders_group_id: orders_group_id },
+    { headers: headers }
+  );
+  return response;
+};
 /*Api for Filter list data  */
-export const FilterList = async (props) => {
+export const FilterList = async () => {
   // console.log(props)
   const response = axios.get(`${API_URL}/filter_list`, { headers: headers });
   return response;
@@ -311,7 +318,7 @@ export const PlaceOrder = async (props, headersVal) => {
   return response;
 };
 /*Api to palace order*/
-export const CreateRazorpay = async (amount, headersVal) => {
+export const CreateRazorpay = async (amount, orders_group_id, headersVal) => {
   let name = "user payment";
   let description = "payment description";
   // console.log(props);
@@ -320,7 +327,33 @@ export const CreateRazorpay = async (amount, headersVal) => {
     {
       name: name,
       amount: amount,
+      orders_group_id: orders_group_id,
       description: description,
+    },
+    {
+      headers: headersVal,
+    }
+  );
+  return response;
+};
+
+export const UpdatePaymentStatus = async (
+  order_id,
+  amount,
+  paymentValue,
+  orders_group_id,
+  payment_method,
+  headersVal
+) => {
+  // console.log(props);
+  const response = axios.put(
+    `${API_URL}/paymentupdate`,
+    {
+      payment_order_id: order_id,
+      amount: amount,
+      is_payment_done: paymentValue,
+      orders_group_id: orders_group_id,
+      payment_method: payment_method,
     },
     {
       headers: headersVal,

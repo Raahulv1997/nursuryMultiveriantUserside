@@ -180,22 +180,22 @@ export default function Login() {
                         />
                       ) : null}
                     </li>
-
+                    {/* 
                     <li>
                       <Link className="twitter">
                         <i className="fab fa-twitter"></i>login with twitter
                       </Link>
-                    </li>
+                    </li> */}
                     <li>
                       <Link className="google" onClick={GoogleLogin}>
                         <i className="fab fa-google"></i>login with google
                       </Link>
                     </li>
-                    <li>
+                    {/* <li>
                       <Link className="instagram">
                         <i className="fab fa-instagram"></i>login with instagram
                       </Link>
-                    </li>
+                    </li> */}
                   </ul>
                   <div className="user-form-divider">
                     <p>or</p>
@@ -299,11 +299,6 @@ export default function Login() {
                 <p>
                   Don't have any account?
                   <Link to={"/singin"}>register here</Link>
-                </p>
-              </div>
-              <div className="user-form-footer">
-                <p>
-                  Greeny | © Copyright by <Link>WE2CODE</Link>
                 </p>
               </div>
             </div>

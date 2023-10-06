@@ -5,7 +5,12 @@ import user from "../../image/user.png";
 import Cart from "../cart";
 import { toast } from "react-toastify";
 import { Container, Navbar } from "react-bootstrap";
-import { CategoryList, CartList, GetUserNotificationList } from "../api/api";
+import {
+  CategoryList,
+  CartList,
+  GetUserNotificationList,
+  UserData,
+} from "../api/api";
 import Notification from "../Notification";
 import MobileMenu from "./mobileMenu";
 import Loadeer from "../common/Loadeer";
@@ -25,6 +30,7 @@ export default function Header({
   if (searchValue === undefined) {
     searchValue = "";
   }
+  const [userData, setUserData] = useState([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [cartApicCall, setCartApiCall] = useState(false);
   const [cartList, setCartList] = useState(false);
@@ -38,10 +44,6 @@ export default function Header({
   const [search, setSearch] = useState(searchValue);
   const [searchErr, setSearchErr] = useState("");
   const [diableOther, setDiableOther] = useState(false);
-
-  let name = localStorage.getItem("username");
-
-  let profileImage = localStorage.getItem("image");
 
   /*Function to add and remove class */
   const AddBodyClass = () => {
@@ -68,6 +70,9 @@ export default function Header({
       let NotiRes = await GetUserNotificationList(headers);
 
       let CartRes = await CartList(headers);
+      let UserRes = await UserData(headers);
+      console.log("user details--" + JSON.stringify(UserRes.data[0]));
+      setUserData(UserRes.data[0]);
       if (NotiRes.data.response === "empty") {
         setNotificationData([]);
       } else {
@@ -103,16 +108,6 @@ export default function Header({
 
     // eslint-disable-next-line
   }, [cartcall, cartApicCall]);
-
-  useEffect(() => {
-    // eslint-disable-next-line
-    profileImage = localStorage.getItem("image");
-    // eslint-disable-next-line
-    name = localStorage.getItem("username");
-    if (getname === true) {
-      setGetName(false);
-    }
-  }, [getname]);
 
   /*Function to search the product from header */
   const onSearch = (event) => {
@@ -278,16 +273,20 @@ export default function Header({
                 {" "}
                 <img
                   src={
-                    profileImage === undefined ||
-                    profileImage === null ||
-                    profileImage === ""
+                    userData.image === undefined ||
+                    userData.image === null ||
+                    userData.image === ""
                       ? user
-                      : profileImage
+                      : userData.image
                   }
                   alt="user"
                 />
               </i>
-              <span>{name === null ? "user" : name}</span>
+              <span>
+                {userData.first_name === null || userData.last_name === null
+                  ? "user"
+                  : userData.first_name}
+              </span>
               <div className="profile_dropsdown">
                 <DropdownButton
                   id={`dropdown-button-drop-${"down-left"}`}

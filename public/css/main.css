@@ -730,6 +730,11 @@ button:focus {
   width: 100%;
   border-radius: 3px;
 }
+.upadte_profile_btn button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 
 /* .generate_ticket .modal-dialog {
   max-width: 500px;
@@ -3493,7 +3498,7 @@ a.product-image {
 .account-title h4 {
   text-transform: capitalize;
 }
-
+.upadte_profile_btn button,
 .account-title button,
 .account-title a {
   border: none;

@@ -48,6 +48,7 @@ const ProductBox = ({
 }) => {
   // eslint-disable-next-line
   const [cartApicCall, setCartApiCall] = useState(false);
+
   const [cartLoader, setCartLoader] = useState(false);
 
   const [inProcessVarient, setInProcessVarient] = useState(null);
@@ -63,6 +64,7 @@ const ProductBox = ({
   const [disableCart, setDisableCart] = useState(false);
   const currentDate = new Date();
   const location = useLocation();
+
   let Token = localStorage.getItem("token");
   const headers = {
     "Content-Type": "application/json",
@@ -74,7 +76,6 @@ const ProductBox = ({
   const search = searchParams.get("search");
   const category = searchParams.get("category");
 
-  // console.log(" prodct id---" + setId);
   // console.log(" prodct var  id---" + setVar_Id);
   let CatSearch =
     cateFilter === undefined ||
@@ -111,7 +112,7 @@ const ProductBox = ({
 
     let response;
     if (Teanding === "Yes" || treanding === "YES") {
-      setLoading(true);
+      // setLoading(true);
       response = await TreandingPro(
         moment(new Date()).format("YYYY-MM-DD"),
         oneMonthBefore,
@@ -149,6 +150,17 @@ const ProductBox = ({
       setCartLoader(false);
       setLoading(false);
     } else {
+      setCartLoader(true);
+      //setLoading(true);
+      // console.log("cartcall-" + cartcall);
+      if (apicall === true) {
+        //setLoading(false);
+        console.log("apicall in if-" + apicall);
+      } else {
+        console.log("apicall in else-" + apicall);
+        setLoading(true);
+      }
+
       response = await ProductList(
         pricefilter.to_product_price,
         pricefilter.from_product_price,
@@ -165,7 +177,8 @@ const ProductBox = ({
         search,
         Featured
       );
-      setLoading(false);
+      setApicall(false);
+
       if (
         response.data.results === undefined ||
         response.data.results === "undefined" ||
@@ -224,6 +237,7 @@ const ProductBox = ({
           // );
         }
       }
+      setLoading(false);
     }
   };
 
@@ -233,9 +247,9 @@ const ProductBox = ({
     if (location.pathname === "/shop") {
       CloseBackDrop();
     }
-    if (apicall === true) {
-      setApicall(false);
-    }
+    // if (apicall === true) {
+    //   setApicall(false);
+    // }
     if (productcall === true) {
       setproductcall(false);
     }
@@ -297,7 +311,7 @@ const ProductBox = ({
         autoClose: 1000,
       });
       setApicall(true);
-      setcartcall(true);
+      // setcartcall(true);
       setDisableCart(false);
       setCartLoader(false);
       setLoading(false);

@@ -155,7 +155,7 @@ export default function Orderhistorysection({ setLoading }) {
       setLoading(false);
     } else {
       setLoading(false);
-      console.log("order data-aaaa--" + JSON.stringify(response.data.results));
+
       setOrderList(response.data.results);
     }
   };
@@ -165,7 +165,7 @@ export default function Orderhistorysection({ setLoading }) {
     window.scrollTo(0, 0);
     GetOrderData();
     // eslint-disable-next-line
-  }, [apicall]);
+  }, [apicall, orderList.payment_status]);
 
   /*Function to Open complaint modal */
   let AddComplaintModal = (id) => {
@@ -313,16 +313,27 @@ export default function Orderhistorysection({ setLoading }) {
                               </p>
                             </li>
                             <li>
-                              <h6>Delivery Date</h6>
-                              <p>
-                                {moment(item.delivery_date).format(
-                                  "DD MMMM YYYY"
-                                )}
-                              </p>
+                              <h6>Payment Mode</h6>
+                              <p>{item.payment_mode}</p>
                             </li>
                             <li>
-                              <h6>Driver OTP</h6>
-                              <p>{item.delivery_verify_code}</p>
+                              <h6>Payment Status</h6>
+                              <p>
+                                <span
+                                  className={
+                                    item.payment_status === "success"
+                                      ? "badge bg-success"
+                                      : item.payment_status === "pending"
+                                      ? "badge bg-primary"
+                                      : item.payment_status === "failed"
+                                      ? "badge bg-danger"
+                                      : "badge bg-info"
+                                  }
+                                >
+                                  {" "}
+                                  {item.payment_status}
+                                </span>
+                              </p>
                             </li>
 
                             {/* <li>
@@ -379,6 +390,18 @@ export default function Orderhistorysection({ setLoading }) {
                             <li>
                               <h6>Mobile No.</h6>
                               <p>{item.phone_no}</p>
+                            </li>
+                            <li>
+                              <h6>Delivery Date</h6>
+                              <p>
+                                {moment(item.delivery_date).format(
+                                  "DD MMMM YYYY"
+                                )}
+                              </p>
+                            </li>
+                            <li>
+                              <h6>Driver OTP</h6>
+                              <p>{item.delivery_verify_code}</p>
                             </li>
                           </ul>
                           <div className="orderlist-deliver">

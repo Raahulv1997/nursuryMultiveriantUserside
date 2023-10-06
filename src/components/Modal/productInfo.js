@@ -148,7 +148,7 @@ export default function ProfileInfoModal(props) {
     event.preventDefault();
     if (validate()) {
       props.setLoading(true);
-      let response = await UpdateUer(state);
+      let response = await UpdateUer(state, headers);
       if (response.data.message === "updated user successfully") {
         toast.success("Profile Updted Successfully", {
           position: toast.POSITION.TOP_RIGHT,

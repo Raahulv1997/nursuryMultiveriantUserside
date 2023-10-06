@@ -4,7 +4,6 @@ import React, { useState, useEffect, useRef } from "react";
 import logo from "../image/logo.png";
 import Otherbannner from "./common/otherbannner";
 import Header from "./common/header";
-
 import Footer from "./common/footer";
 import {
   UserData,
@@ -12,12 +11,14 @@ import {
   CartList,
   CheckUserAddress,
   CreateRazorpay,
-  UpdatePaymentStatus,
 } from "./api/api";
 import ProfileInfoModal from "./Modal/productInfo";
 import AddAddressForm from "./Modal/addAddressForm";
 import { ToastContainer, toast } from "react-toastify";
-
+import Notfound from "./common/notfound";
+// import paypal from "../image/payment/png/01.png"
+// import visa from "../image/payment/png/02.png"
+// import debit from "../image/payment/png/03.png"
 function Checkout() {
   const Vendor5 = useRef(null);
   const divRef = useRef(null);
@@ -88,10 +89,8 @@ function Checkout() {
 
     let responseCheck = await CheckUserAddress(pin, v, headers);
 
-    setAfterAreaCheck(responseCheck.data.service_available || []);
-    setAfterAreaCheckNotAvailable(
-      responseCheck.data.service_not_available || []
-    );
+    setAfterAreaCheck(responseCheck.data.service_available);
+    setAfterAreaCheckNotAvailable(responseCheck.data.service_not_available);
 
     // document.getElementById("Vendor5").focus();
     // Vendor5.current.focus();
@@ -269,29 +268,16 @@ function Checkout() {
     };
     if (SingleSelectedPayment === false) {
       setSinglePaymentErr(true);
-    } else if (
-      data.first_name === null &&
-      data.phone_no === null &&
-      data.pincode === null &&
-      data.address === null &&
-      data.city === null
-    ) {
-      toast.success("Please Update your Profile first for any order", {
-        position: toast.POSITION.TOP_RIGHT,
-        autoClose: 1000,
-      });
     } else {
       if (SingleSelectedPayment === "UPI") {
         console.log("ressponcee---" + JSON.stringify(result));
-
-        OnPlaceOrderApi(result, payAmount);
-        // onPayentClick(payAmount, result);
+        onPayentClick(payAmount, result);
       } else if (SingleSelectedPayment === "COD") {
         console.log("ressponcee---" + JSON.stringify(result));
-        setLoading(true);
+        // setLoading(true);
 
         let response = await PlaceOrder(result, headers);
-
+        console.log("order res--" + JSON.stringify(response));
         if (
           response.data.response ===
           "Thank you for your order! Your order has been received and is being processed"
@@ -317,11 +303,10 @@ function Checkout() {
     }
   };
 
-  const OnPlaceOrderApi = async (result, payAmount) => {
+  const OnPlaceOrderApi = async (result) => {
     console.log("rsssss--" + JSON.stringify(result));
-    setLoading(true);
+
     let response = await PlaceOrder(result, headers);
-    let orders_group_id = response.data.orders_group_id;
     console.log("order res--" + JSON.stringify(response));
     if (
       response.data.response ===
@@ -337,13 +322,16 @@ function Checkout() {
       setAddPass(false);
       setcartcall(true);
 
-      onPayentClick(payAmount, orders_group_id);
+      setTimeout(() => {
+        navigate("/profile?ClickedBy=checkout");
+      }, 2000);
     }
   };
 
-  const onPayentClick = async (amount, orders_group_id) => {
+  const onPayentClick = async (amount, result) => {
+    let res = result;
     let amt = Math.round(Number(amount));
-
+    console.log(res);
     const script = document.createElement("script");
     script.src = "https://checkout.razorpay.com/v1/checkout.js";
     script.onerror = () => {
@@ -353,7 +341,7 @@ function Checkout() {
       try {
         setLoading(true);
         // const total = userData.cart.reduce((a, b) => a + +b.price, 0).toFixed(0);
-        const result = await CreateRazorpay(amt, orders_group_id, headers);
+        const result = await CreateRazorpay(amt, headers);
         console.log("CreateRazorpay---" + JSON.stringify(result));
         const { amount, key_id, order_id } = result.data;
         console.log(amount, order_id);
@@ -369,29 +357,15 @@ function Checkout() {
           description: "FIRST RAZOR PAY",
           order_id: order_id,
           handler: async function (response) {
-            console.log("redssss--" + JSON.stringify(response));
-
+            // await AddRazorpay(amount, response);
+            // console.log(result)
             // Perform any additional actions on successful payment here
             toast.success("Payment Successful.", {
               position: toast.POSITION.TOP_RIGHT,
               autoClose: 2000,
             });
-            let paymentValue = "success";
-            let payment_method = "other";
-            let rs = await UpdatePaymentStatus(
-              order_id,
-              amount,
-              paymentValue,
-              orders_group_id,
-              payment_method,
-              headers
-            );
-            paymentObject.close();
-            if (rs.data.msg === "Order Payment-Status Updated successfully.") {
-              setTimeout(() => {
-                navigate("/profile?ClickedBy=checkout");
-              }, 1000);
-            }
+
+            OnPlaceOrderApi(res);
           },
           prefill: {
             name: "We2code PVT LTD",
@@ -402,31 +376,13 @@ function Checkout() {
 
         setLoading(false);
         const paymentObject = new window.Razorpay(options);
-
         paymentObject.on("payment.failed", function (response) {
           console.log(JSON.stringify(response));
           toast.success("Payment Failed.", {
             position: toast.POSITION.TOP_RIGHT,
             autoClose: 2000,
           });
-          // paymentObject.close();
-          // window.location.reload();
-          console.log(" failde--" + JSON.stringify(response.error.reason));
-          if (response.error.reason === "payment_failed") {
-            setTimeout(() => {
-              const razorPayModalContainer = document.querySelector(
-                ".razorpay-container"
-              );
-              if (razorPayModalContainer) {
-                razorPayModalContainer.style.display = "none";
-                var element = document.getElementById("main_body");
-                element.style.overflow = "visible";
-              }
-              navigate(`/recheckout?orders_group_id=${orders_group_id}`);
-            }, 2000);
-          }
         });
-
         paymentObject.open();
       } catch (error) {
         alert(error);
@@ -448,17 +404,6 @@ function Checkout() {
       setLoading(false);
       setPaymentErr(false);
       setTermErr(true);
-    } else if (
-      data.first_name === null &&
-      data.phone_no === null &&
-      data.pincode === null &&
-      data.address === null &&
-      data.city === null
-    ) {
-      toast.success("Please Update your Profile first for any order", {
-        position: toast.POSITION.TOP_RIGHT,
-        autoClose: 1000,
-      });
     } else if (afterAreaCheckNotAvailable.length > 0 || shouldApplyRef) {
       // if (divRef.current) {
       //   divRef.current.scrollIntoView({ behavior: "smooth" });
@@ -468,12 +413,10 @@ function Checkout() {
       setNotavailable(true);
       return;
     } else {
-      setLoading(true);
       console.log("ddddd--" + JSON.stringify(result));
-
+      return false;
       if (payMethod === "UPI") {
-        OnPlaceOrderApi(result, amount);
-        // onPayentClick(amount, result);
+        onPayentClick(amount, result);
       } else if (payMethod === "COD") {
         console.log("ddddd--" + JSON.stringify(result));
 
@@ -494,16 +437,14 @@ function Checkout() {
           setTermErr(false);
           setAddPass(false);
           setcartcall(true);
-
-          setTimeout(() => {
-            navigate("/profile?ClickedBy=checkout");
-          }, 2000);
-
-          // navigate("/profile?ClickedBy=checkout");
+          navigate("/profile?ClickedBy=checkout");
+          // const url = `/invoice?order_id=${encodeURIComponent(
+          //   response.data.invoice_id
+          // )}`;
+          // window.location.href = url;
         }
         setLoading(false);
       }
-      setLoading(false);
     }
   };
 
@@ -576,16 +517,6 @@ function Checkout() {
                             <div
                               className="col-md-6 col-lg-4 alert fade show"
                               id="myDiv"
-                              style={{
-                                display:
-                                  data.first_name === null &&
-                                  data.phone_no === null &&
-                                  data.address === null &&
-                                  data.pincode === null &&
-                                  data.city === null
-                                    ? "none"
-                                    : "block",
-                              }}
                             >
                               <div
                                 className={
@@ -626,18 +557,7 @@ function Checkout() {
                                 </Link>
                               </div>
                             </div>
-                            {data.first_name === null ? (
-                              <span className="upadte_profile_btn">
-                                <button
-                                  className="edit p-3  btn btn-success "
-                                  title="Edit This"
-                                  onClick={() => setOpenProfileInfo(true)}
-                                >
-                                  <div className="icofont-edit"></div>
-                                  Upadte Profile
-                                </button>
-                              </span>
-                            ) : null}
+
                             {data.alternate_address ? (
                               <div className="col-md-6 col-lg-4 alert fade show">
                                 <div
@@ -1333,9 +1253,7 @@ function Checkout() {
                                 setPaymentErr(false);
                               }}
                             />
-                            <label htmlFor="UPI" className="form-label mb-0">
-                              Pay Now
-                            </label>
+                            <label className="form-label mb-0">Pay Now</label>
 
                             {/* <button className="trash icofont-ui-delete" title="Remove This" data-bs-dismiss="alert">
                                                 </button> */}

@@ -127,8 +127,8 @@ const Footer = () => {
                   <li>
                     <i className="icofont-ui-email"></i>
                     <p>
-                      <span>support@india ki nursury.com</span>
-                      <span>carrer@india ki nursury.com</span>
+                      <span>support@indiakinursury.com</span>
+                      <span>carrer@indiakinursury.com</span>
                     </p>
                   </li>
                   <li>
