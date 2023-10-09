@@ -131,11 +131,8 @@ export default function AddAddressForm(props) {
         array2.includes(value)
       );
 
-      console.log(matchingValues);
-      console.log("kkkk--" + matchingValues);
-
       if (matchingValues.length > 0) {
-        setAreaError(matchingValues);
+        setAreaError(matchingValues || []);
       }
     }
 

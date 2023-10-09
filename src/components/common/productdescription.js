@@ -22,7 +22,7 @@ export default function Productdescription(props) {
   const GetReviewList = async () => {
     let response = await ReviewList(props.id, headers);
     if (reviewListData.length === 0) {
-      setReviewListData(response.data);
+      setReviewListData(response.data || []);
     }
   };
 

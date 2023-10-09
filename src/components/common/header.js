@@ -71,18 +71,18 @@ export default function Header({
 
       let CartRes = await CartList(headers);
       let UserRes = await UserData(headers);
-      console.log("user details--" + JSON.stringify(UserRes.data[0]));
-      setUserData(UserRes.data[0]);
+
+      setUserData(UserRes.data[0] || []);
       if (NotiRes.data.response === "empty") {
         setNotificationData([]);
       } else {
         setNotificationData(NotiRes.data, "Notification list");
       }
 
-      setCartData(CartRes.data);
+      setCartData(CartRes.data || []);
     }
     // console.log(response.data.response);
-    setCatData(response.data.response);
+    setCatData(response.data.response || []);
   };
 
   /*Function to get the data just by parent */

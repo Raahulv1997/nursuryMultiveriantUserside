@@ -48,10 +48,7 @@ export default function Orderhistorysection({ setLoading }) {
       setOrderProductList(OrderRes.data.order_product_detaile);
 
       if (OrderId) {
-        console.log(
-          "order details---" + JSON.stringify(OrderRes.data.order_detaile)
-        );
-        setOrderDataList(OrderRes.data.order_detaile);
+        setOrderDataList(OrderRes.data.order_detaile || []);
       } else {
         setOrderDataList([]);
       }
@@ -156,7 +153,7 @@ export default function Orderhistorysection({ setLoading }) {
     } else {
       setLoading(false);
 
-      setOrderList(response.data.results);
+      setOrderList(response.data.results || []);
     }
   };
 

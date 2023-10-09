@@ -50,8 +50,9 @@ const CartUpdate = (props) => {
 
         props.setApicall(true);
         props.setcartcall(true);
-        props.setLoading(false);
+
         props.setCartApiCall(true);
+        props.setLoading(false);
       }
       if (response.data.response === "update successfull") {
         toast.success("Product Quantity Updated", {
@@ -63,7 +64,7 @@ const CartUpdate = (props) => {
         props.setApicall(true);
         props.setcartcall(true);
 
-        props.setLoading(false);
+        // props.setLoading(false);
         props.setInProcessVarient(null);
       }
       if (response.data.response === "delete opration failed") {
@@ -106,6 +107,7 @@ const CartUpdate = (props) => {
         <button
           className="action-plus"
           title="Quantity Plus"
+          // eslint-disable-next-line
           style={{ disabled: props.loading == true ? true : false }}
           onClick={() => updateQuantity("inc")}
         >

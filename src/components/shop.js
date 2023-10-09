@@ -55,8 +55,8 @@ export default function Shop() {
   const getFilterData = async () => {
     let response = await CategoryList();
     // setBrandData(response.data.brand_data);
-    setCatData(response.data.response);
-    setCatDataFilter(response.data.response);
+    setCatData(response.data.response || []);
+    setCatDataFilter(response.data.response || []);
   };
   /*Render functionto get Filter list */
   useEffect(() => {
@@ -129,7 +129,7 @@ export default function Shop() {
         document.querySelectorAll('input[name="rating"]:checked')
       ).map((checkbox) => checkbox.value);
       console.log(selectedValues);
-      setRating(JSON.stringify(selectedValues));
+      setRating(JSON.stringify(selectedValues) || []);
       setCurrentPage(0);
     } else {
       setRating([]);
@@ -154,7 +154,7 @@ export default function Shop() {
       const selectedValues = Array.from(
         document.querySelectorAll('input[name="category"]:checked')
       ).map((checkbox) => checkbox.value);
-      setCateFilter(selectedValues);
+      setCateFilter(selectedValues || []);
       setCurrentPage(0);
     } else {
       setCateFilter([]);
@@ -164,16 +164,16 @@ export default function Shop() {
   /*Function to serch the category */
   const onSerchCategory = (e) => {
     const value = e.target.value;
-    setSerachCate(value);
+    setSerachCate(value || []);
     if (catData.length > 0 && value !== "") {
       // console.log("data---" + JSON.stringify(catData));
       const filteredData = catData.filter((item) =>
         item.category_name.toLowerCase().includes(value.toLowerCase())
       );
-      setCatDataFilter(filteredData);
+      setCatDataFilter(filteredData || []);
       setCurrentPage(0);
     } else {
-      setCatDataFilter(catData);
+      setCatDataFilter(catData || []);
       // getFilterData();
     }
 

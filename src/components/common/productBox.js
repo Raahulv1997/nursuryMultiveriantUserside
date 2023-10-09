@@ -108,11 +108,11 @@ const ProductBox = ({
   }, []);
   /*Function to get the product list */
   let GetProductList = async () => {
-    setCartLoader(true);
+    // setCartLoader(true);
 
     let response;
     if (Teanding === "Yes" || treanding === "YES") {
-      // setLoading(true);
+      setLoading(true);
       response = await TreandingPro(
         moment(new Date()).format("YYYY-MM-DD"),
         oneMonthBefore,
@@ -130,36 +130,29 @@ const ProductBox = ({
         }
         if (location.pathname === "/shop") {
           paginationData({});
-          setCartLoader(false);
-          // setLoading(false);
+          // setCartLoader(false);
+          setLoading(false);
         }
       } else {
-        setData(response.data.results);
-        setCartLoader(false);
+        setData(response.data.results || []);
+        // setCartLoader(false);
         setLoading(false);
       }
     } else if (WishlistProduct === "yes") {
-      setCartLoader(true);
+      // setCartLoader(true);
+      setLoading(true);
       let response = await getwishlist(headers);
       let { data } = response;
       if (data) {
-        setData(data.response);
-        setCartLoader(false);
-        // setLoading(false);
+        setData(data.response || []);
+        // setCartLoader(false);
+        setLoading(false);
       }
-      setCartLoader(false);
+      // setCartLoader(false);
       setLoading(false);
     } else {
-      setCartLoader(true);
-      //setLoading(true);
-      // console.log("cartcall-" + cartcall);
-      if (apicall === true) {
-        //setLoading(false);
-        console.log("apicall in if-" + apicall);
-      } else {
-        console.log("apicall in else-" + apicall);
-        setLoading(true);
-      }
+      // setCartLoader(true);
+      setLoading(true);
 
       response = await ProductList(
         pricefilter.to_product_price,
@@ -177,7 +170,6 @@ const ProductBox = ({
         search,
         Featured
       );
-      setApicall(false);
 
       if (
         response.data.results === undefined ||
@@ -189,7 +181,6 @@ const ProductBox = ({
         if (location.pathname === "/shop") {
           paginationData({});
           setCartLoader(false);
-          setLoading(false);
         }
         if (
           location.pathname === "/" &&
@@ -198,8 +189,8 @@ const ProductBox = ({
           setNoFeaturedData("no_featured");
         }
       } else {
-        setCartLoader(false);
-        setLoading(false);
+        // setCartLoader(false);
+
         if (location.pathname === "/shop") {
           paginationData(response.data.pagination);
         }
@@ -218,6 +209,7 @@ const ProductBox = ({
               return item.id !== Number(setId);
             });
             setData(daaata);
+            setLoading(false);
           } else {
             let daaata = response.data.results.filter((item) => {
               // eslint-disable-next-line
@@ -230,8 +222,10 @@ const ProductBox = ({
             });
             setData(daaata);
           }
+          setLoading(false);
         } else {
           setData(response.data.results);
+          setLoading(false);
           // setData(
           //   response.data.results.filter((item) => item.id !== Number(setId))
           // );
@@ -247,9 +241,9 @@ const ProductBox = ({
     if (location.pathname === "/shop") {
       CloseBackDrop();
     }
-    // if (apicall === true) {
-    //   setApicall(false);
-    // }
+    if (apicall === true) {
+      setApicall(false);
+    }
     if (productcall === true) {
       setproductcall(false);
     }
@@ -301,8 +295,8 @@ const ProductBox = ({
 
     // Store the current vendor_id for future comparison
     setPrevVendorID(vendor_id);
-    setCartLoader(true);
-    // setLoading(true);
+    // setCartLoader(true);
+    setLoading(true);
     setDisableCart(true);
     let response = await AddToCart(id, varId, 1, headers);
     if (response.data.response === "add product successfull") {
@@ -311,9 +305,9 @@ const ProductBox = ({
         autoClose: 1000,
       });
       setApicall(true);
-      // setcartcall(true);
+      setcartcall(true);
       setDisableCart(false);
-      setCartLoader(false);
+      // setCartLoader(false);
       setLoading(false);
     }
   };
@@ -329,7 +323,8 @@ const ProductBox = ({
     ) {
       navigate("/login");
     } else {
-      setCartLoader(true);
+      setLoading(true);
+      // setCartLoader(true);
       if (wishlist > 0 || wishlist_id > 0) {
         // console.log("in remove");
         setDisableWishlist(true);
@@ -343,8 +338,8 @@ const ProductBox = ({
             autoClose: 1000,
           });
           setDisableWishlist(false);
-          setCartLoader(false);
-
+          // setCartLoader(false);
+          setLoading(false);
           setApicall(true);
         }
         // setDisableWishlist(false);
@@ -352,7 +347,8 @@ const ProductBox = ({
         // setApicall(true);
       } else {
         // console.log("in add");
-        setCartLoader(true);
+        setLoading(true);
+        // setCartLoader(true);
         setDisableWishlist(true);
 
         let response = await Add_Remove_wishlist(id, verient_id, headers);
@@ -363,8 +359,8 @@ const ProductBox = ({
             autoClose: 1000,
           });
           setDisableWishlist(false);
-          setCartLoader(false);
-
+          // setCartLoader(false);
+          setLoading(false);
           setApicall(true);
         }
       }
@@ -586,8 +582,8 @@ const ProductBox = ({
                       setCartApiCall={setCartApiCall}
                       setcartcall={setcartcall}
                       quantity={item.product_stock_quantity}
-                      setLoading={setCartLoader}
-                      loading={cartLoader}
+                      setLoading={setLoading}
+                      loading={loading}
                     />
                   )}
                 </div>

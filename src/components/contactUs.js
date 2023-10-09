@@ -13,7 +13,7 @@ import ComplaintForm from "./common/complaintForm";
 
 export default function ContactUs() {
   const [oderList, setoderList] = useState([]);
-  const [apicall, setApicall] = useState([]);
+  const [apicall, setApicall] = useState(false);
   const [loading, setLoading] = useState(true);
   let Token = localStorage.getItem("token");
   const headers = {
@@ -32,7 +32,7 @@ export default function ContactUs() {
       setoderList([]);
       setLoading(false);
     } else {
-      setoderList(response.data.results);
+      setoderList(response.data.results || []);
       setLoading(false);
     }
   };

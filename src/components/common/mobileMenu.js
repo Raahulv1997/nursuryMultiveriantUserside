@@ -36,10 +36,10 @@ export default function MobileMenu({
     let response = await CategoryList();
     if (Token) {
       let CartRes = await CartList(headers);
-      setCartData(CartRes.data);
+      setCartData(CartRes.data || []);
     }
     // console.log(response.data.response);
-    setCatData(response.data.response);
+    setCatData(response.data.response || []);
   };
 
   useEffect(() => {

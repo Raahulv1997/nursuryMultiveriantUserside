@@ -25,8 +25,8 @@ export default function Complainthistorysection({ setLoading }) {
       setLoading(false);
     } else {
       setLoading(false);
-      console.log("dtggaaaa-" + JSON.stringify(response.data.result));
-      setCompList(response.data.result);
+
+      setCompList(response.data.result || []);
     }
   };
   /*Render method to get the complaint data */

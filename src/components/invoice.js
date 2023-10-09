@@ -44,8 +44,8 @@ function Invoice() {
     } else {
       // setOrderDetails(OrderRes.data.order_detaile[0]);
 
-      setOrderProductList(OrderRes.data.order_product_detaile);
-      setOrderDataList(OrderRes.data.order_detaile[0]);
+      setOrderProductList(OrderRes.data.order_product_detaile || []);
+      setOrderDataList(OrderRes.data.order_detaile[0] || []);
       // setOrderList(OrderRes.data.order_product_detaile);
 
       setLoading(false);

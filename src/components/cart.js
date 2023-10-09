@@ -20,7 +20,7 @@ export default function Cart({
   var delCharges = 0;
   let navigate = useNavigate();
   let location = useLocation();
-  const [apicall, setApicall] = useState(false);
+  const [apicall, setApicall] = useState([]);
   const [updatecartLoader, SetUpdateCartLoader] = useState(false);
   const [cartcall, setcartcall] = useState(false);
   let [data, setData] = useState([]);
@@ -46,7 +46,7 @@ export default function Cart({
         setData([]);
         SetUpdateCartLoader(false);
       } else {
-        setData(response.data.response);
+        setData(response.data.response || []);
         setsubTotal(response.data.sub_total);
         settotalQty(response.data.total_product_count);
         // setData(response.data);
@@ -80,7 +80,7 @@ export default function Cart({
   //   });
   //   return totalPrice;
   // };
-  console.log("hhh" + typeof totalQty);
+
   return (
     <div>
       <div

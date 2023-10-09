@@ -53,7 +53,7 @@ export default function ProductDetailsBox(props) {
       props.setLoading(false);
     } else {
       // setData(response.data.results[0]);
-      setVarList(response.data.results);
+      setVarList(response.data.results || []);
       setData(
         response.data.results.find(
           (response) => response.product_verient_id === Number(props.var)
@@ -172,10 +172,7 @@ export default function ProductDetailsBox(props) {
 
         let response = await Add_Remove_wishlist(id, verient_id, headers);
 
-        if (
-          response.data.response ===
-          "already add in wishlist remove product to wishlist"
-        ) {
+        if (response.data.response === "remove product to wishlist") {
           toast.success("Removed to wishlist", {
             position: toast.POSITION.TOP_RIGHT,
             autoClose: 1000,
