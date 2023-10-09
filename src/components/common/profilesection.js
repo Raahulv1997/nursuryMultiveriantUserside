@@ -43,13 +43,22 @@ export default function Profilesection({ setGetName, setLoading }) {
               <div className="account-card">
                 <div className="account-title">
                   <h4>Your Profile</h4>
-                  <button onClick={() => setOpenProfileInfo(true)}>
-                    edit profile
-                  </button>
+                  <div className="d-flex">
+                    {" "}
+                    <button className="mx-1">
+                      <Link to="/changepassword">Change Password</Link>
+                    </button>
+                    <button
+                      className="mx-1"
+                      onClick={() => setOpenProfileInfo(true)}
+                    >
+                      Edit Profile
+                    </button>
+                  </div>
                 </div>
                 <div className="account-content">
                   <div className="row">
-                    <div className="col-lg-2">
+                    <div className="col-md-3 col-lg-2">
                       <div className="profile-image">
                         <Link to="" onClick={() => setOpenProfileInfo(true)}>
                           <img
@@ -67,7 +76,16 @@ export default function Profilesection({ setGetName, setLoading }) {
                         </Link>
                       </div>
                     </div>
-                    <div className="col-md-6 col-lg-4">
+
+                    <div
+                      className="col-md-3 col-lg-3"
+                      style={{
+                        visibility:
+                          data.first_name || data.last_name
+                            ? "visible"
+                            : "hidden",
+                      }}
+                    >
                       <div className="form-group">
                         <label className="form-label">Name </label>
                         <p className="text-capitalize">
@@ -76,29 +94,64 @@ export default function Profilesection({ setGetName, setLoading }) {
                         </p>
                       </div>
                     </div>
-                    <div className="col-md-6 col-lg-4">
+
+                    <div
+                      className="col-md-3 col-lg-3"
+                      style={{
+                        visibility: data.email ? "visible" : "hidden",
+                      }}
+                    >
                       <div className="form-group">
                         <label className="form-label">Email </label>
                         <p>{data.email}</p>
                       </div>
                     </div>
-                    <div className="col-lg-2">
-                      <div className="profile-btn">
-                        <Link to="/changepassword">change pass.</Link>
-                      </div>
-                    </div>
-                    <div className="col-md-6 col-lg-2"></div>
-                    <div className="col-md-6 col-lg-4">
+                    <div className="col-md-2"></div>
+                  </div>
+
+                  <div className="row">
+                    <div className="col-md-2"></div>
+                    <div
+                      className="col-md-3 col-lg-3"
+                      style={{
+                        visibility: data.phone_no ? "visible" : "hidden",
+                      }}
+                    >
                       <div className="form-group">
                         <label className="form-label">Phone Number</label>
                         <p>{data.phone_no}</p>
                       </div>
                     </div>
-                    <div className="col-md-6 col-lg-4">
+
+                    <div
+                      className="col-md-3 col-lg-3"
+                      style={{
+                        visibility:
+                          data.address || data.city || data.pincode
+                            ? "visible"
+                            : "hidden",
+                      }}
+                    >
                       <div className="form-group">
                         <label className="form-label">Address</label>
                         <p className="text-capitalize">
-                          {data.address} , {data.city} {data.pincode}
+                          {data.address} ,{data.city} {data.pincode}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div
+                      className="col-md-3 col-lg-3"
+                      style={{
+                        visibility: data.alternate_address
+                          ? "visible"
+                          : "hidden",
+                      }}
+                    >
+                      <div className="form-group">
+                        <label className="form-label">Alternate Address</label>
+                        <p className="text-capitalize">
+                          {data.alternate_address} ,{data.city} {data.pincode}
                         </p>
                       </div>
                     </div>

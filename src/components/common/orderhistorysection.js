@@ -401,24 +401,29 @@ export default function Orderhistorysection({ setLoading }) {
                               <p>{item.delivery_verify_code}</p>
                             </li>
                           </ul>
-                          <div className="orderlist-deliver">
-                            <h6>Delivery location</h6>
-                            <p>
-                              {item.address}, {item.city}-{item.pin_code}
-                            </p>
-                          </div>
-
-                          {item.status_order === "Delivered" ? (
-                            <button
-                              className="btn btn-sm"
-                              onClick={() => {
-                                onInvoiceClick(item.order_id);
-                              }}
-                            >
+                          <div className="orderlist-deliver row">
+                            <div className="col-sm-6">
                               {" "}
-                              Invoice
-                            </button>
-                          ) : null}
+                              <h6>Delivery location</h6>
+                              <p>
+                                {item.address}, {item.city}-{item.pin_code}
+                              </p>
+                            </div>
+                            <div className="col-sm-6 text-end">
+                              {" "}
+                              {item.status_order === "Delivered" ? (
+                                <button
+                                  className="btn btn-sm"
+                                  onClick={() => {
+                                    onInvoiceClick(item.order_id);
+                                  }}
+                                >
+                                  {" "}
+                                  Invoice
+                                </button>
+                              ) : null}
+                            </div>
+                          </div>
                         </div>
                         <div
                           className={isOrderDetailOpen ? "col-lg-12" : "d-none"}
@@ -468,7 +473,7 @@ orderData={orderDataList}
                             onClick={() => AddComplaintModal(item.order_id)}
                           >
                             <button className="blog-btn">
-                              Generate Ticket
+                              Register Complaint
                             </button>
                           </Link>
 

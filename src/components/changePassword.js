@@ -151,7 +151,7 @@ export default function ChangePassword() {
                         }
                         onChange={onInputChange}
                         value={state.new_password}
-                        placeholder="Current password"
+                        placeholder="New password"
                       />
                       <span
                         className="password-icon"
@@ -182,7 +182,7 @@ export default function ChangePassword() {
                         }
                         onChange={onInputChange}
                         value={state.conf_password}
-                        placeholder="reapet password"
+                        placeholder="Confirm  password"
                       />
                       <span
                         className="password-icon"

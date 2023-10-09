@@ -220,7 +220,7 @@ export default function ProfileInfoModal(props) {
                   value={state.first_name || ""}
                   name="first_name"
                   onChange={onInputChange}
-                  maxLength={15}
+                  maxLength={30}
                 />
                 {/*----ERROR MESSAGE FOR first_name----*/}
                 {errors.first_name && (
@@ -247,7 +247,7 @@ export default function ProfileInfoModal(props) {
                   value={state.last_name || ""}
                   name="last_name"
                   onChange={onInputChange}
-                  maxLength={15}
+                  maxLength={30}
                 />
                 {/*----ERROR MESSAGE FOR last_name----*/}
                 {errors.last_name && (
@@ -307,7 +307,7 @@ export default function ProfileInfoModal(props) {
                   value={state.address || ""}
                   name="address"
                   onChange={onInputChange}
-                  maxLength={30}
+                  maxLength={150}
                 />
                 {/*----ERROR MESSAGE FOR address----*/}
                 {errors.address && (
@@ -333,7 +333,7 @@ export default function ProfileInfoModal(props) {
                   type="text"
                   value={state.alternate_address || ""}
                   name="alternate_address"
-                  maxLength={30}
+                  maxLength={150}
                   onChange={onInputChange}
                 />
 
@@ -361,6 +361,7 @@ export default function ProfileInfoModal(props) {
                   placeholder="Email"
                   type="text"
                   value={state.email || ""}
+                  disabled={state.email ? true : false}
                   name="email"
                   onChange={onInputChange}
                 />

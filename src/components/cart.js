@@ -187,7 +187,7 @@ export default function Cart({
                     >
                       {" "}
                       <b>Total</b>
-                      <b className="text-danger">
+                      <b className="text-success">
                         {(
                           Number(
                             ` ${

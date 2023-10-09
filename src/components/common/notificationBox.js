@@ -3,9 +3,14 @@ import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 export default function NotificationBox({ data, close }) {
+  console.log("data---" + JSON.stringify(data.notification_type));
+
   let navigate = useNavigate(null);
   const OnNotificationClick = () => {
-    navigate("/profile?ClickedBy=checkout");
+    if (data.notification_type === "order") {
+      navigate("/profile?ClickedBy=checkout");
+    }
+
     setTimeout(() => {
       close();
     }, 1000);
