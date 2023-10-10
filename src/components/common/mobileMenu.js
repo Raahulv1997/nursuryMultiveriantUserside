@@ -134,17 +134,30 @@ export default function MobileMenu({
           </button>
 
           {Token ? (
-            <button
-              className="cart-btn"
-              title="Cartlist"
-              onClick={() => OpenCart()}
-            >
-              <i className="fas fa-shopping-basket"></i>
-              <span>cartlist</span>
-              {cartData.total_product_count === undefined ? null : (
-                <sup>{cartData.total_product_count}</sup>
-              )}
-            </button>
+            <>
+              <button
+                className="cart-btn"
+                title="Cartlist"
+                onClick={() => OpenCart()}
+              >
+                <i className="fas fa-shopping-basket"></i>
+                <span>cartlist</span>
+                {cartData.total_product_count === undefined ? null : (
+                  <sup>{cartData.total_product_count}</sup>
+                )}
+              </button>
+              <Link
+                to="/wishlist"
+                // onClick={OpenNotification}
+                className="header-widget"
+                title="Wishlist"
+              >
+                <i className="fas fa-heart"></i>
+                {/* {notificationData.length > 0 ? (
+                    <sup> {notificationData.length}</sup>
+                  ) : null} */}
+              </Link>
+            </>
           ) : null}
           {/* Search functionality */}
           <button
