@@ -1,6 +1,6 @@
 import OrderTable from "./common/orderTable";
 import { Link, useNavigate } from "react-router-dom";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import logo from "../image/logo.png";
 import Otherbannner from "./common/otherbannner";
 import Header from "./common/header";
@@ -19,9 +19,6 @@ import AddAddressForm from "./Modal/addAddressForm";
 import { ToastContainer, toast } from "react-toastify";
 
 function Checkout() {
-  const Vendor5 = useRef(null);
-  const divRef = useRef(null);
-
   var shouldApplyRef;
   const [data, setData] = useState("");
   const [cartData, setCartData] = useState("");
@@ -93,16 +90,6 @@ function Checkout() {
       responseCheck.data.service_not_available || []
     );
 
-    // document.getElementById("Vendor5").focus();
-    // Vendor5.current.focus();
-
-    // if (responseCheck.data.status === true) {
-    //   setLocationCheck("avaliable");
-    // }
-    // if (responseCheck.data.status === false) {
-    //   setLocationCheck("notAvalaible");
-    // }
-
     setLoading(false);
   };
 
@@ -115,7 +102,7 @@ function Checkout() {
     window.scrollTo(0, 0);
     // eslint-disable-next-line
   }, [apicall]);
-  console.log("datasaa--" + JSON.stringify(cartData.length));
+
   /*Function to get the additional Information */
   const AdditionalAddress = (data) => {
     setNewAddress(data.address);
@@ -210,28 +197,28 @@ function Checkout() {
     order: order,
   };
   /*Function to check the address if it is avalable to delivery the product or not */
-  const CheckAddress = async (pin) => {
-    setLoading(true);
-    setPaymentErr(false);
-    setTermErr(false);
-    let response = await CheckUserAddress(pin, vendorId, headers);
-    if (response.data.status === false) {
-      toast.error("Area Not available", {
-        position: toast.POSITION.TOP_RIGHT,
-        autoClose: 1000,
-      });
-      setLoading(false);
-      setAddPass(false);
-    }
-    if (response.data.service_available.length > 0) {
-      toast.success("Area available", {
-        position: toast.POSITION.TOP_RIGHT,
-        autoClose: 1000,
-      });
-      setLoading(false);
-      setAddPass(true);
-    }
-  };
+  // const CheckAddress = async (pin) => {
+  //   setLoading(true);
+  //   setPaymentErr(false);
+  //   setTermErr(false);
+  //   let response = await CheckUserAddress(pin, vendorId, headers);
+  //   if (response.data.status === false) {
+  //     toast.error("Area Not available", {
+  //       position: toast.POSITION.TOP_RIGHT,
+  //       autoClose: 1000,
+  //     });
+  //     setLoading(false);
+  //     setAddPass(false);
+  //   }
+  //   if (response.data.service_available.length > 0) {
+  //     toast.success("Area available", {
+  //       position: toast.POSITION.TOP_RIGHT,
+  //       autoClose: 1000,
+  //     });
+  //     setLoading(false);
+  //     setAddPass(true);
+  //   }
+  // };
 
   const OnSingleCLick = async (vendor_id) => {
     if (singleVendorID === null || singleVendorID === "") {
@@ -246,7 +233,7 @@ function Checkout() {
       setSinglePaymentErr(true);
     } else {
       // setLoading(true);
-      console.log("call  api");
+
       return false;
     }
   };
@@ -256,7 +243,6 @@ function Checkout() {
     SingleSelectedPayment,
     payAmount
   ) => {
-    console.log("jjj--" + SingleSelectedPayment);
     const result = {
       payment_method: SingleSelectedPayment === "COD" ? "cod" : "other",
       delivery_address: deliveryAddress,
@@ -302,11 +288,6 @@ function Checkout() {
           });
           setLoading(false);
 
-          // const url = `/invoice?order_id=${encodeURIComponent(
-          //   response.data.invoice_id
-          // )}`;
-          // window.location.href = url;
-
           setTimeout(() => {
             navigate("/profile?ClickedBy=checkout");
           }, 2000);
@@ -318,11 +299,10 @@ function Checkout() {
   };
 
   const OnPlaceOrderApi = async (result, payAmount) => {
-    console.log("rsssss--" + JSON.stringify(result));
     setLoading(true);
     let response = await PlaceOrder(result, headers);
     let orders_group_id = response.data.orders_group_id;
-    console.log("order res--" + JSON.stringify(response));
+
     if (
       response.data.response ===
       "Thank you for your order! Your order has been received and is being processed"
@@ -469,14 +449,11 @@ function Checkout() {
       return;
     } else {
       setLoading(true);
-      console.log("ddddd--" + JSON.stringify(result));
 
       if (payMethod === "UPI") {
         OnPlaceOrderApi(result, amount);
         // onPayentClick(amount, result);
       } else if (payMethod === "COD") {
-        console.log("ddddd--" + JSON.stringify(result));
-
         setLoading(true);
         let response = await PlaceOrder(result, headers);
 
@@ -755,19 +732,32 @@ function Checkout() {
                         var iddd = Number(item.vendor_id);
                         shouldApplyRef = arraysAreEqual(item.vendor_id);
 
-                        console.log("iffffff" + shouldApplyRef);
                         return (
                           <div
                             id={"Vendor" + item.vendor_id}
+                            tabindex={item.vendor_id}
                             key={iddd} // Add a unique key for each div
                             style={{
-                              border:
+                              outline:
                                 arraysAreEqual(item.vendor_id) === true
                                   ? "2px solid red"
                                   : "none",
+                              padding:
+                                arraysAreEqual(item.vendor_id) === true
+                                  ? "10px"
+                                  : "0px",
+
+                              boxShadow:
+                                arraysAreEqual(item.vendor_id) === true
+                                  ? "2px 2px 4px rgba(0, 0, 0, 0.6)"
+                                  : "none",
+                              borderRadius:
+                                arraysAreEqual(item.vendor_id) === true
+                                  ? "10px"
+                                  : "0px",
                             }}
                           >
-                            <input ref={Vendor5} type="hidden" />
+                            <input type="hidden" />
                             <div className="checkout_page">
                               <div
                                 className="checkout_vander_name"

@@ -14,6 +14,7 @@ export default function Profile() {
   const [apicall, setApicall] = useState(false);
   const [loading, setLoading] = useState(true);
   const [searchparams] = useSearchParams();
+  let OrderID = searchparams.get("order_id");
 
   useEffect(() => {
     if (
@@ -80,7 +81,7 @@ export default function Profile() {
           <Profilesection setGetName={setGetName} setLoading={setLoading} />
         )}
         {activeTab === "component2" && (
-          <Orderhistorysection setLoading={setLoading} />
+          <Orderhistorysection setLoading={setLoading} OrderID={OrderID} />
         )}
         {activeTab === "component3" && (
           <Complainthistorysection setLoading={setLoading} />

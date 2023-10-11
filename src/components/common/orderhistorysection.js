@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import { Link, useNavigate } from "react-router-dom";
 import { OrderList, Orderdetails, CancelOrder } from "../api/api";
@@ -7,13 +7,13 @@ import TicketModal from "../Modal/ticket";
 import OrderDetailsTable from "./OrderDetailsTable";
 import { Button, Modal } from "react-bootstrap";
 
-export default function Orderhistorysection({ setLoading }) {
+export default function Orderhistorysection({ setLoading, OrderID }) {
   let Token = localStorage.getItem("token");
   const headers = {
     "Content-Type": "application/json",
     user_token: `${Token}`,
   };
-
+  const orderListRef = useRef(null);
   let nevigate = useNavigate();
   let [orderList, setOrderList] = useState([]);
   const [openTicketModal, setOpenTicketModal] = useState(false);
@@ -126,6 +126,7 @@ export default function Orderhistorysection({ setLoading }) {
 
   useEffect(() => {
     GetData();
+
     // eslint-disable-next-line
   }, []);
 
@@ -163,6 +164,13 @@ export default function Orderhistorysection({ setLoading }) {
     GetOrderData();
     // eslint-disable-next-line
   }, [apicall, orderList.payment_status]);
+
+  useEffect(() => {
+    if (OrderID && orderListRef.current) {
+      console.log("iii");
+      orderListRef.current.focus();
+    }
+  }, [OrderID]);
 
   /*Function to Open complaint modal */
   let AddComplaintModal = (id) => {
@@ -221,7 +229,19 @@ export default function Orderhistorysection({ setLoading }) {
             return (
               <div className="row" key={index}>
                 <div className="col-lg-12">
-                  <div className="orderlist">
+                  <div
+                    ref={orderListRef}
+                    className="orderlist"
+                    tabIndex={OrderID === item.order_id ? 0 : -1}
+                    style={{
+                      outline:
+                        OrderID === item.order_id ? "2px solid green" : "",
+                      boxShadow:
+                        OrderID === item.order_id
+                          ? "2px 2px 4px rgba(0, 0, 0, 0.6)"
+                          : "none",
+                    }}
+                  >
                     <Link
                       className="orderlist-head"
                       onClick={() => toggleOrderDetail(orderId, item.order_id)}
